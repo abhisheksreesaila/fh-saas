@@ -1,0 +1,18 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_db_host.ipynb
+      - 00_db_host_tests.ipynb
+      - 01_db_tenant.ipynb
+      - 01_db_tenant_tests.ipynb
+      - 02_utils_sql.ipynb
+      - 02_utils_sql_tests.ipynb
+      - 03_utils_bgtsk.ipynb
+      - 03_utils_bgtsk_tests.ipynb
+      - 04_utils_oauth.ipynb
+      - 04_utils_oauth_tests.ipynb
+      - 05_utils_email.ipynb
+      - 05_utils_email_tests.ipynb
+      - 06_utils_log.ipynb
+      - 06_utils_log_tests.ipynb
