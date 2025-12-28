@@ -12,12 +12,12 @@ import re
 from typing import List, Dict, Any, Optional
 from contextlib import contextmanager
 
-# %% ../nbs/02_utils_sql.ipynb 4
+# %% ../nbs/02_utils_sql.ipynb 5
 def get_db_type():
     """Get database type from environment variable"""
     return os.getenv("DB_TYPE", "SQLITE").upper()
 
-# %% ../nbs/02_utils_sql.ipynb 6
+# %% ../nbs/02_utils_sql.ipynb 8
 def _extract_params(sql: str) -> List[str]:
     """Extract parameter names from SQL string (e.g., :param_name)"""
     return re.findall(r':(\w+)', sql)
@@ -69,7 +69,7 @@ def run_id(db: Database, registry: Dict[str, str], query_id: str, params: Option
         raise Exception(f"Failed to execute query '{query_id}': {str(e)}") from e
 
 
-# %% ../nbs/02_utils_sql.ipynb 8
+# %% ../nbs/02_utils_sql.ipynb 12
 def insert_only(db: Database, table_name: str, record: Dict[str, Any], conflict_cols: List[str], auto_commit: bool = True) -> None:
     """
     Insert a single record only if it doesn't exist (ignores conflicts)
@@ -170,7 +170,7 @@ def bulk_insert_only(db: Database, table_name: str, records: List[Dict[str, Any]
         raise Exception(f"Failed to bulk insert into {table_name}: {str(e)}") from e
 
 
-# %% ../nbs/02_utils_sql.ipynb 10
+# %% ../nbs/02_utils_sql.ipynb 16
 def upsert(db: Database, table_name: str, record: Dict[str, Any], 
            conflict_cols: List[str], update_cols: Optional[List[str]] = None, auto_commit: bool = True) -> None:
     """
@@ -279,7 +279,7 @@ def bulk_upsert(db: Database, table_name: str, records: List[Dict[str, Any]],
         raise Exception(f"Failed to bulk upsert into {table_name}: {str(e)}") from e
 
 
-# %% ../nbs/02_utils_sql.ipynb 12
+# %% ../nbs/02_utils_sql.ipynb 20
 def get_by_id(db: Database, table_name: str, id_value: Any, id_col: str = "id") -> Any:
     """
     Get a single record by ID
@@ -395,7 +395,7 @@ def bulk_delete(db: Database, table_name: str, id_list: List[Any], id_col: str =
         raise Exception(f"Failed to bulk delete from {table_name}: {str(e)}") from e
 
 
-# %% ../nbs/02_utils_sql.ipynb 14
+# %% ../nbs/02_utils_sql.ipynb 26
 @contextmanager
 def with_transaction(db: Database):
     """

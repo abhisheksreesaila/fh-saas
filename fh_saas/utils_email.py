@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 __all__ = ['logger', 'get_smtp_config', 'get_template_path', 'load_template', 'send_email', 'send_batch_emails',
            'send_welcome_email', 'send_invitation_email', 'send_password_reset_email']
 
-# %% ../nbs/05_utils_email.ipynb 4
+# %% ../nbs/05_utils_email.ipynb 5
 def get_smtp_config() -> Dict[str, Any]:
     """Get SMTP configuration from environment variables
     
@@ -82,7 +82,7 @@ def get_smtp_config() -> Dict[str, Any]:
         'use_tls': use_tls
     }
 
-# %% ../nbs/05_utils_email.ipynb 6
+# %% ../nbs/05_utils_email.ipynb 8
 def get_template_path(template_name: str) -> Path:
     """Get path to email template file
     
@@ -114,7 +114,7 @@ def load_template(template_name: str) -> str:
     template_path = get_template_path(template_name)
     return template_path.read_text(encoding='utf-8')
 
-# %% ../nbs/05_utils_email.ipynb 8
+# %% ../nbs/05_utils_email.ipynb 12
 def send_email(
     to_email: str,
     to_name: str,
@@ -219,7 +219,7 @@ def send_email(
             "error": str(e)
         }
 
-# %% ../nbs/05_utils_email.ipynb 10
+# %% ../nbs/05_utils_email.ipynb 15
 def send_batch_emails(
     recipients: List[Dict[str, str]],
     subject: str,
@@ -329,7 +329,7 @@ def send_batch_emails(
     
     return results
 
-# %% ../nbs/05_utils_email.ipynb 12
+# %% ../nbs/05_utils_email.ipynb 18
 def send_welcome_email(
     to_email: str,
     to_name: str,
@@ -365,7 +365,7 @@ def send_welcome_email(
         test=test
     )
 
-# %% ../nbs/05_utils_email.ipynb 13
+# %% ../nbs/05_utils_email.ipynb 20
 def send_invitation_email(
     to_email: str,
     to_name: str,
@@ -401,7 +401,7 @@ def send_invitation_email(
         test=test
     )
 
-# %% ../nbs/05_utils_email.ipynb 14
+# %% ../nbs/05_utils_email.ipynb 22
 def send_password_reset_email(
     to_email: str,
     to_name: str,

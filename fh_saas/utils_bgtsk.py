@@ -16,10 +16,10 @@ from fastcore.utils import *
 from fastsql.core import *
 
 
-# %% ../nbs/03_utils_bgtsk.ipynb 3
+# %% ../nbs/03_utils_bgtsk.ipynb 4
 from .db_host import timestamp, gen_id
 
-# %% ../nbs/03_utils_bgtsk.ipynb 5
+# %% ../nbs/03_utils_bgtsk.ipynb 6
 class AppJob:
     """Model for tenant-level background jobs with retry support"""
     id: str
@@ -34,7 +34,7 @@ class AppJob:
     started_at: str = None
     completed_at: str = None
 
-# %% ../nbs/03_utils_bgtsk.ipynb 7
+# %% ../nbs/03_utils_bgtsk.ipynb 8
 class BackgroundTaskManager:
     """
     Lightweight background task manager for tenant-level operations.

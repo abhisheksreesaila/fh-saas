@@ -10,7 +10,7 @@ from .db_host import timestamp, gen_id
 import urllib.parse
 import os
 
-# %% ../nbs/01_db_tenant.ipynb 3
+# %% ../nbs/01_db_tenant.ipynb 4
 def get_or_create_tenant_db(tenant_id: str, tenant_name: str = None):
     """
     Get or create a tenant database:
@@ -87,7 +87,7 @@ def get_or_create_tenant_db(tenant_id: str, tenant_name: str = None):
     return Database(tenant_url)
 
 
-# %% ../nbs/01_db_tenant.ipynb 5
+# %% ../nbs/01_db_tenant.ipynb 7
 # ==========================================
 # CORE TENANT MODELS (Infrastructure)
 # ==========================================

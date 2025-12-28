@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# %% ../nbs/04_utils_oauth.ipynb 4
+# %% ../nbs/04_utils_oauth.ipynb 5
 def get_google_oauth_client():
     """
     Initialize Google OAuth client with credentials from environment.
@@ -62,7 +62,7 @@ def get_google_oauth_client():
         client_secret=client_secret
     )
 
-# %% ../nbs/04_utils_oauth.ipynb 6
+# %% ../nbs/04_utils_oauth.ipynb 8
 def generate_oauth_state():
     """
     Generate cryptographically secure random state token for CSRF protection.
@@ -110,7 +110,7 @@ def verify_oauth_state(session: dict, callback_state: str):
     # Clear state after successful verification (one-time use)
     session.pop('oauth_state', None)
 
-# %% ../nbs/04_utils_oauth.ipynb 8
+# %% ../nbs/04_utils_oauth.ipynb 12
 def create_or_get_global_user(
     host_db: HostDatabase,
     oauth_id: str, 
@@ -263,7 +263,7 @@ def verify_membership(
     
     return len(valid) > 0
 
-# %% ../nbs/04_utils_oauth.ipynb 11
+# %% ../nbs/04_utils_oauth.ipynb 18
 def provision_new_user(
     host_db: HostDatabase,
     global_user: GlobalUser,
@@ -389,7 +389,7 @@ def provision_new_user(
         
         raise Exception(f"Failed to provision tenant for {global_user.email}: {str(e)}") from e
 
-# %% ../nbs/04_utils_oauth.ipynb 13
+# %% ../nbs/04_utils_oauth.ipynb 21
 def create_user_session(session: dict, global_user: GlobalUser, membership: Membership):
     """
     Create authenticated session after successful OAuth login.
@@ -459,7 +459,7 @@ def clear_session(session: dict):
     """
     session.clear()
 
-# %% ../nbs/04_utils_oauth.ipynb 15
+# %% ../nbs/04_utils_oauth.ipynb 26
 def route_user_after_login(global_user: GlobalUser, membership: Membership = None) -> str:
     """
     Determine redirect URL based on user type and membership.
@@ -535,7 +535,7 @@ def require_tenant_access(session: dict):
     # Return tenant database connection
     return get_or_create_tenant_db(tenant_id)
 
-# %% ../nbs/04_utils_oauth.ipynb 17
+# %% ../nbs/04_utils_oauth.ipynb 30
 def handle_login_request(request, session):
     """
     Handle /login route - generate OAuth link with CSRF protection.
