@@ -64,7 +64,7 @@ def get_context() -> Dict[str, Optional[str]]:
         'request_id': _request_id.get()
     }
 
-# %% ../nbs/06_utils_log.ipynb 9
+# %% ../nbs/06_utils_log.ipynb 10
 class DatabaseHandler:
     """Non-blocking database log handler with queue
     
@@ -136,7 +136,7 @@ class DatabaseHandler:
         while not self.queue.empty():
             self.queue.get()
 
-# %% ../nbs/06_utils_log.ipynb 15
+# %% ../nbs/06_utils_log.ipynb 16
 def _log_sync_operation(
     func: Callable,
     handler: Optional[DatabaseHandler],
@@ -230,7 +230,7 @@ def _log_async_operation(
     
     return wrapper
 
-# %% ../nbs/06_utils_log.ipynb 16
+# %% ../nbs/06_utils_log.ipynb 17
 def log_db_operation(
     operation_type: str = 'QUERY',
     handler: Optional[DatabaseHandler] = None
@@ -259,7 +259,7 @@ def log_db_operation(
     
     return decorator
 
-# %% ../nbs/06_utils_log.ipynb 18
+# %% ../nbs/06_utils_log.ipynb 19
 def log_api_call(
     method: str = 'GET',
     handler: Optional[DatabaseHandler] = None
@@ -287,7 +287,7 @@ def log_api_call(
     
     return decorator
 
-# %% ../nbs/06_utils_log.ipynb 20
+# %% ../nbs/06_utils_log.ipynb 21
 def log_background_task(
     task_name: str,
     handler: Optional[DatabaseHandler] = None
