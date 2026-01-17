@@ -4,6 +4,6 @@ project:
 website:
   title: "fh-saas"
   site-url: "https://abhisheksreesaila.github.io/fh-saas"
-  description: "saas tempplate using fast html components with material skin (fh-material)"
+  description: "Production-ready multi-tenant SaaS toolkit for FastHTML applications with authentication, billing, and integrations"
   repo-branch: main
   repo-url: "https://github.com/abhisheksreesaila/fh-saas"
