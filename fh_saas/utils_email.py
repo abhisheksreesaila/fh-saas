@@ -55,32 +55,48 @@ def get_smtp_config() -> Dict[str, Any]:
     }
 
 # %% ../nbs/05_utils_email.ipynb 8
-def get_template_path(template_name: str) -> Path:
+def get_template_path(
+    template_name: str,  # Template basename (e.g., 'welcome', 'invitation')
+    custom_template_path: Optional[str | Path] = None  # Custom path overrides package templates
+) -> Path:
     """Get absolute path to email template file."""
-    # Get the package directory
-    package_dir = Path(__file__).parent if '__file__' in globals() else Path.cwd()
-    template_path = package_dir / 'templates' / f'{template_name}.md'
-    
-    if not template_path.exists():
-        raise FileNotFoundError(f"Template not found: {template_path}")
-    
-    return template_path
+    if custom_template_path:
+        custom_path = Path(custom_template_path)
+        if not custom_path.exists():
+            raise FileNotFoundError(f"Custom template not found: {custom_path}")
+        return custom_path
+    else:
+        package_dir = Path(__file__).parent if '__file__' in globals() else Path.cwd()
+        template_path = package_dir / 'templates' / f'{template_name}.md'
+        
+        if not template_path.exists():
+            raise FileNotFoundError(
+                f"Template not found: {template_path}\n"
+                f"Available templates: welcome, invitation, password_reset\n"
+                f"Or provide custom_template_path parameter"
+            )
+        
+        return template_path
 
 
-def load_template(template_name: str) -> str:
+def load_template(
+    template_name: str,  # Template basename (e.g., 'welcome')
+    custom_template_path: Optional[str | Path] = None  # Custom path overrides package templates
+) -> str:
     """Load markdown email template as string."""
-    template_path = get_template_path(template_name)
+    template_path = get_template_path(template_name, custom_template_path)
     return template_path.read_text(encoding='utf-8')
 
 # %% ../nbs/05_utils_email.ipynb 12
 def send_email(
-    to_email: str,
-    to_name: str,
-    subject: str,
-    template_name: str,
-    template_vars: Dict[str, str],
-    test: bool = False,
-    smtp_config: Optional[Dict[str, Any]] = None
+    to_email: str,  # Recipient email address
+    to_name: str,  # Recipient display name
+    subject: str,  # Email subject line
+    template_name: str,  # Template name: 'welcome', 'invitation', 'password_reset'
+    template_vars: Dict[str, str],  # Variables to substitute in template
+    test: bool = False,  # If True, prints email instead of sending
+    smtp_config: Optional[Dict[str, Any]] = None,  # Custom SMTP config (defaults to env vars)
+    custom_template_path: Optional[str | Path] = None  # Custom template path
 ) -> Dict[str, Any]:
     """Send single email using markdown template with variable substitution."""
     try:
@@ -106,8 +122,8 @@ def send_email(
         'use_tls': config.get('use_tls', True)
     }
     
-    # Load template
-    template = load_template(template_name)
+    # Load template (supports custom path)
+    template = load_template(template_name, custom_template_path)
     
     # Prepare addresses
     from_addr = get_addr(config['from_email'], config.get('from_name', ''))
@@ -152,15 +168,16 @@ def send_email(
 
 # %% ../nbs/05_utils_email.ipynb 15
 def send_batch_emails(
-    recipients: List[Dict[str, str]],
-    subject: str,
-    template_name: str,
-    template_vars_list: List[Dict[str, str]],
-    test: bool = False,
-    pause: float = 0.2,
-    smtp_config: Optional[Dict[str, Any]] = None
+    recipients: List[Dict[str, str]],  # List of dicts with 'email' and 'name' keys
+    subject: str,  # Email subject line
+    template_name: str,  # Template name: 'welcome', 'invitation', 'password_reset'
+    template_vars_list: List[Dict[str, str]],  # List of variable dicts, one per recipient
+    test: bool = False,  # If True, prints emails instead of sending
+    pause: float = 0.2,  # Seconds between emails (rate limiting)
+    smtp_config: Optional[Dict[str, Any]] = None,  # Custom SMTP config
+    custom_template_path: Optional[str | Path] = None  # Custom template path
 ) -> List[Dict[str, Any]]:
-    """Send personalized emails to multiple recipients with per-recipient variables."""
+    """Send personalized emails to multiple recipients."""
     try:
         from markdown_merge import MarkdownMerge, get_addr
     except ImportError:
@@ -184,8 +201,8 @@ def send_batch_emails(
         'use_tls': config.get('use_tls', True)
     }
     
-    # Load template
-    template = load_template(template_name)
+    # Load template (supports custom path)
+    template = load_template(template_name, custom_template_path)
     
     # Prepare addresses
     from_addr = get_addr(config['from_email'], config.get('from_name', ''))
@@ -235,14 +252,15 @@ def send_batch_emails(
 
 # %% ../nbs/05_utils_email.ipynb 18
 def send_welcome_email(
-    to_email: str,
-    to_name: str,
-    user_name: str,
-    tenant_name: str,
-    dashboard_url: str,
-    test: bool = False
+    to_email: str,  # Recipient email address
+    to_name: str,  # Recipient display name
+    user_name: str,  # User's name for personalization
+    tenant_name: str,  # Tenant/organization name
+    dashboard_url: str,  # URL to user's dashboard
+    test: bool = False,  # If True, prints email instead of sending
+    custom_template_path: Optional[str | Path] = None  # Custom welcome.md template path
 ) -> Dict[str, Any]:
-    """Send welcome email to new user with tenant dashboard link."""
+    """Send welcome email to new user. Template vars: {user_name}, {tenant_name}, {dashboard_url}, {to_email}"""
     return send_email(
         to_email=to_email,
         to_name=to_name,
@@ -254,19 +272,21 @@ def send_welcome_email(
             'dashboard_url': dashboard_url,
             'to_email': to_email
         },
-        test=test
+        test=test,
+        custom_template_path=custom_template_path
     )
 
 # %% ../nbs/05_utils_email.ipynb 20
 def send_invitation_email(
-    to_email: str,
-    to_name: str,
-    inviter_name: str,
-    tenant_name: str,
-    invitation_url: str,
-    test: bool = False
+    to_email: str,  # Recipient email address
+    to_name: str,  # Recipient display name
+    inviter_name: str,  # Name of person sending invitation
+    tenant_name: str,  # Tenant/organization name
+    invitation_url: str,  # URL to accept invitation
+    test: bool = False,  # If True, prints email instead of sending
+    custom_template_path: Optional[str | Path] = None  # Custom invitation.md template path
 ) -> Dict[str, Any]:
-    """Send invitation email with link to join tenant."""
+    """Send invitation email. Template vars: {inviter_name}, {tenant_name}, {invitation_url}, {to_email}"""
     return send_email(
         to_email=to_email,
         to_name=to_name,
@@ -278,18 +298,20 @@ def send_invitation_email(
             'invitation_url': invitation_url,
             'to_email': to_email
         },
-        test=test
+        test=test,
+        custom_template_path=custom_template_path
     )
 
 # %% ../nbs/05_utils_email.ipynb 22
 def send_password_reset_email(
-    to_email: str,
-    to_name: str,
-    user_name: str,
-    reset_url: str,
-    test: bool = False
+    to_email: str,  # Recipient email address
+    to_name: str,  # Recipient display name
+    user_name: str,  # User's name for personalization
+    reset_url: str,  # Secure password reset URL
+    test: bool = False,  # If True, prints email instead of sending
+    custom_template_path: Optional[str | Path] = None  # Custom password_reset.md template path
 ) -> Dict[str, Any]:
-    """Send password reset email with secure reset link."""
+    """Send password reset email. Template vars: {user_name}, {reset_url}, {to_email}"""
     return send_email(
         to_email=to_email,
         to_name=to_name,
@@ -300,5 +322,6 @@ def send_password_reset_email(
             'reset_url': reset_url,
             'to_email': to_email
         },
-        test=test
+        test=test,
+        custom_template_path=custom_template_path
     )
