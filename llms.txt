@@ -1,34 +1,38 @@
-# FH-sass
+# fh-saas
 
-FH-sass is a comprehensive utility library built with nbdev for rapid SaaS development. It provides a structured set of modules for database multi-tenancy, API integrations, background task processing, and data synchronization, all developed using literate programming practices.
+fh-saas is a production-ready multi-tenant SaaS toolkit for FastHTML applications. It provides comprehensive modules for authentication, database multi-tenancy, API integrations, background tasks, and data synchronization, all developed using nbdev literate programming.
 
-Here are some of FH-sass's features:
-- **Multi-tenant Architecture**: Out-of-the-box support for database hosting and tenant isolation.
-- **Robust Utility Suite**: Specialized tools for SQL, GraphQL, OAuth, and Webhooks.
-- **High-Performance Data**: Integration with Polars for efficient data mapping and transformation.
-- **Ready for Scale**: Built-in background task management and synchronization workflows.
-- **Fully Documented**: Every module is automatically documented from notebooks with executable examples.
+## Key Features
+- **Multi-Tenant Architecture**: Complete host + tenant database separation with automatic provisioning
+- **OAuth Authentication**: Google OAuth integration with CSRF protection and session management
+- **API Integrations**: HTTP/GraphQL clients with retry logic, rate limiting, and streaming pagination
+- **Background Tasks**: Async job execution with retry support and status tracking
+- **Data Pipeline**: API → Polars transforms → Database sync workflows
+- **Content Management**: Blog publishing, SEO optimization, and workflow automation
+- **Production Ready**: Audit logging, structured logging, email notifications, and webhook processing
 
-## Core Database & Tenancy
-- [00_db_host](_proc/00_db_host.html.md): Database hosting configuration and connection management.
-- [01_db_tenant](_proc/01_db_tenant.html.md): Multi-tenancy logic and tenant-specific database routing.
-- [02_utils_sql](_proc/02_utils_sql.html.md): Common SQL utilities and query helpers.
-- [15_utils_db](_proc/15_utils_db.html.md): General database abstractions and shared utilities.
+## Core Database & Multi-Tenancy
+- [00_db_host](_proc/00_db_host.html.md): Host database with users, tenants, memberships, billing, and audit logs
+- [01_db_tenant](_proc/01_db_tenant.html.md): Tenant-specific database isolation and connection management
+- [15_utils_db](_proc/15_utils_db.html.md): Table registration, index creation, and database utilities
 
-## Authentication & APIs
-- [04_utils_oauth](_proc/04_utils_oauth.html.md): OAuth2 authentication flows and provider integrations.
-- [07_utils_api](_proc/07_utils_api.html.md): REST API client utilities and request handling.
-- [08_utils_graphql](_proc/08_utils_graphql.html.md): GraphQL query execution and schema management.
-- [14_utils_webhook](_proc/14_utils_webhook.html.md): Webhook handling, signature verification, and processing.
+## Authentication & Security
+- [04_utils_auth](_proc/04_utils_auth.html.md): Google OAuth flows, CSRF protection, automatic tenant provisioning
+- [06_utils_log](_proc/06_utils_log.html.md): Structured logging with configurable levels and formatters
 
-## Infrastructure & System
-- [03_utils_bgtsk](_proc/03_utils_bgtsk.html.md): Background task processing and queue management.
-- [05_utils_email](_proc/05_utils_email.html.md): Email dispatching and template integration.
-- [06_utils_log](_proc/06_utils_log.html.md): Structured logging and observability.
-- [10_utils_sync](_proc/10_utils_sync.html.md): Data synchronization and state consistency tools.
+## API Integrations
+- [07_utils_api](_proc/07_utils_api.html.md): HTTP client with retries, rate limiting, and request/response hooks
+- [08_utils_graphql](_proc/08_utils_graphql.html.md): GraphQL client with streaming pagination for large datasets
+- [14_utils_webhook](_proc/14_utils_webhook.html.md): Webhook receiver with signature verification and processing
 
-## Content & Data Workflows
-- [09_utils_polars_mapper](_proc/09_utils_polars_mapper.html.md): High-performance data mapping using the Polars library.
-- [11_utils_blog](_proc/11_utils_blog.html.md): Content management and blog-specific utilities.
-- [12_utils_seo](_proc/12_utils_seo.html.md): SEO metadata generation and optimization tools.
-- [13_utils_workflow](_proc/13_utils_workflow.html.md): Business logic workflow orchestration.
+## Data Processing & Workflows
+- [02_utils_sql](_proc/02_utils_sql.html.md): SQL helpers, query builders, and database type detection
+- [03_utils_bgtsk](_proc/03_utils_bgtsk.html.md): Background task manager with retry logic and job tracking
+- [09_utils_polars_mapper](_proc/09_utils_polars_mapper.html.md): JSON to Polars DataFrame transformations
+- [10_utils_sync](_proc/10_utils_sync.html.md): End-to-end API to database synchronization pipeline
+
+## Content & Publishing
+- [05_utils_email](_proc/05_utils_email.html.md): Transactional email sending via Resend API
+- [11_utils_blog](_proc/11_utils_blog.html.md): Markdown blog publishing with frontmatter parsing
+- [12_utils_seo](_proc/12_utils_seo.html.md): SEO metadata, sitemap generation, and optimization
+- [13_utils_workflow](_proc/13_utils_workflow.html.md): Multi-step workflow automation and orchestration
