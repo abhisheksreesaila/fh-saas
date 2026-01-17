@@ -174,7 +174,25 @@ pip install git+https://github.com/abhisheksreesaila/fh-saas.git
 [PyPI](https://pypi.org/project/fh-saas/) ·
 [Documentation](https://abhisheksreesaila.github.io/fh-saas/)
 
-**🤖 For AI Assistants:** [Download llms-ctx.txt](https://raw.githubusercontent.com/abhisheksreesaila/fh-saas/main/llms-ctx.txt) — Complete API documentation for LLMs
+------------------------------------------------------------------------
+
+## 🤖 AI Assistant Context
+
+**For AI coding assistants** (GitHub Copilot, Claude, ChatGPT, Cursor,
+etc.), download the complete API documentation:
+
+**[📥 Download
+llms-ctx.txt](https://raw.githubusercontent.com/abhisheksreesaila/fh-saas/main/llms-ctx.txt)**
+— Complete fh-saas documentation in LLM-friendly format
+
+### How to use:
+
+1.  Download the context file
+2.  Add to your AI assistant’s instructions/knowledge base  
+3.  Get accurate code suggestions for fh-saas APIs
+
+This file contains all module documentation, examples, and API
+signatures formatted for optimal LLM understanding.
 
 ------------------------------------------------------------------------
 
@@ -183,3 +201,23 @@ pip install git+https://github.com/abhisheksreesaila/fh-saas.git
 Contributions are welcome! Please check the [GitHub
 repository](https://github.com/abhisheksreesaila/fh-saas) for issues and
 discussions.
+
+## 🤖 AI Assistant Context
+
+**For AI coding assistants** (GitHub Copilot, Claude, ChatGPT, Cursor,
+etc.), download the complete API documentation:
+
+### [📥 Download llms-ctx.txt](https://raw.githubusercontent.com/abhisheksreesaila/fh-saas/main/llms-ctx.txt)
+
+**What’s included:** - Complete module documentation and API
+signatures - Code examples and usage patterns - Multi-tenant
+architecture patterns - Authentication and security flows - Data
+pipeline implementations
+
+**How to use:** 1. Download the `llms-ctx.txt` file 2. Add it to your AI
+assistant’s project context or instructions 3. Get accurate,
+context-aware code suggestions for fh-saas
+
+This consolidated context file (~500KB) contains all documentation
+formatted for optimal LLM understanding, enabling your AI assistant to
+provide precise help with fh-saas APIs.

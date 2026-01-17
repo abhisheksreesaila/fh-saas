@@ -22,6 +22,13 @@ function gcap {
     Write-Host "`n[1/4] Staging all changes..." -ForegroundColor Cyan
     git add -A
     
+    Write-Host "[1.5/4] Regenerating LLM context file..." -ForegroundColor Cyan
+    python local_ctx.py
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  ✓ llms-ctx.txt updated" -ForegroundColor Green
+        git add llms-ctx.txt
+    }
+    
     Write-Host "[2/4] Committing (pre-commit hooks will run)..." -ForegroundColor Cyan
     git commit -m $message
     
