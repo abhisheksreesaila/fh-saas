@@ -174,6 +174,8 @@ pip install git+https://github.com/abhisheksreesaila/fh-saas.git
 [PyPI](https://pypi.org/project/fh-saas/) ·
 [Documentation](https://abhisheksreesaila.github.io/fh-saas/)
 
+**🤖 For AI Assistants:** [Download llms-ctx.txt](https://raw.githubusercontent.com/abhisheksreesaila/fh-saas/main/llms-ctx.txt) — Complete API documentation for LLMs
+
 ------------------------------------------------------------------------
 
 ## 🤝 Contributing
