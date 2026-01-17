@@ -22,5 +22,33 @@ website:
     search: true
   sidebar:
     style: floating
+    contents:
+      - index.ipynb
+      - section: "📦 Core"
+        contents:
+          - 00_db_host.ipynb
+          - 01_db_tenant.ipynb
+          - 15_utils_db.ipynb
+      - section: "🔌 Integrations"
+        contents:
+          - 07_utils_api.ipynb
+          - 08_utils_graphql.ipynb
+          - 14_utils_webhook.ipynb
+      - section: "⚙️ Data Pipeline"
+        contents:
+          - 03_utils_bgtsk.ipynb
+          - 09_utils_polars_mapper.ipynb
+          - 10_utils_sync.ipynb
+      - section: "🛠️ Utilities"
+        contents:
+          - 02_utils_sql.ipynb
+          - 06_utils_log.ipynb
+          - 04_utils_oauth.ipynb
+          - 05_utils_email.ipynb
+      - section: "📣 Content"
+        contents:
+          - 11_utils_blog.ipynb
+          - 12_utils_seo.ipynb
+          - 13_utils_workflow.ipynb
 
-metadata-files: [nbdev.yml, sidebar.yml]
+metadata-files: [nbdev.yml]

@@ -1,0 +1,34 @@
+# FH-sass
+
+FH-sass is a comprehensive utility library built with nbdev for rapid SaaS development. It provides a structured set of modules for database multi-tenancy, API integrations, background task processing, and data synchronization, all developed using literate programming practices.
+
+Here are some of FH-sass's features:
+- **Multi-tenant Architecture**: Out-of-the-box support for database hosting and tenant isolation.
+- **Robust Utility Suite**: Specialized tools for SQL, GraphQL, OAuth, and Webhooks.
+- **High-Performance Data**: Integration with Polars for efficient data mapping and transformation.
+- **Ready for Scale**: Built-in background task management and synchronization workflows.
+- **Fully Documented**: Every module is automatically documented from notebooks with executable examples.
+
+## Core Database & Tenancy
+- [00_db_host](_proc/00_db_host.html.md): Database hosting configuration and connection management.
+- [01_db_tenant](_proc/01_db_tenant.html.md): Multi-tenancy logic and tenant-specific database routing.
+- [02_utils_sql](_proc/02_utils_sql.html.md): Common SQL utilities and query helpers.
+- [15_utils_db](_proc/15_utils_db.html.md): General database abstractions and shared utilities.
+
+## Authentication & APIs
+- [04_utils_oauth](_proc/04_utils_oauth.html.md): OAuth2 authentication flows and provider integrations.
+- [07_utils_api](_proc/07_utils_api.html.md): REST API client utilities and request handling.
+- [08_utils_graphql](_proc/08_utils_graphql.html.md): GraphQL query execution and schema management.
+- [14_utils_webhook](_proc/14_utils_webhook.html.md): Webhook handling, signature verification, and processing.
+
+## Infrastructure & System
+- [03_utils_bgtsk](_proc/03_utils_bgtsk.html.md): Background task processing and queue management.
+- [05_utils_email](_proc/05_utils_email.html.md): Email dispatching and template integration.
+- [06_utils_log](_proc/06_utils_log.html.md): Structured logging and observability.
+- [10_utils_sync](_proc/10_utils_sync.html.md): Data synchronization and state consistency tools.
+
+## Content & Data Workflows
+- [09_utils_polars_mapper](_proc/09_utils_polars_mapper.html.md): High-performance data mapping using the Polars library.
+- [11_utils_blog](_proc/11_utils_blog.html.md): Content management and blog-specific utilities.
+- [12_utils_seo](_proc/12_utils_seo.html.md): SEO metadata generation and optimization tools.
+- [13_utils_workflow](_proc/13_utils_workflow.html.md): Business logic workflow orchestration.

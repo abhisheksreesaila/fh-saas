@@ -35,3 +35,38 @@ div.description {
   font-size: 135%;
   opacity: 70%;
 }
+
+/* Sidebar section headers - make them stand out */
+.sidebar-item-section .sidebar-item-text {
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+/* Sidebar items under sections */
+.sidebar-item-section .sidebar-item .sidebar-item-text {
+  font-weight: 400;
+  font-size: 0.875rem;
+  text-transform: none;
+  letter-spacing: normal;
+  color: inherit;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* Add some spacing between sections */
+.sidebar-item-section {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* First section doesn't need top margin */
+.sidebar-item-section:first-child {
+  margin-top: 0;
+}

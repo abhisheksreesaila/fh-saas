@@ -10,9 +10,26 @@ website:
       - 02_utils_sql_tests.ipynb
       - 03_utils_bgtsk.ipynb
       - 03_utils_bgtsk_tests.ipynb
-      - 04_utils_oauth.ipynb
-      - 04_utils_oauth_tests.ipynb
+      - 04_utils_auth.ipynb
+      - 04_utils_auth_tests.ipynb
       - 05_utils_email.ipynb
       - 05_utils_email_tests.ipynb
       - 06_utils_log.ipynb
       - 06_utils_log_tests.ipynb
+      - 07_utils_api.ipynb
+      - 07_utils_api_tests.ipynb
+      - 08_utils_graphql.ipynb
+      - 08_utils_graphql_tests.ipynb
+      - 09_utils_polars_mapper.ipynb
+      - 09_utils_polars_mapper_tests.ipynb
+      - 10_utils_sync.ipynb
+      - 10_utils_sync_tests.ipynb
+      - 11_utils_blog.ipynb
+      - 11_utils_blog_tests.ipynb
+      - 12_utils_seo.ipynb
+      - 12_utils_seo_tests.ipynb
+      - 13_utils_workflow.ipynb
+      - 13_utils_workflow_tests.ipynb
+      - 14_utils_webhook.ipynb
+      - 14_utils_webhook_tests.ipynb
+      - 15_utils_db.ipynb
