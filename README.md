@@ -114,8 +114,9 @@ tenant_db.conn.commit()
 
 ## 📚 Documentation Guide
 
-| Section | What You’ll Learn |
+|  |  |
 |----|----|
+| Section | What You'll Learn |
 | **📦 Core** |  |
 | [Multi-Tenant Setup](https://abhisheksreesaila.github.io/fh-saas/db_host.html) | Host database, user management, tenant registry |
 | [Tenant Databases](https://abhisheksreesaila.github.io/fh-saas/db_tenant.html) | Isolated databases per tenant, connection pooling |
