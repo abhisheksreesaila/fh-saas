@@ -43,7 +43,7 @@ website:
         contents:
           - 02_utils_sql.ipynb
           - 06_utils_log.ipynb
-          - 04_utils_oauth.ipynb
+          - 04_utils_auth.ipynb
           - 05_utils_email.ipynb
       - section: "📣 Content"
         contents:
