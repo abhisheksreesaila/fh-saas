@@ -14,14 +14,24 @@ def generate_local_ctx(llms_file='llms.txt', output_file='llms-ctx.txt'):
     ctx_output = []
     
     for link in links:
-        # Convert web-style path to local path
+        # Convert _proc/ paths to _docs/ paths
+        # _proc/00_db_host.html.md -> _docs/db_host.html.md
         local_path = Path(link)
+        
+        # Check if path starts with _proc (works on both Windows and Unix)
+        if local_path.parts and local_path.parts[0] == '_proc':
+            # Extract filename, strip number prefix
+            filename = local_path.name
+            # Remove leading digits and underscore (e.g., "00_", "01_", "15_")
+            if len(filename) > 3 and filename[:2].isdigit() and filename[2] == '_':
+                filename = filename[3:]
+            elif len(filename) > 2 and filename[:1].isdigit() and filename[1] == '_':
+                filename = filename[2:]
+            local_path = Path('_docs') / filename
         
         if local_path.exists():
             print(f"Processing: {local_path}")
             file_text = local_path.read_text(encoding='utf-8')
-            # Format follows the llms-ctx standard: 
-            # File path as header, then content, then separator
             ctx_output.append(f"FILE: {link}\n")
             ctx_output.append(file_text)
             ctx_output.append("\n" + "="*40 + "\n")
