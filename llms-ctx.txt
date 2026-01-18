@@ -552,6 +552,16 @@ data leakage possible
 
 ## 🔌 Tenant Connection
 
+> ⚠️ **Naming Convention**: Use **underscores** (not hyphens) in
+> `tenant_id` values.
+>
+> Database names are derived from `tenant_id` (e.g., `tenant_acme_001` →
+> `t_tenant_acme_001_db`). PostgreSQL and SQLite identifiers work best
+> with alphanumeric characters and underscores.
+>
+> ✅ Good: `tenant_acme_001`, `tenant_finxplorer_prod` ❌ Avoid:
+> `tenant-acme-001`, `tenant.finxplorer.prod`
+
 ``` python
 from nbdev.showdoc import show_doc
 ```
@@ -746,6 +756,117 @@ tenant_db.conn.commit()
 [`TenantUser`](https://abhisheksreesaila.github.io/fh-saas/db_tenant.html#tenantuser)
 **must match** the `GlobalUser.id` from the host database to maintain
 identity linking.
+
+------------------------------------------------------------------------
+
+## 🔐 Role-Based Access Control (RBAC)
+
+Every tenant has a **three-tier role system** for controlling access:
+
+### Role Hierarchy
+
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Level</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin</code></td>
+<td>3</td>
+<td>Full access to all resources and settings</td>
+</tr>
+<tr>
+<td><code>editor</code></td>
+<td>2</td>
+<td>Can view and modify data, but not settings</td>
+</tr>
+<tr>
+<td><code>viewer</code></td>
+<td>1</td>
+<td>Read-only access to data</td>
+</tr>
+</tbody>
+</table>
+
+### Role Assignment Rules
+
+1.  **Tenant owner** (from host `Membership.role='owner'`) →
+    automatically gets `admin` role
+2.  **Other users** → assigned explicitly by admin via
+    `TenantUser.local_role`
+3.  **No defaults** → admins must explicitly assign roles when inviting
+    users
+
+### TenantUser.local_role
+
+The `local_role` field in
+[`TenantUser`](https://abhisheksreesaila.github.io/fh-saas/db_tenant.html#tenantuser)
+stores the user’s role within the tenant:
+
+``` python
+# Example: Admin adds a new user as editor
+new_user = TenantUser(
+    id=global_user_id,      # Must match GlobalUser.id
+    display_name="Jane Doe",
+    local_role="editor",    # Assigned by admin
+    created_at=timestamp()
+)
+tables['tenant_users'].insert(new_user)
+```
+
+### Fine-Grained Permissions (Optional)
+
+For advanced use cases, the `core_permissions` table allows
+resource-level control:
+
+``` python
+# Example: Grant user edit access to transactions only
+permission = TenantPermission(
+    id=gen_id(),
+    user_id=tenant_user.id,
+    resource="transactions",
+    action="edit",
+    granted=True,
+    created_at=timestamp()
+)
+tables['permissions'].insert(permission)
+```
+
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resource</code></td>
+<td>What the permission applies to (e.g., “transactions”,
+“budgets”)</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td>What action is allowed (e.g., “view”, “edit”, “delete”)</td>
+</tr>
+<tr>
+<td><code>granted</code></td>
+<td>True = allowed, False = explicitly denied</td>
+</tr>
+</tbody>
+</table>
+
+> 💡 **Tip:** Most apps only need the `local_role` field. Use
+> `core_permissions` when you need per-resource control (e.g., “User X
+> can view transactions but not budgets”).
 
 
 ========================================
@@ -1278,6 +1399,189 @@ from nbdev.showdoc import show_doc
 
 ------------------------------------------------------------------------
 
+## 🎭 Role-Based Access Control
+
+Control access based on user roles within the tenant.
+
+### Role Hierarchy
+
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Level</th>
+<th>Automatic For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin</code></td>
+<td>3</td>
+<td>Tenant owners</td>
+</tr>
+<tr>
+<td><code>editor</code></td>
+<td>2</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>viewer</code></td>
+<td>1</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+
+### Key Functions
+
+<table>
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr>
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#has_min_role"><code>has_min_role</code></a></td>
+<td>Check if user meets minimum role requirement</td>
+</tr>
+<tr>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_role"><code>require_role</code></a></td>
+<td>Route decorator for role-based protection</td>
+</tr>
+<tr>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_role"><code>get_user_role</code></a></td>
+<td>Derive effective role from session + tenant DB</td>
+</tr>
+</tbody>
+</table>
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L46"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### has_min_role
+
+>  has_min_role (user:dict, required_role:str)
+
+*Check if user meets the minimum role requirement.*
+
+Args: user: User dict with ‘role’ field (from request.state.user)
+required_role: Minimum role needed (‘admin’, ‘editor’, ‘viewer’)
+
+Returns: True if user’s role \>= required_role in hierarchy
+
+Example: \>\>\> user = {‘role’: ‘editor’} \>\>\> has_min_role(user,
+‘viewer’) \# True - editor \> viewer \>\>\> has_min_role(user, ‘admin’)
+\# False - editor \< admin
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L67"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_user_role
+
+>  get_user_role (session:dict, tenant_db:fastsql.core.Database=None)
+
+*Derive effective role from session and tenant database.*
+
+Rules: 1. Tenant owner (session\[‘tenant_role’\] == ‘owner’) → ‘admin’
+2. System admin → ‘admin’ 3. Otherwise → lookup TenantUser.local_role
+from tenant DB 4. Fallback → None (user must be explicitly assigned a
+role)
+
+Args: session: User session dict tenant_db: Tenant database connection
+(optional)
+
+Returns: Effective role string: ‘admin’, ‘editor’, ‘viewer’, or None
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L112"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### require_role
+
+>  require_role (min_role:str)
+
+*Decorator to protect routes with minimum role requirement.*
+
+Args: min_role: Minimum role required (‘admin’, ‘editor’, ‘viewer’)
+
+Returns: Decorator that checks request.state.user\[‘role’\] Returns 403
+Forbidden if user lacks required role
+
+Example: \>\>\> @app.get(‘/admin/settings’) \>\>\>
+@require_role(‘admin’) \>\>\> def admin_settings(request): … return
+“Admin only content”
+
+    >>> @app.get('/reports')  
+    >>> @require_role('viewer')  # All authenticated users
+    >>> def view_reports(request):
+    ...     return "Reports"
+
+### Usage in Routes
+
+``` python
+from fh_saas.utils_auth import require_role, has_min_role
+
+# Option 1: Decorator for route-level protection
+@app.get('/admin/users')
+@require_role('admin')
+def manage_users(request):
+    return "Admin-only user management"
+
+@app.get('/dashboard')
+@require_role('viewer')  # All roles can access
+def dashboard(request):
+    return "Dashboard for all users"
+
+# Option 2: Inline check for conditional logic
+@app.get('/data')
+def view_data(request):
+    user = request.state.user
+    
+    if has_min_role(user, 'admin'):
+        return "All data with admin controls"
+    elif has_min_role(user, 'editor'):
+        return "Data with edit buttons"
+    else:
+        return "Read-only data view"
+```
+
+### Role Derivation Flow
+
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                    Role Derivation (in beforeware)              │
+    ├─────────────────────────────────────────────────────────────────┤
+    │  1. Check session['tenant_role']                                │
+    │     └── If 'owner' → effective role = 'admin'                  │
+    │                                                                 │
+    │  2. Check session['is_sys_admin']                               │
+    │     └── If True → effective role = 'admin'                     │
+    │                                                                 │
+    │  3. Lookup TenantUser.local_role in tenant DB                   │
+    │     └── Returns assigned role or None                          │
+    │                                                                 │
+    │  4. Attach to request.state.user['role']                        │
+    │     └── Used by require_role() and has_min_role()              │
+    └─────────────────────────────────────────────────────────────────┘
+
+------------------------------------------------------------------------
+
 ## 🛡️ Auth Beforeware
 
 Protect routes by checking for authenticated sessions with auto tenant
@@ -1309,7 +1613,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_auth_be
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L51"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L180"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_auth_beforeware
@@ -1317,10 +1621,30 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >  create_auth_beforeware (redirect_path:str='/login',
 >                              session_key:str='user_id', skip:list[str]=None,
 >                              include_defaults:bool=True,
->                              setup_tenant_db:bool=True)
+>                              setup_tenant_db:bool=True, schema_init:Callable[[
+>                              fastsql.core.Database],dict[str,Any]]=None)
 
 *Create Beforeware that checks for authenticated session and sets up
 request.state.*
+
+Args: redirect_path: Where to redirect unauthenticated users
+session_key: Session key for user ID skip: List of regex patterns to
+skip auth include_defaults: Include default skip patterns
+setup_tenant_db: Auto-setup tenant database on request.state
+schema_init: Optional callback to initialize tables dict. Signature:
+(tenant_db: Database) -\> dict\[str, Table\] Result stored in
+request.state.tables
+
+Returns: Beforeware instance for FastHTML apps
+
+Sets on request.state: - user: dict with user_id, email, tenant_id,
+role, is_owner - tenant_id: str - tenant_db: Database connection -
+tables: dict of Table objects (if schema_init provided)
+
+Example: \>\>\> def get_app_tables(db): … return {‘users’:
+db.create(User, pk=‘id’)} \>\>\> beforeware =
+create_auth_beforeware(schema_init=get_app_tables) \>\>\> \# In routes:
+request.state.user\[‘role’\], request.state.tables\[‘users’\]
 
 ------------------------------------------------------------------------
 
@@ -1351,7 +1675,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L92"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L260"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_google_oauth_client
@@ -1403,7 +1727,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_s
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L108"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L276"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_oauth_state
@@ -1416,7 +1740,7 @@ protection).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L103"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L271"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_oauth_state
@@ -1463,7 +1787,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_members
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L160"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L328"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_membership
@@ -1476,7 +1800,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L152"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L320"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_membership
@@ -1488,7 +1812,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L121"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L289"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_or_get_global_user
@@ -1538,7 +1862,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L168"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L336"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### provision_new_user
@@ -1585,7 +1909,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L251"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L428"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### clear_session
@@ -1597,7 +1921,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L237"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L405"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_current_user
@@ -1606,10 +1930,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 *Extract current user info from session.*
 
+Returns: dict with keys: user_id, email, tenant_id, tenant_role,
+is_sys_admin
+
+Note: The ‘role’ and ‘is_owner’ fields are added by
+create_auth_beforeware after deriving the effective role from
+TenantUser.local_role. Access via request.state.user\[‘role’\] in
+routes.
+
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L227"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L395"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_user_session
@@ -1652,7 +1984,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L265"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L442"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_tenant_access
@@ -1664,7 +1996,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L256"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L433"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### route_user_after_login
@@ -1711,7 +2043,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L347"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L524"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_logout
@@ -1723,7 +2055,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L303"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L480"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_oauth_callback
@@ -1736,7 +2068,7 @@ redirect.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L287"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L464"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_login_request
@@ -5286,6 +5618,15 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ## 📁 Template Management
 
+**Built-in Templates:**  
+We ship 3 production-ready markdown templates: - `welcome.md` - New user
+onboarding - `invitation.md` - Invite users to tenant  
+- `password_reset.md` - Password recovery
+
+**Custom Templates:**  
+You can provide your own templates by passing `custom_template_path` to
+any email function.
+
 <table>
 <colgroup>
 <col style="width: 52%" />
@@ -5301,7 +5642,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 <tr>
 <td><a
 href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#get_template_path"><code>get_template_path</code></a></td>
-<td>Resolve path to template file</td>
+<td>Resolve path to template file (built-in or custom)</td>
 </tr>
 <tr>
 <td><a
@@ -5314,14 +5655,53 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#load_template
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L70"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L82"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### load_template
 
->  load_template (template_name:str)
+>  load_template (template_name:str,
+>                     custom_template_path:Union[str,pathlib._local.Path,NoneTyp
+>                     e]=None)
 
 *Load markdown email template as string.*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>template_name</td>
+<td>str</td>
+<td></td>
+<td>Template basename (e.g., ‘welcome’)</td>
+</tr>
+<tr>
+<td>custom_template_path</td>
+<td>Union</td>
+<td>None</td>
+<td>Custom path overrides package templates</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>str</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ------------------------------------------------------------------------
 
@@ -5331,9 +5711,48 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_template_path
 
->  get_template_path (template_name:str)
+>  get_template_path (template_name:str,
+>                         custom_template_path:Union[str,pathlib._local.Path,Non
+>                         eType]=None)
 
 *Get absolute path to email template file.*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>template_name</td>
+<td>str</td>
+<td></td>
+<td>Template basename (e.g., ‘welcome’, ‘invitation’)</td>
+</tr>
+<tr>
+<td>custom_template_path</td>
+<td>Union</td>
+<td>None</td>
+<td>Custom path overrides package templates</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Path</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ## ✉️ Email Sending
 
@@ -5365,16 +5784,90 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_batch_em
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L76"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L91"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_email
 
 >  send_email (to_email:str, to_name:str, subject:str, template_name:str,
 >                  template_vars:Dict[str,str], test:bool=False,
->                  smtp_config:Optional[Dict[str,Any]]=None)
+>                  smtp_config:Optional[Dict[str,Any]]=None, custom_template_pat
+>                  h:Union[str,pathlib._local.Path,NoneType]=None)
 
 *Send single email using markdown template with variable substitution.*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>to_email</td>
+<td>str</td>
+<td></td>
+<td>Recipient email address</td>
+</tr>
+<tr>
+<td>to_name</td>
+<td>str</td>
+<td></td>
+<td>Recipient display name</td>
+</tr>
+<tr>
+<td>subject</td>
+<td>str</td>
+<td></td>
+<td>Email subject line</td>
+</tr>
+<tr>
+<td>template_name</td>
+<td>str</td>
+<td></td>
+<td>Template name: ‘welcome’, ‘invitation’, ‘password_reset’</td>
+</tr>
+<tr>
+<td>template_vars</td>
+<td>Dict</td>
+<td></td>
+<td>Variables to substitute in template</td>
+</tr>
+<tr>
+<td>test</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, prints email instead of sending</td>
+</tr>
+<tr>
+<td>smtp_config</td>
+<td>Optional</td>
+<td>None</td>
+<td>Custom SMTP config (defaults to env vars)</td>
+</tr>
+<tr>
+<td>custom_template_path</td>
+<td>Union</td>
+<td>None</td>
+<td>Custom template path</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ## 📦 Batch Sending
 
@@ -5401,7 +5894,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_batch_em
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L154"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L170"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_batch_emails
@@ -5410,14 +5903,88 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >                         template_name:str,
 >                         template_vars_list:List[Dict[str,str]],
 >                         test:bool=False, pause:float=0.2,
->                         smtp_config:Optional[Dict[str,Any]]=None)
+>                         smtp_config:Optional[Dict[str,Any]]=None, custom_templ
+>                         ate_path:Union[str,pathlib._local.Path,NoneType]=None)
 
-*Send personalized emails to multiple recipients with per-recipient
-variables.*
+*Send personalized emails to multiple recipients.*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>recipients</td>
+<td>List</td>
+<td></td>
+<td>List of dicts with ‘email’ and ‘name’ keys</td>
+</tr>
+<tr>
+<td>subject</td>
+<td>str</td>
+<td></td>
+<td>Email subject line</td>
+</tr>
+<tr>
+<td>template_name</td>
+<td>str</td>
+<td></td>
+<td>Template name: ‘welcome’, ‘invitation’, ‘password_reset’</td>
+</tr>
+<tr>
+<td>template_vars_list</td>
+<td>List</td>
+<td></td>
+<td>List of variable dicts, one per recipient</td>
+</tr>
+<tr>
+<td>test</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, prints emails instead of sending</td>
+</tr>
+<tr>
+<td>pause</td>
+<td>float</td>
+<td>0.2</td>
+<td>Seconds between emails (rate limiting)</td>
+</tr>
+<tr>
+<td>smtp_config</td>
+<td>Optional</td>
+<td>None</td>
+<td>Custom SMTP config</td>
+</tr>
+<tr>
+<td>custom_template_path</td>
+<td>Union</td>
+<td>None</td>
+<td>Custom template path</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>List</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ## 🎁 Convenience Functions
 
-Pre-built functions for common email types:
+Pre-built functions for common email types. All support
+`custom_template_path` for using your own templates.
 
 <table>
 <colgroup>
@@ -5457,42 +6024,291 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_password
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L237"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L254"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_welcome_email
 
 >  send_welcome_email (to_email:str, to_name:str, user_name:str,
->                          tenant_name:str, dashboard_url:str, test:bool=False)
+>                          tenant_name:str, dashboard_url:str, test:bool=False, 
+>                          custom_template_path:Union[str,pathlib._local.Path,No
+>                          neType]=None)
 
-*Send welcome email to new user with tenant dashboard link.*
+*Send welcome email to new user. Template vars: {user_name},
+{tenant_name}, {dashboard_url}, {to_email}*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>to_email</td>
+<td>str</td>
+<td></td>
+<td>Recipient email address</td>
+</tr>
+<tr>
+<td>to_name</td>
+<td>str</td>
+<td></td>
+<td>Recipient display name</td>
+</tr>
+<tr>
+<td>user_name</td>
+<td>str</td>
+<td></td>
+<td>User’s name for personalization</td>
+</tr>
+<tr>
+<td>tenant_name</td>
+<td>str</td>
+<td></td>
+<td>Tenant/organization name</td>
+</tr>
+<tr>
+<td>dashboard_url</td>
+<td>str</td>
+<td></td>
+<td>URL to user’s dashboard</td>
+</tr>
+<tr>
+<td>test</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, prints email instead of sending</td>
+</tr>
+<tr>
+<td>custom_template_path</td>
+<td>Union</td>
+<td>None</td>
+<td>Custom welcome.md template path</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L261"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L280"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_invitation_email
 
 >  send_invitation_email (to_email:str, to_name:str, inviter_name:str,
 >                             tenant_name:str, invitation_url:str,
->                             test:bool=False)
+>                             test:bool=False, custom_template_path:Union[str,pa
+>                             thlib._local.Path,NoneType]=None)
 
-*Send invitation email with link to join tenant.*
+*Send invitation email. Template vars: {inviter_name}, {tenant_name},
+{invitation_url}, {to_email}*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>to_email</td>
+<td>str</td>
+<td></td>
+<td>Recipient email address</td>
+</tr>
+<tr>
+<td>to_name</td>
+<td>str</td>
+<td></td>
+<td>Recipient display name</td>
+</tr>
+<tr>
+<td>inviter_name</td>
+<td>str</td>
+<td></td>
+<td>Name of person sending invitation</td>
+</tr>
+<tr>
+<td>tenant_name</td>
+<td>str</td>
+<td></td>
+<td>Tenant/organization name</td>
+</tr>
+<tr>
+<td>invitation_url</td>
+<td>str</td>
+<td></td>
+<td>URL to accept invitation</td>
+</tr>
+<tr>
+<td>test</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, prints email instead of sending</td>
+</tr>
+<tr>
+<td>custom_template_path</td>
+<td>Union</td>
+<td>None</td>
+<td>Custom invitation.md template path</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L285"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L306"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_password_reset_email
 
 >  send_password_reset_email (to_email:str, to_name:str, user_name:str,
->                                 reset_url:str, test:bool=False)
+>                                 reset_url:str, test:bool=False, custom_templat
+>                                 e_path:Union[str,pathlib._local.Path,NoneType]
+>                                 =None)
 
-*Send password reset email with secure reset link.*
+*Send password reset email. Template vars: {user_name}, {reset_url},
+{to_email}*
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>to_email</td>
+<td>str</td>
+<td></td>
+<td>Recipient email address</td>
+</tr>
+<tr>
+<td>to_name</td>
+<td>str</td>
+<td></td>
+<td>Recipient display name</td>
+</tr>
+<tr>
+<td>user_name</td>
+<td>str</td>
+<td></td>
+<td>User’s name for personalization</td>
+</tr>
+<tr>
+<td>reset_url</td>
+<td>str</td>
+<td></td>
+<td>Secure password reset URL</td>
+</tr>
+<tr>
+<td>test</td>
+<td>bool</td>
+<td>False</td>
+<td>If True, prints email instead of sending</td>
+</tr>
+<tr>
+<td>custom_template_path</td>
+<td>Union</td>
+<td>None</td>
+<td>Custom password_reset.md template path</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+## 📝 Template Customization
+
+### Built-in Templates
+
+The package ships with 3 production-ready templates in
+`fh_saas/templates/`:
+
+<table>
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr>
+<th>Template</th>
+<th>Variables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>welcome.md</code></td>
+<td><code>{user_name}</code>, <code>{tenant_name}</code>,
+<code>{dashboard_url}</code>, <code>{to_email}</code></td>
+</tr>
+<tr>
+<td><code>invitation.md</code></td>
+<td><code>{inviter_name}</code>, <code>{tenant_name}</code>,
+<code>{invitation_url}</code>, <code>{to_email}</code></td>
+</tr>
+<tr>
+<td><code>password_reset.md</code></td>
+<td><code>{user_name}</code>, <code>{reset_url}</code>,
+<code>{to_email}</code></td>
+</tr>
+</tbody>
+</table>
+
+### Creating Custom Templates
+
+1.  Copy a built-in template as a starting point
+2.  Modify the markdown and keep variable names in `{brackets}`
+3.  Pass `custom_template_path='/path/to/template.md'` to any function
+
+Templates use **markdown_merge** format - standard markdown with
+`{variable}` placeholders.
 
 
 ========================================
