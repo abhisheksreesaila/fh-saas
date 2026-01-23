@@ -403,7 +403,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L95"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L100"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.from_env
@@ -415,7 +415,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L114"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L119"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.commit
@@ -427,7 +427,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L118"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L123"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.rollback
@@ -439,7 +439,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L123"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L143"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.reset_instance
@@ -447,6 +447,8 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >  HostDatabase.reset_instance ()
 
 *Reset singleton instance (testing only).*
+
+⚠️ Call close() first to release database connections!
 
 ------------------------------------------------------------------------
 
@@ -613,6 +615,10 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 *Get or create a tenant database connection by tenant ID.*
 
+⚠️ IMPORTANT: Caller is responsible for closing the returned Database
+connection by calling `db.conn.close()` and `db.engine.dispose()` when
+done.
+
 ------------------------------------------------------------------------
 
 ## 📦 Core Tenant Models
@@ -623,7 +629,7 @@ app-specific models (transactions, budgets, etc.) build on top of these.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L109"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L122"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantSettings
@@ -635,7 +641,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L100"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L113"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantPermission
@@ -647,7 +653,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L91"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L104"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantUser
@@ -718,7 +724,7 @@ creates all infrastructure tables in a tenant database:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L119"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L132"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### init_tenant_core_schema
@@ -1467,7 +1473,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_role"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L46"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L47"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### has_min_role
@@ -1488,7 +1494,7 @@ Example: \>\>\> user = {‘role’: ‘editor’} \>\>\> has_min_role(user,
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L67"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L68"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_role
@@ -1510,7 +1516,7 @@ Returns: Effective role string: ‘admin’, ‘editor’, ‘viewer’, or None
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L112"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L113"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_role
@@ -1532,6 +1538,123 @@ Example: \>\>\> @app.get(‘/admin/settings’) \>\>\>
     >>> @require_role('viewer')  # All authenticated users
     >>> def view_reports(request):
     ...     return "Reports"
+
+------------------------------------------------------------------------
+
+## ⚡ Session Caching
+
+For HTMX-heavy apps with many partial requests, the beforeware can cache
+auth data in the session to avoid database queries on every request.
+
+### Configuration
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_cache</code></td>
+<td><code>False</code></td>
+<td>Enable caching user dict in session</td>
+</tr>
+<tr>
+<td><code>session_cache_ttl</code></td>
+<td><code>300</code></td>
+<td>Cache TTL in seconds (5 minutes)</td>
+</tr>
+</tbody>
+</table>
+
+### How It Works
+
+    Request arrives
+        │
+        ▼
+    Check session cache
+        │
+        ├── Cache valid? → Use cached user data (0 DB queries)
+        │
+        └── Cache miss/expired? → Query DB → Update cache
+
+### Cache Invalidation
+
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Logout</td>
+<td>Automatic (session cleared)</td>
+</tr>
+<tr>
+<td>Role change</td>
+<td>Call <code>invalidate_auth_cache(session)</code></td>
+</tr>
+<tr>
+<td>TTL expiry</td>
+<td>Automatic refresh on next request</td>
+</tr>
+</tbody>
+</table>
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L170"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### invalidate_auth_cache
+
+>  invalidate_auth_cache (session:dict)
+
+*Clear the auth cache from session.*
+
+Call this when: - User role or permissions change - User is
+added/removed from tenant - Admin changes user’s local_role
+
+Args: session: User session dict
+
+Example: \>\>\> \# After admin changes user role \>\>\>
+tenant_user.local_role = ‘editor’ \>\>\>
+tables\[‘tenant_users’\].update(tenant_user) \>\>\>
+invalidate_auth_cache(session) \# Force fresh lookup
+
+### Usage Example
+
+``` python
+from fh_saas.utils_auth import invalidate_auth_cache
+
+# Enable caching (recommended for HTMX apps)
+app = FastHTML(
+    before=create_auth_beforeware(
+        session_cache=True,
+        session_cache_ttl=300  # 5 minutes
+    )
+)
+
+# After changing user role, invalidate their cache
+@app.post('/admin/users/{user_id}/role')
+def update_role(request, user_id: str, new_role: str):
+    tables = request.state.tables
+    user = tables['tenant_users'].get(user_id)
+    user.local_role = new_role
+    tables['tenant_users'].update(user)
+    
+    # If changing own role, invalidate cache
+    if user_id == request.state.user['user_id']:
+        invalidate_auth_cache(request.session)
+    
+    return "Role updated"
+```
 
 ### Usage in Routes
 
@@ -1613,7 +1736,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_auth_be
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L180"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L243"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_auth_beforeware
@@ -1622,7 +1745,9 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >                              session_key:str='user_id', skip:list[str]=None,
 >                              include_defaults:bool=True,
 >                              setup_tenant_db:bool=True, schema_init:Callable[[
->                              fastsql.core.Database],dict[str,Any]]=None)
+>                              fastsql.core.Database],dict[str,Any]]=None,
+>                              session_cache:bool=False,
+>                              session_cache_ttl:int=300)
 
 *Create Beforeware that checks for authenticated session and sets up
 request.state.*
@@ -1633,7 +1758,9 @@ skip auth include_defaults: Include default skip patterns
 setup_tenant_db: Auto-setup tenant database on request.state
 schema_init: Optional callback to initialize tables dict. Signature:
 (tenant_db: Database) -\> dict\[str, Table\] Result stored in
-request.state.tables
+request.state.tables session_cache: Enable caching user dict in session
+to reduce DB queries. Recommended for HTMX-heavy apps. Default: False
+session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes)
 
 Returns: Beforeware instance for FastHTML apps
 
@@ -1641,10 +1768,19 @@ Sets on request.state: - user: dict with user_id, email, tenant_id,
 role, is_owner - tenant_id: str - tenant_db: Database connection -
 tables: dict of Table objects (if schema_init provided)
 
-Example: \>\>\> def get_app_tables(db): … return {‘users’:
-db.create(User, pk=‘id’)} \>\>\> beforeware =
-create_auth_beforeware(schema_init=get_app_tables) \>\>\> \# In routes:
-request.state.user\[‘role’\], request.state.tables\[‘users’\]
+Example: \>\>\> \# Basic usage \>\>\> beforeware =
+create_auth_beforeware()
+
+    >>> # With session caching for HTMX apps
+    >>> beforeware = create_auth_beforeware(
+    ...     session_cache=True,
+    ...     session_cache_ttl=300
+    ... )
+
+    >>> # With schema initialization
+    >>> def get_app_tables(db):
+    ...     return {'users': db.create(User, pk='id')}
+    >>> beforeware = create_auth_beforeware(schema_init=get_app_tables)
 
 ------------------------------------------------------------------------
 
@@ -1675,7 +1811,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L260"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L363"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_google_oauth_client
@@ -1727,7 +1863,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_s
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L276"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L379"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_oauth_state
@@ -1740,7 +1876,7 @@ protection).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L271"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L374"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_oauth_state
@@ -1787,7 +1923,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_members
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L328"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L431"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_membership
@@ -1800,7 +1936,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L320"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L423"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_membership
@@ -1812,7 +1948,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L289"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L392"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_or_get_global_user
@@ -1862,7 +1998,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L336"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L439"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### provision_new_user
@@ -1909,7 +2045,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L428"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L546"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### clear_session
@@ -1921,7 +2057,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L405"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L523"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_current_user
@@ -1941,7 +2077,7 @@ routes.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L395"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L513"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_user_session
@@ -1984,7 +2120,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L442"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L560"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_tenant_access
@@ -1996,7 +2132,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L433"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L551"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### route_user_after_login
@@ -2043,7 +2179,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L524"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L642"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_logout
@@ -2055,7 +2191,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L480"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L598"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_oauth_callback
@@ -2068,7 +2204,7 @@ redirect.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L464"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L582"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_login_request

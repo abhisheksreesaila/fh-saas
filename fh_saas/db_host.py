@@ -91,6 +91,11 @@ class HostDatabase:
         
         self._initialized = True
     
+    @property
+    def engine(self):
+        """Get the underlying SQLAlchemy engine."""
+        return self.db.engine
+    
     @classmethod
     def from_env(cls):
         """Create HostDatabase from DB_* environment variables."""
@@ -119,7 +124,30 @@ class HostDatabase:
         """Rollback current transaction."""
         self.db.conn.rollback()
     
+    def close(self):
+        """Close database connection and dispose engine.
+        
+        Call this when shutting down or before reset_instance() in tests.
+        """
+        try:
+            self.db.conn.close()
+        except Exception:
+            pass
+        try:
+            self.db.engine.dispose()
+        except Exception:
+            pass
+        self._initialized = False
+    
     @classmethod
     def reset_instance(cls):
-        """Reset singleton instance (testing only)."""
+        """Reset singleton instance (testing only).
+        
+        ⚠️ Call close() first to release database connections!
+        """
+        if cls._instance is not None:
+            try:
+                cls._instance.close()
+            except Exception:
+                pass
         cls._instance = None

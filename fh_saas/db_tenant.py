@@ -18,7 +18,11 @@ logger = logging.getLogger(__name__)
 
 # %% ../nbs/01_db_tenant.ipynb 6
 def get_or_create_tenant_db(tenant_id: str, tenant_name: str = None):
-    """Get or create a tenant database connection by tenant ID."""
+    """Get or create a tenant database connection by tenant ID.
+    
+    ⚠️ IMPORTANT: Caller is responsible for closing the returned Database connection
+    by calling `db.conn.close()` and `db.engine.dispose()` when done.
+    """
     from sqlalchemy import text
     
     # Connect to host - read from environment
@@ -38,54 +42,63 @@ def get_or_create_tenant_db(tenant_id: str, tenant_name: str = None):
     else:
         host_url = f"sqlite:///{DB_NAME}.db"
     
+    # Use try/finally to ensure host_db connection is always closed
     host_db = Database(host_url)
-    
-    # Check if tenant registered
-    class TenantCatalog:
-        id: str; name: str; db_url: str
-        is_active: bool = True; plan_tier: str = "free"; created_at: str
-    
-    tenant_catalogs = host_db.create(TenantCatalog, name="core_tenants", pk='id')
-    host_db.conn.rollback()
-    all_tenants = tenant_catalogs()
-    existing = [t for t in all_tenants if t.id == tenant_id]
-    
-    # Build tenant database connection
-    # PostgreSQL databases cannot start with numbers, so prefix with 't_'
-    if DB_TYPE == "POSTGRESQL":
-        tenant_db_name = f"t_{tenant_id}_db"
-        tenant_url = f"postgresql://{DB_USER}:{encoded_pass}@{DB_HOST}:{DB_PORT}/{tenant_db_name}"
-    else:
-        tenant_db_name = f"{tenant_id}_db"
-        tenant_url = f"sqlite:///{tenant_db_name}.db"
-    
-    if not existing:
-        print(f"⚡ Creating new tenant: {tenant_id}")
+    try:
+        # Check if tenant registered
+        class TenantCatalog:
+            id: str; name: str; db_url: str
+            is_active: bool = True; plan_tier: str = "free"; created_at: str
         
-        # Create physical database (PostgreSQL only)
+        tenant_catalogs = host_db.create(TenantCatalog, name="core_tenants", pk='id')
+        host_db.conn.rollback()
+        all_tenants = tenant_catalogs()
+        existing = [t for t in all_tenants if t.id == tenant_id]
+        
+        # Build tenant database connection
+        # PostgreSQL databases cannot start with numbers, so prefix with 't_'
         if DB_TYPE == "POSTGRESQL":
-            with host_db.engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
-                try:
-                    conn.execute(text(f"CREATE DATABASE {tenant_db_name}"))
-                    print(f"   ✅ Database created: {tenant_db_name}")
-                except Exception as e:
-                    if "already exists" not in str(e):
-                        raise
+            tenant_db_name = f"t_{tenant_id}_db"
+            tenant_url = f"postgresql://{DB_USER}:{encoded_pass}@{DB_HOST}:{DB_PORT}/{tenant_db_name}"
+        else:
+            tenant_db_name = f"{tenant_id}_db"
+            tenant_url = f"sqlite:///{tenant_db_name}.db"
         
-        # Register in host
-        new_tenant = TenantCatalog(
-            id=tenant_id,
-            name=tenant_name or tenant_id,
-            db_url=tenant_url,
-            created_at=timestamp()
-        )
-        tenant_catalogs.insert(new_tenant)
-        print(f"   ✅ Registered in host DB")
-    else:
-        print(f"ℹ️  Tenant exists: {existing[0].name}")
-        tenant_url = existing[0].db_url
-    
-    return Database(tenant_url)
+        if not existing:
+            print(f"⚡ Creating new tenant: {tenant_id}")
+            
+            # Create physical database (PostgreSQL only)
+            if DB_TYPE == "POSTGRESQL":
+                with host_db.engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
+                    try:
+                        conn.execute(text(f"CREATE DATABASE {tenant_db_name}"))
+                        print(f"   ✅ Database created: {tenant_db_name}")
+                    except Exception as e:
+                        if "already exists" not in str(e):
+                            raise
+            
+            # Register in host
+            new_tenant = TenantCatalog(
+                id=tenant_id,
+                name=tenant_name or tenant_id,
+                db_url=tenant_url,
+                created_at=timestamp()
+            )
+            tenant_catalogs.insert(new_tenant)
+            host_db.conn.commit()
+            print(f"   ✅ Registered in host DB")
+        else:
+            print(f"ℹ️  Tenant exists: {existing[0].name}")
+            tenant_url = existing[0].db_url
+        
+        return Database(tenant_url)
+    finally:
+        # Always close the internal host_db connection to prevent leaks
+        try:
+            host_db.conn.close()
+            host_db.engine.dispose()
+        except Exception:
+            pass  # Ignore cleanup errors
 
 # %% ../nbs/01_db_tenant.ipynb 10
 class TenantUser:

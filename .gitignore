@@ -1,6 +1,9 @@
 _docs/
 _proc/
 
+# SQLite test databases
+*.db
+
 *.bak
 .gitattributes
 .last_checked

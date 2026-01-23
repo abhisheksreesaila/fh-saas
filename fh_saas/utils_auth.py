@@ -4,9 +4,9 @@
 
 # %% auto 0
 __all__ = ['logger', 'ROLE_HIERARCHY', 'DEFAULT_SKIP_AUTH', 'has_min_role', 'get_user_role', 'require_role',
-           'create_auth_beforeware', 'get_google_oauth_client', 'generate_oauth_state', 'verify_oauth_state',
-           'create_or_get_global_user', 'get_user_membership', 'verify_membership', 'provision_new_user',
-           'create_user_session', 'get_current_user', 'clear_session', 'route_user_after_login',
+           'invalidate_auth_cache', 'create_auth_beforeware', 'get_google_oauth_client', 'generate_oauth_state',
+           'verify_oauth_state', 'create_or_get_global_user', 'get_user_membership', 'verify_membership',
+           'provision_new_user', 'create_user_session', 'get_current_user', 'clear_session', 'route_user_after_login',
            'require_tenant_access', 'handle_login_request', 'handle_oauth_callback', 'handle_logout']
 
 # %% ../nbs/04_utils_auth.ipynb 2
@@ -28,6 +28,7 @@ import os
 import uuid
 import json
 import logging
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -162,7 +163,69 @@ def require_role(min_role: str):
         return wrapper
     return decorator
 
-# %% ../nbs/04_utils_auth.ipynb 13
+# %% ../nbs/04_utils_auth.ipynb 12
+# Session cache key
+_AUTH_CACHE_KEY = '_auth_cache'
+
+def invalidate_auth_cache(session: dict):
+    """Clear the auth cache from session.
+    
+    Call this when:
+    - User role or permissions change
+    - User is added/removed from tenant
+    - Admin changes user's local_role
+    
+    Args:
+        session: User session dict
+        
+    Example:
+        >>> # After admin changes user role
+        >>> tenant_user.local_role = 'editor'
+        >>> tables['tenant_users'].update(tenant_user)
+        >>> invalidate_auth_cache(session)  # Force fresh lookup
+    """
+    session.pop(_AUTH_CACHE_KEY, None)
+    logger.debug("Auth cache invalidated")
+
+
+def _get_cached_auth(session: dict, cache_ttl: int) -> dict | None:
+    """Get cached auth data if valid and not expired.
+    
+    Args:
+        session: User session dict
+        cache_ttl: Cache time-to-live in seconds
+        
+    Returns:
+        Cached auth dict with 'user' and 'tenant_id', or None if expired/missing
+    """
+    cache = session.get(_AUTH_CACHE_KEY)
+    if not cache:
+        return None
+    
+    cached_at = cache.get('cached_at', 0)
+    if time.time() - cached_at > cache_ttl:
+        logger.debug("Auth cache expired")
+        return None
+    
+    return cache
+
+
+def _set_auth_cache(session: dict, user: dict, tenant_id: str):
+    """Store auth data in session cache.
+    
+    Args:
+        session: User session dict
+        user: User dict to cache
+        tenant_id: Tenant ID to cache
+    """
+    session[_AUTH_CACHE_KEY] = {
+        'user': user.copy(),
+        'tenant_id': tenant_id,
+        'cached_at': time.time()
+    }
+    logger.debug(f"Auth cache set for user {user.get('user_id')}")
+
+# %% ../nbs/04_utils_auth.ipynb 17
 from fasthtml.common import Beforeware
 from typing import Callable, Any
 
@@ -184,6 +247,8 @@ def create_auth_beforeware(
     include_defaults: bool = True,
     setup_tenant_db: bool = True,
     schema_init: Callable[[Database], dict[str, Any]] = None,
+    session_cache: bool = False,
+    session_cache_ttl: int = 300,
 ):
     """Create Beforeware that checks for authenticated session and sets up request.state.
     
@@ -196,6 +261,9 @@ def create_auth_beforeware(
         schema_init: Optional callback to initialize tables dict.
                      Signature: (tenant_db: Database) -> dict[str, Table]
                      Result stored in request.state.tables
+        session_cache: Enable caching user dict in session to reduce DB queries.
+                       Recommended for HTMX-heavy apps. Default: False
+        session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes)
     
     Returns:
         Beforeware instance for FastHTML apps
@@ -207,10 +275,19 @@ def create_auth_beforeware(
         - tables: dict of Table objects (if schema_init provided)
         
     Example:
+        >>> # Basic usage
+        >>> beforeware = create_auth_beforeware()
+        
+        >>> # With session caching for HTMX apps
+        >>> beforeware = create_auth_beforeware(
+        ...     session_cache=True,
+        ...     session_cache_ttl=300
+        ... )
+        
+        >>> # With schema initialization
         >>> def get_app_tables(db):
         ...     return {'users': db.create(User, pk='id')}
         >>> beforeware = create_auth_beforeware(schema_init=get_app_tables)
-        >>> # In routes: request.state.user['role'], request.state.tables['users']
     """
     skip_patterns = []
     if include_defaults:
@@ -223,40 +300,66 @@ def create_auth_beforeware(
             return RedirectResponse(redirect_path, status_code=303)
         
         if setup_tenant_db:
-            user = get_current_user(sess)
-            if user:
-                req.state.tenant_id = user.get('tenant_id')
-                req.state.tenant_db = None
-                
-                if user.get('tenant_id') and not user.get('is_sys_admin'):
-                    try:
-                        host_db = HostDatabase.from_env()
-                        if verify_membership(host_db, user['user_id'], user['tenant_id']):
+            # Check session cache first (if enabled)
+            cache_hit = False
+            if session_cache:
+                cached = _get_cached_auth(sess, session_cache_ttl)
+                if cached:
+                    cache_hit = True
+                    user = cached['user']
+                    req.state.user = user
+                    req.state.tenant_id = cached['tenant_id']
+                    
+                    # Still need to create tenant_db connection (lightweight)
+                    if user.get('tenant_id') and not user.get('is_sys_admin'):
+                        try:
                             req.state.tenant_db = get_or_create_tenant_db(user['tenant_id'])
-                        else:
-                            logger.warning(f"Invalid membership for user {user['user_id']}")
-                    except Exception as e:
-                        logger.error(f"Failed to setup tenant_db: {e}")
-                
-                # Derive effective role from session + tenant DB
-                role = get_user_role(sess, req.state.tenant_db)
-                user['role'] = role
-                user['is_owner'] = sess.get('tenant_role') == 'owner'
-                req.state.user = user
-                
-                # Auto-initialize tables if schema_init provided
-                if schema_init and req.state.tenant_db:
-                    try:
-                        req.state.tables = schema_init(req.state.tenant_db)
-                    except Exception as e:
-                        logger.error(f"Failed to initialize schema: {e}")
-                        req.state.tables = {}
-                else:
+                        except Exception as e:
+                            logger.error(f"Failed to setup tenant_db from cache: {e}")
+                            req.state.tenant_db = None
+                    else:
+                        req.state.tenant_db = None
+            
+            # Cache miss - do full DB lookup
+            if not cache_hit:
+                user = get_current_user(sess)
+                if user:
+                    req.state.tenant_id = user.get('tenant_id')
+                    req.state.tenant_db = None
+                    
+                    if user.get('tenant_id') and not user.get('is_sys_admin'):
+                        try:
+                            host_db = HostDatabase.from_env()
+                            if verify_membership(host_db, user['user_id'], user['tenant_id']):
+                                req.state.tenant_db = get_or_create_tenant_db(user['tenant_id'])
+                            else:
+                                logger.warning(f"Invalid membership for user {user['user_id']}")
+                        except Exception as e:
+                            logger.error(f"Failed to setup tenant_db: {e}")
+                    
+                    # Derive effective role from session + tenant DB
+                    role = get_user_role(sess, req.state.tenant_db)
+                    user['role'] = role
+                    user['is_owner'] = sess.get('tenant_role') == 'owner'
+                    req.state.user = user
+                    
+                    # Update session cache (if enabled)
+                    if session_cache:
+                        _set_auth_cache(sess, user, user.get('tenant_id'))
+            
+            # Auto-initialize tables if schema_init provided
+            if schema_init and req.state.tenant_db:
+                try:
+                    req.state.tables = schema_init(req.state.tenant_db)
+                except Exception as e:
+                    logger.error(f"Failed to initialize schema: {e}")
                     req.state.tables = {}
+            else:
+                req.state.tables = {}
     
     return Beforeware(check_auth, skip=skip_patterns)
 
-# %% ../nbs/04_utils_auth.ipynb 17
+# %% ../nbs/04_utils_auth.ipynb 21
 def get_google_oauth_client():
     """Initialize Google OAuth client with credentials from environment."""
     client_id = os.getenv('GOOGLE_CLIENT_ID')
@@ -267,7 +370,7 @@ def get_google_oauth_client():
     
     return GoogleAppClient(client_id=client_id, client_secret=client_secret)
 
-# %% ../nbs/04_utils_auth.ipynb 20
+# %% ../nbs/04_utils_auth.ipynb 24
 def generate_oauth_state():
     """Generate cryptographically secure random state token for CSRF protection."""
     return uuid.uuid4().hex
@@ -285,7 +388,7 @@ def verify_oauth_state(session: dict, callback_state: str):
     
     session.pop('oauth_state', None)  # One-time use
 
-# %% ../nbs/04_utils_auth.ipynb 24
+# %% ../nbs/04_utils_auth.ipynb 28
 def create_or_get_global_user(host_db: HostDatabase, oauth_id: str, email: str, oauth_info: dict = None):
     """Create or retrieve GlobalUser from host database."""
     try:
@@ -332,12 +435,13 @@ def verify_membership(host_db: HostDatabase, user_id: str, tenant_id: str) -> bo
     valid = [m for m in all_memberships if m.user_id == user_id and m.tenant_id == tenant_id and m.is_active]
     return len(valid) > 0
 
-# %% ../nbs/04_utils_auth.ipynb 29
+# %% ../nbs/04_utils_auth.ipynb 33
 def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
     """Auto-provision new tenant for first-time user."""
     tenant_id = gen_id()
     username = global_user.email.split('@')[0]
     tenant_name = f"{username}'s Workspace"
+    tenant_db = None
     
     try:
         logger.info(f'Starting tenant provisioning for {global_user.email}',
@@ -357,6 +461,7 @@ def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
             created_at=timestamp()
         )
         core_tables['tenant_users'].insert(tenant_user)
+        tenant_db.conn.commit()  # Commit tenant changes
         
         # Create membership in host database
         membership = Membership(
@@ -387,11 +492,24 @@ def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
         
     except Exception as e:
         host_db.rollback()
+        if tenant_db:
+            try:
+                tenant_db.conn.rollback()
+            except Exception:
+                pass
         logger.error(f'Tenant provisioning failed for {global_user.email}: {e}',
                     extra={'tenant_id': tenant_id, 'user_id': global_user.id}, exc_info=True)
         raise Exception(f"Failed to provision tenant for {global_user.email}: {str(e)}") from e
+    finally:
+        # Always close tenant_db connection to prevent connection leaks
+        if tenant_db:
+            try:
+                tenant_db.conn.close()
+                tenant_db.engine.dispose()
+            except Exception:
+                pass
 
-# %% ../nbs/04_utils_auth.ipynb 32
+# %% ../nbs/04_utils_auth.ipynb 36
 def create_user_session(session: dict, global_user: GlobalUser, membership: Membership):
     """Create authenticated session after successful OAuth login."""
     session['user_id'] = global_user.id
@@ -429,7 +547,7 @@ def clear_session(session: dict):
     """Clear all session data (logout)."""
     session.clear()
 
-# %% ../nbs/04_utils_auth.ipynb 37
+# %% ../nbs/04_utils_auth.ipynb 41
 def route_user_after_login(global_user: GlobalUser, membership: Membership = None) -> str:
     """Determine redirect URL based on user type and membership."""
     if global_user.is_sys_admin:
@@ -460,7 +578,7 @@ def require_tenant_access(request_or_session):
     
     return get_or_create_tenant_db(user['tenant_id'])
 
-# %% ../nbs/04_utils_auth.ipynb 41
+# %% ../nbs/04_utils_auth.ipynb 45
 def handle_login_request(request, session):
     """Generate Google OAuth URL with CSRF state protection."""
     logger.debug('Login request initiated')
