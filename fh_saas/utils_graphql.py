@@ -4,15 +4,16 @@
 
 # %% ../nbs/08_utils_graphql.ipynb 2
 from __future__ import annotations
-from .utils_api import AsyncAPIClient
+from .utils_api import AsyncAPIClient, bearer_token_auth
 from typing import AsyncGenerator, Dict, Any, List, Optional
+from contextlib import asynccontextmanager
 import logging
 from nbdev.showdoc import show_doc
 
 logger = logging.getLogger(__name__)
 
 # %% auto 0
-__all__ = ['logger', 'GraphQLClient']
+__all__ = ['logger', 'GraphQLClient', 'execute_graphql']
 
 # %% ../nbs/08_utils_graphql.ipynb 5
 class GraphQLClient:
@@ -25,6 +26,65 @@ class GraphQLClient:
     ):
         self.api_client = api_client
         self.endpoint = endpoint
+        self._owns_api = False  # Track if we created the API client
+    
+    @classmethod
+    @asynccontextmanager
+    async def from_url(
+        cls,
+        url: str, # GraphQL endpoint URL
+        bearer_token: str | None = None, # Optional bearer token for Authorization header
+        headers: dict | None = None # Optional additional headers
+    ):
+        """Create GraphQL client directly from URL with optional bearer token.
+        
+        Usage:
+            async with GraphQLClient.from_url(url, bearer_token=token) as gql:
+                result = await gql.execute(query)
+        """
+        # Merge auth with any additional headers
+        auth_headers = {}
+        if bearer_token:
+            auth_headers.update(bearer_token_auth(bearer_token))
+        if headers:
+            auth_headers.update(headers)
+        
+        async with AsyncAPIClient(
+            url,
+            auth_headers=auth_headers or None
+        ) as api:
+            client = cls(api)
+            client._owns_api = True
+            yield client
+    
+    async def execute(
+        self,
+        query: str, # GraphQL query or mutation string
+        variables: dict = None # Query/mutation variables
+    ) -> Dict[str, Any]:
+        """Execute a GraphQL query or mutation and return the data portion.
+        
+        This is a unified method that works for both queries and mutations.
+        Returns only the 'data' portion of the response for convenience.
+        """
+        payload = {'query': query}
+        if variables:
+            payload['variables'] = variables
+        
+        response = await self.api_client.request(
+            method='POST',
+            endpoint=self.endpoint,
+            json=payload
+        )
+        
+        data = response.json()
+        
+        # Check for GraphQL errors
+        if 'errors' in data:
+            error_msg = data['errors'][0].get('message', 'Unknown GraphQL error')
+            raise ValueError(f"GraphQL error: {error_msg}")
+        
+        return data.get('data', {})
     
     async def execute_query(
         self,
@@ -58,6 +118,61 @@ class GraphQLClient:
     ) -> Dict[str, Any]:
         """Execute a GraphQL mutation (alias for execute_query)."""
         return await self.execute_query(mutation, variables)
+    
+    async def fetch_pages_relay(
+        self,
+        query: str, # GraphQL query with $first and $after variables
+        connection_path: str, # Dot-notation path to connection object (e.g., "transactionsConnection")
+        variables: dict | None = None, # Base variables for the query (excluding first/after)
+        page_size: int = 100, # Number of items per page
+        max_pages: int | None = None # Maximum pages to fetch (None for unlimited)
+    ) -> list[dict]:
+        """Fetch all pages from a Relay-style paginated GraphQL query.
+        
+        Example query structure:
+            query($first: Int, $after: String, $filter: TransactionFilter) {
+                transactionsConnection(first: $first, after: $after, filter: $filter) {
+                    edges { node { id amount } }
+                    pageInfo { hasNextPage endCursor }
+                }
+            }
+        
+        Returns:
+            List of all nodes from all pages
+        """
+        all_nodes = []
+        cursor = None
+        page_count = 0
+        base_vars = variables or {}
+        
+        while True:
+            if max_pages and page_count >= max_pages:
+                logger.info(f"Reached max_pages limit of {max_pages}")
+                break
+            
+            page_vars = {**base_vars, "first": page_size, "after": cursor}
+            result = await self.execute(query, page_vars)
+            
+            # Navigate to connection using dot-notation path
+            connection = result
+            for key in connection_path.split('.'):
+                connection = connection.get(key, {})
+            
+            edges = connection.get('edges', [])
+            page_info = connection.get('pageInfo', {})
+            
+            for edge in edges:
+                all_nodes.append(edge['node'])
+            
+            page_count += 1
+            logger.info(f"Fetched page {page_count} with {len(edges)} edges")
+            
+            if not page_info.get('hasNextPage'):
+                break
+            
+            cursor = page_info.get('endCursor')
+        
+        return all_nodes
     
     async def fetch_pages_generator(
         self,
@@ -114,3 +229,29 @@ class GraphQLClient:
             else:
                 return None
         return result
+
+# %% ../nbs/08_utils_graphql.ipynb 14
+async def execute_graphql(
+    url: str, # GraphQL endpoint URL
+    query: str, # GraphQL query string
+    variables: dict | None = None, # Optional query variables
+    bearer_token: str | None = None, # Optional bearer token for Authorization header
+    headers: dict | None = None # Optional additional headers
+) -> dict:
+    """Execute a single GraphQL query without managing client lifecycle.
+    
+    This is a convenience function for one-off queries. For multiple queries,
+    use GraphQLClient.from_url() to reuse the connection.
+    
+    Usage:
+        result = await execute_graphql(
+            url="https://api.example.com/graphql",
+            query="query { users { id name } }",
+            bearer_token="your-token"
+        )
+    
+    Raises:
+        ValueError: If the response contains GraphQL errors
+    """
+    async with GraphQLClient.from_url(url, bearer_token=bearer_token, headers=headers) as gql:
+        return await gql.execute(query, variables)
