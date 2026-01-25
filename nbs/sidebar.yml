@@ -22,8 +22,6 @@ website:
       - 08_utils_graphql_tests.ipynb
       - 09_utils_polars_mapper.ipynb
       - 09_utils_polars_mapper_tests.ipynb
-      - 10_utils_sync.ipynb
-      - 10_utils_sync_tests.ipynb
       - 11_utils_blog.ipynb
       - 11_utils_blog_tests.ipynb
       - 12_utils_seo.ipynb

@@ -24,9 +24,19 @@ def map_and_upsert(
     key_col: str, # Primary key column for conflict resolution
     db_uri: str, # SQLAlchemy connection string (e.g., 'sqlite:///db.db' or 'postgresql://...')
     column_map: dict = None, # Optional rename map {json_key: db_col}
-    unnest_cols: list[str] = None # List of Struct columns to flatten
-):
-    """Map JSON data to database columns and upsert using staging table pattern."""
+    unnest_cols: list[str] = None, # List of Struct columns to flatten
+    type_map: dict = None # Optional type casting map {col_name: pl.DataType}
+) -> int:
+    """
+    Map JSON data to database columns and upsert using staging table pattern.
+    
+    **Returns:** Number of rows affected by the upsert operation
+    
+    **Type Casting:**
+    When columns have `None` values, Polars may infer incorrect types (e.g., String
+    instead of Int64). This causes PostgreSQL type mismatch errors. Use `type_map`
+    to explicitly cast columns before writing to the database.
+    """
     # Step 1: Rename columns if mapping provided
     if column_map:
         df = df.rename(column_map)
@@ -39,7 +49,22 @@ def map_and_upsert(
                 df = df.unnest(col)
                 logger.info(f"Unnested column: {col}")
     
-    # Step 3: Select only columns that exist in target table (drop extras)
+    # Step 3: Apply type casting if specified
+    if type_map:
+        cast_count = 0
+        for col_name, dtype in type_map.items():
+            if col_name not in df.columns:
+                logger.warning(f"Column '{col_name}' in type_map not found in DataFrame, skipping")
+                continue
+            try:
+                df = df.with_columns(pl.col(col_name).cast(dtype, strict=False))
+                cast_count += 1
+                logger.debug(f"Cast column '{col_name}' to {dtype}")
+            except Exception as e:
+                logger.warning(f"Failed to cast column '{col_name}' to {dtype}: {e}")
+        logger.info(f"Applied type casting to {cast_count}/{len(type_map)} columns")
+    
+    # Step 4: Select only columns that exist in target table (drop extras)
     # This prevents errors from extra JSON fields
     engine = create_engine(db_uri)
     
@@ -53,11 +78,12 @@ def map_and_upsert(
     df = df.select(available_cols)
     logger.info(f"Selected columns for {table_name}: {available_cols}")
     
-    # Step 4: Generate unique staging table name
+    # Step 5: Generate unique staging table name
     staging_table = f"staging_{uuid.uuid4().hex[:8]}"
+    rows_affected = 0
     
     try:
-        # Step 5: Write to staging table (fast bulk insert)
+        # Step 6: Write to staging table (fast bulk insert)
         df.write_database(
             table_name=staging_table,
             connection=db_uri,
@@ -65,10 +91,10 @@ def map_and_upsert(
         )
         logger.info(f"Wrote {len(df)} rows to staging table {staging_table}")
         
-        # Step 6: Determine database type for dialect-specific SQL
+        # Step 7: Determine database type for dialect-specific SQL
         is_sqlite = 'sqlite' in db_uri.lower()
         
-        # Step 7: Execute upsert from staging to target
+        # Step 8: Execute upsert from staging to target
         with engine.connect() as conn:
             if is_sqlite:
                 # SQLite: INSERT OR REPLACE
@@ -89,16 +115,19 @@ def map_and_upsert(
                     ON CONFLICT ({key_col}) DO UPDATE SET {update_set}
                 """
             
-            conn.execute(text(upsert_sql))
+            result = conn.execute(text(upsert_sql))
+            rows_affected = result.rowcount if result.rowcount >= 0 else len(df)
             conn.commit()
-            logger.info(f"Upserted {len(df)} rows into {table_name}")
+            logger.info(f"Upserted {rows_affected} rows into {table_name}")
     
     finally:
-        # Step 8: Cleanup - drop staging table
+        # Step 9: Cleanup - drop staging table
         with engine.connect() as conn:
             conn.execute(text(f"DROP TABLE IF EXISTS {staging_table}"))
             conn.commit()
-            logger.info(f"Dropped staging table {staging_table}")
+            logger.debug(f"Dropped staging table {staging_table}")
+    
+    return rows_affected
 
 # %% ../nbs/09_utils_polars_mapper.ipynb 8
 def apply_schema(

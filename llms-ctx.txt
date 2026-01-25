@@ -112,6 +112,57 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 >  timestamp ()
 
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L23"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_db_uri
+
+>  get_db_uri (db)
+
+*Extract SQLAlchemy connection URI from a Database object.*
+
+Safely renders the URL with the actual password (required for utilities
+like
+[`map_and_upsert`](https://abhisheksreesaila.github.io/fh-saas/utils_polars_mapper.html#map_and_upsert)
+that create new connections).
+
+**Why this is needed:** - `str(db.conn.engine.url)` masks the password
+as `***` - This causes “password authentication failed” errors -
+`render_as_string(hide_password=False)` reveals the actual password
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>db</code></td>
+<td>fastsql/minidataapi Database object or HostDatabase instance</td>
+</tr>
+</tbody>
+</table>
+
+**Returns:** Full connection URI string with password
+
+**Example:**
+
+``` python
+from fh_saas.db_host import get_db_uri, HostDatabase
+from fh_saas.utils_polars_mapper import map_and_upsert
+
+host_db = HostDatabase.from_env()
+db_uri = get_db_uri(host_db.db)
+
+# Now safe to use with map_and_upsert
+map_and_upsert(df, 'my_table', 'id', db_uri)
+```
+
 <table>
 <colgroup>
 <col style="width: 43%" />
@@ -134,6 +185,11 @@ href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#timestamp"><code>
 href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#gen_id"><code>gen_id()</code></a></td>
 <td>🆔 Generates a unique 32-character hex ID</td>
 </tr>
+<tr>
+<td><code>get_db_uri(db)</code></td>
+<td>🔗 Extract full connection URI with password from Database
+object</td>
+</tr>
 </tbody>
 </table>
 
@@ -147,7 +203,7 @@ table with the `core_` or `sys_` prefix.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L53"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L105"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### SystemJob
@@ -159,7 +215,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L47"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L99"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostAuditLog
@@ -171,7 +227,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L40"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L92"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Subscription
@@ -183,7 +239,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L34"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L86"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Membership
@@ -195,7 +251,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L29"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L81"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantCatalog
@@ -207,7 +263,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L23"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L75"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GlobalUser
@@ -314,7 +370,7 @@ injection for testing
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L62"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L114"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase
@@ -403,7 +459,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L100"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L152"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.from_env
@@ -415,7 +471,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L119"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L171"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.commit
@@ -427,7 +483,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L123"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L175"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.rollback
@@ -439,7 +495,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L143"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L195"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.reset_instance
@@ -4947,15 +5003,46 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_polars_mapper.html#apply
 <td><code>unnest_cols</code></td>
 <td>Optional list of nested columns to flatten</td>
 </tr>
+<tr>
+<td><code>type_map</code></td>
+<td>Optional type casting map <code>{col: pl.DataType}</code></td>
+</tr>
 </tbody>
 </table>
+
+**Returns:** `int` - Number of rows affected by the upsert operation
 
 **Staging Table Pattern (10-100x faster than row-by-row):** 1. Write to
 temporary staging table (fast bulk insert) 2. Execute
 `INSERT ... ON CONFLICT` (database-native, vectorized) 3. Drop staging
 table (cleanup)
 
-**Example:**
+**Type Casting with `type_map`:**
+
+When API data contains `None` values, Polars may infer incorrect types
+(e.g., `String` instead of `Int64`). This causes PostgreSQL type
+mismatch errors like:
+
+    column "balance" is of type integer but expression is of type text
+
+Use `type_map` to explicitly cast columns before writing:
+
+``` python
+rows = map_and_upsert(
+    df=df,
+    table_name='accounts',
+    key_col='id',
+    db_uri=db_uri,
+    type_map={
+        'balance_current': pl.Int64,
+        'balance_available': pl.Int64,
+        'balance_limit': pl.Int64
+    }
+)
+print(f"Upserted {rows} rows")
+```
+
+**Basic Example:**
 
 ``` python
 import polars as pl
@@ -4968,13 +5055,14 @@ json_data = [
 
 df = pl.DataFrame(json_data)
 
-map_and_upsert(
+rows_affected = map_and_upsert(
     df=df,
     table_name='users',
     key_col='user_id',
     db_uri='sqlite:///app.db',
     column_map={'user_id_val': 'user_id', 'ABC_1': 'name'}
 )
+print(f"Upserted {rows_affected} users")
 ```
 
 ------------------------------------------------------------------------
@@ -4987,10 +5075,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 >  map_and_upsert (df:polars.dataframe.frame.DataFrame, table_name:str,
 >                      key_col:str, db_uri:str, column_map:dict=None,
->                      unnest_cols:list[str]=None)
+>                      unnest_cols:list[str]=None, type_map:dict=None)
 
 *Map JSON data to database columns and upsert using staging table
 pattern.*
+
+**Returns:** Number of rows affected by the upsert operation
+
+**Type Casting:** When columns have `None` values, Polars may infer
+incorrect types (e.g., String instead of Int64). This causes PostgreSQL
+type mismatch errors. Use `type_map` to explicitly cast columns before
+writing to the database.
 
 <table>
 <colgroup>
@@ -5044,6 +5139,18 @@ pattern.*
 <td>list</td>
 <td>None</td>
 <td>List of Struct columns to flatten</td>
+</tr>
+<tr>
+<td>type_map</td>
+<td>dict</td>
+<td>None</td>
+<td>Optional type casting map {col_name: pl.DataType}</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>int</strong></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -5117,7 +5224,7 @@ df = apply_schema(df, {
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_polars_mapper.py#L104"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_polars_mapper.py#L133"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### apply_schema
@@ -5154,431 +5261,6 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 <tr>
 <td><strong>Returns</strong></td>
 <td><strong>DataFrame</strong></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-
-========================================
-
-FILE: _proc/10_utils_sync.html.md
-
-# 🔄 API → DB Sync
-
-
-<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-
-## 🎯 Overview
-
-<table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
-<thead>
-<tr>
-<th>Function</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sync.html#sync_external_data"><code>sync_external_data</code></a></td>
-<td>Full sync: API → Transform → DB</td>
-</tr>
-<tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sync.html#sync_incremental"><code>sync_incremental</code></a></td>
-<td>Incremental sync since timestamp</td>
-</tr>
-</tbody>
-</table>
-
-------------------------------------------------------------------------
-
-## 🏗️ Architecture
-
-    ┌─────────────────────────────────────────────────────────────────┐
-    │                    End-to-End Sync Pipeline                     │
-    ├─────────────────────────────────────────────────────────────────┤
-    │  GraphQL API ──▶ Streaming Pages ──▶ Polars Transform ──▶ DB  │
-    │       │                │                    │                   │
-    │  fetch_pages      yield batch         map_and_upsert           │
-    │  generator        (memory safe)        (staging pattern)        │
-    └─────────────────────────────────────────────────────────────────┘
-
-## 🔄 Full Sync
-
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>client</code></td>
-<td>GraphQL client instance</td>
-</tr>
-<tr>
-<td><code>query_template</code></td>
-<td>GraphQL query with pagination</td>
-</tr>
-<tr>
-<td><code>variables</code></td>
-<td>Query variables</td>
-</tr>
-<tr>
-<td><code>items_path</code></td>
-<td>JSONPath to data items</td>
-</tr>
-<tr>
-<td><code>cursor_path</code></td>
-<td>JSONPath to cursor</td>
-</tr>
-<tr>
-<td><code>table_name</code></td>
-<td>Target table name</td>
-</tr>
-<tr>
-<td><code>key_col</code></td>
-<td>Primary key column</td>
-</tr>
-<tr>
-<td><code>db_uri</code></td>
-<td>Database connection string</td>
-</tr>
-<tr>
-<td><code>column_map</code></td>
-<td>Optional column renaming</td>
-</tr>
-<tr>
-<td><code>type_map</code></td>
-<td>Optional type conversions</td>
-</tr>
-<tr>
-<td><code>has_next_path</code></td>
-<td>Optional hasNextPage path</td>
-</tr>
-</tbody>
-</table>
-
-**Returns:** `{'total_records': 10000, 'batches': 10}`
-
-**Example:**
-
-``` python
-from fh_saas.utils_api import AsyncAPIClient, bearer_token_auth
-from fh_saas.utils_graphql import GraphQLClient
-import polars as pl
-
-async with AsyncAPIClient(
-    'https://api.example.com/graphql',
-    auth_headers=bearer_token_auth('TOKEN')
-) as api_client:
-    
-    client = GraphQLClient(api_client)
-    
-    stats = await sync_external_data(
-        client=client,
-        query_template='''
-            query($cursor: String) {
-                users(after: $cursor, first: 1000) {
-                    nodes { user_id_val name_str email_addr }
-                    pageInfo { hasNextPage endCursor }
-                }
-            }
-        ''',
-        variables={'cursor': None},
-        items_path=['data', 'users', 'nodes'],
-        cursor_path=['data', 'users', 'pageInfo', 'endCursor'],
-        has_next_path=['data', 'users', 'pageInfo', 'hasNextPage'],
-        table_name='users',
-        key_col='user_id',
-        db_uri='sqlite:///app.db',
-        column_map={
-            'user_id_val': 'user_id',
-            'name_str': 'name',
-            'email_addr': 'email'
-        },
-        type_map={'user_id': pl.Int64}
-    )
-    
-    print(f"Synced {stats['total_records']} records")
-```
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sync.py#L20"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### sync_external_data
-
->  sync_external_data (client:fh_saas.utils_graphql.GraphQLClient,
->                          query_template:str, variables:dict,
->                          items_path:list[str], cursor_path:list[str],
->                          table_name:str, key_col:str, db_uri:str,
->                          column_map:dict=None, type_map:dict=None,
->                          has_next_path:list[str]=None, batch_size:int=5000)
-
-*Sync external data from GraphQL API to database (streaming,
-memory-efficient).*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>client</td>
-<td>GraphQLClient</td>
-<td></td>
-<td>Initialized GraphQL client</td>
-</tr>
-<tr>
-<td>query_template</td>
-<td>str</td>
-<td></td>
-<td>GraphQL query with $cursor variable</td>
-</tr>
-<tr>
-<td>variables</td>
-<td>dict</td>
-<td></td>
-<td>Initial variables (e.g., {‘cursor’: None})</td>
-</tr>
-<tr>
-<td>items_path</td>
-<td>list</td>
-<td></td>
-<td>Path to data list in response</td>
-</tr>
-<tr>
-<td>cursor_path</td>
-<td>list</td>
-<td></td>
-<td>Path to next cursor</td>
-</tr>
-<tr>
-<td>table_name</td>
-<td>str</td>
-<td></td>
-<td>Target database table</td>
-</tr>
-<tr>
-<td>key_col</td>
-<td>str</td>
-<td></td>
-<td>Primary key for upsert</td>
-</tr>
-<tr>
-<td>db_uri</td>
-<td>str</td>
-<td></td>
-<td>Database connection string</td>
-</tr>
-<tr>
-<td>column_map</td>
-<td>dict</td>
-<td>None</td>
-<td>Optional column renaming</td>
-</tr>
-<tr>
-<td>type_map</td>
-<td>dict</td>
-<td>None</td>
-<td>Optional type conversions</td>
-</tr>
-<tr>
-<td>has_next_path</td>
-<td>list</td>
-<td>None</td>
-<td>Optional hasNextPage path</td>
-</tr>
-<tr>
-<td>batch_size</td>
-<td>int</td>
-<td>5000</td>
-<td>Max rows per batch (pagination page size)</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-## ⏱️ Incremental Sync
-
-Syncs only records updated after `last_sync_time`.
-
-<table>
-<colgroup>
-<col style="width: 45%" />
-<col style="width: 54%" />
-</colgroup>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>last_sync_time</code></td>
-<td>ISO timestamp (e.g., <code>'2024-01-15T10:00:00Z'</code>)</td>
-</tr>
-<tr>
-<td><em>(others)</em></td>
-<td>Same as <a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sync.html#sync_external_data"><code>sync_external_data</code></a></td>
-</tr>
-</tbody>
-</table>
-
-**Returns:**
-`{'total_records': 100, 'batches': 2, 'last_sync_time': '2024-01-16T10:00:00Z'}`
-
-**Example:**
-
-``` python
-# Query with $last_sync filter
-query = '''
-    query($cursor: String, $last_sync: DateTime!) {
-        users(after: $cursor, where: {updated_at: {_gt: $last_sync}}) {
-            nodes { id name updated_at }
-            pageInfo { hasNextPage endCursor }
-        }
-    }
-'''
-
-stats = await sync_incremental(
-    client=client,
-    query_template=query,
-    last_sync_time='2024-01-15T10:00:00Z',
-    items_path=['data', 'users', 'nodes'],
-    cursor_path=['data', 'users', 'pageInfo', 'endCursor'],
-    table_name='users',
-    key_col='id',
-    db_uri='sqlite:///app.db'
-)
-```
-
-------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sync.py#L75"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
-### sync_incremental
-
->  sync_incremental (client:fh_saas.utils_graphql.GraphQLClient,
->                        query_template:str, last_sync_time:str,
->                        items_path:list[str], cursor_path:list[str],
->                        table_name:str, key_col:str, db_uri:str,
->                        column_map:dict=None, type_map:dict=None,
->                        has_next_path:list[str]=None)
-
-*Incremental sync: fetch only records updated after last sync
-timestamp.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>client</td>
-<td>GraphQLClient</td>
-<td></td>
-<td>Initialized GraphQL client</td>
-</tr>
-<tr>
-<td>query_template</td>
-<td>str</td>
-<td></td>
-<td>GraphQL query with $cursor and $last_sync variables</td>
-</tr>
-<tr>
-<td>last_sync_time</td>
-<td>str</td>
-<td></td>
-<td>ISO timestamp (e.g., ‘2024-01-15T10:00:00Z’)</td>
-</tr>
-<tr>
-<td>items_path</td>
-<td>list</td>
-<td></td>
-<td>Path to data list</td>
-</tr>
-<tr>
-<td>cursor_path</td>
-<td>list</td>
-<td></td>
-<td>Path to cursor</td>
-</tr>
-<tr>
-<td>table_name</td>
-<td>str</td>
-<td></td>
-<td>Target table</td>
-</tr>
-<tr>
-<td>key_col</td>
-<td>str</td>
-<td></td>
-<td>Primary key</td>
-</tr>
-<tr>
-<td>db_uri</td>
-<td>str</td>
-<td></td>
-<td>Database connection</td>
-</tr>
-<tr>
-<td>column_map</td>
-<td>dict</td>
-<td>None</td>
-<td>Optional column map</td>
-</tr>
-<tr>
-<td>type_map</td>
-<td>dict</td>
-<td>None</td>
-<td>Optional type map</td>
-</tr>
-<tr>
-<td>has_next_path</td>
-<td>list</td>
-<td>None</td>
-<td>Optional hasNextPage path</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
 <td></td>
 </tr>
 </tbody>

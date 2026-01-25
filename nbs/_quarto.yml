@@ -38,7 +38,6 @@ website:
         contents:
           - 03_utils_bgtsk.ipynb
           - 09_utils_polars_mapper.ipynb
-          - 10_utils_sync.ipynb
       - section: "🛠️ Utilities"
         contents:
           - 02_utils_sql.ipynb

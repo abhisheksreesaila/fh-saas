@@ -128,7 +128,6 @@ tenant_db.conn.commit()
 | **⚙️ Data Pipeline** |  |
 | [Background Tasks](https://abhisheksreesaila.github.io/fh-saas/utils_bgtsk.html) | Async job execution |
 | [Data Transforms](https://abhisheksreesaila.github.io/fh-saas/utils_polars_mapper.html) | JSON → Polars → Database pipeline |
-| [API → DB Sync](https://abhisheksreesaila.github.io/fh-saas/utils_sync.html) | End-to-end external data sync |
 | **🛠️ Utilities** |  |
 | [SQL Helpers](https://abhisheksreesaila.github.io/fh-saas/utils_sql.html) | Database type detection, query builders |
 | [Logging](https://abhisheksreesaila.github.io/fh-saas/utils_log.html) | Configurable logging for all modules |
