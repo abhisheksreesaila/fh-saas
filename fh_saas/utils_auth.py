@@ -6,8 +6,9 @@
 __all__ = ['logger', 'ROLE_HIERARCHY', 'DEFAULT_SKIP_AUTH', 'has_min_role', 'get_user_role', 'require_role',
            'invalidate_auth_cache', 'create_auth_beforeware', 'get_google_oauth_client', 'generate_oauth_state',
            'verify_oauth_state', 'create_or_get_global_user', 'get_user_membership', 'verify_membership',
-           'provision_new_user', 'create_user_session', 'get_current_user', 'clear_session', 'route_user_after_login',
-           'require_tenant_access', 'handle_login_request', 'handle_oauth_callback', 'handle_logout']
+           'provision_new_user', 'create_user_session', 'get_current_user', 'clear_session', 'auth_redirect',
+           'route_user_after_login', 'require_tenant_access', 'handle_login_request', 'handle_oauth_callback',
+           'handle_logout']
 
 # %% ../nbs/04_utils_auth.ipynb 2
 from fastsql import *
@@ -23,7 +24,7 @@ from fh_saas.db_tenant import (
     TenantUser
 )
 from fasthtml.oauth import GoogleAppClient, redir_url
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, Response
 import os
 import uuid
 import json
@@ -548,6 +549,46 @@ def clear_session(session: dict):
     session.clear()
 
 # %% ../nbs/04_utils_auth.ipynb 41
+def auth_redirect(request, redirect_url: str = '/login'):
+    """
+    HTMX-aware redirect for authentication flows.
+    
+    When HTMX makes a partial request and receives a standard redirect (302/303),
+    it follows the redirect and swaps the response into the target element.
+    This causes the login page to appear inside the partial content area.
+    
+    This function detects HTMX requests and uses the `HX-Redirect` header
+    to trigger a full page navigation instead.
+    
+    Args:
+        request: Starlette request object
+        redirect_url: URL to redirect to (default: '/login')
+        
+    Returns:
+        Response with appropriate redirect mechanism
+        
+    Example:
+        ```python
+        @app.get('/dashboard')
+        def dashboard(request):
+            if not get_current_user(request.session):
+                return auth_redirect(request)
+            return render_dashboard()
+        ```
+    """
+    # Check if this is an HTMX request
+    if 'HX-Request' in request.headers:
+        # Return 200 with HX-Redirect header - HTMX will do full page redirect
+        response = Response(status_code=200)
+        response.headers['HX-Redirect'] = redirect_url
+        logger.debug(f"HTMX auth redirect to {redirect_url}")
+        return response
+    else:
+        # Regular redirect for non-HTMX requests
+        logger.debug(f"Standard auth redirect to {redirect_url}")
+        return RedirectResponse(redirect_url, status_code=303)
+
+
 def route_user_after_login(global_user: GlobalUser, membership: Membership = None) -> str:
     """Determine redirect URL based on user type and membership."""
     if global_user.is_sys_admin:
@@ -578,7 +619,7 @@ def require_tenant_access(request_or_session):
     
     return get_or_create_tenant_db(user['tenant_id'])
 
-# %% ../nbs/04_utils_auth.ipynb 45
+# %% ../nbs/04_utils_auth.ipynb 46
 def handle_login_request(request, session):
     """Generate Google OAuth URL with CSRF state protection."""
     logger.debug('Login request initiated')

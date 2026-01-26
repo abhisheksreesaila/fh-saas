@@ -1353,6 +1353,8 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"
 <tr>
 <td>🚦 Routing</td>
 <td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#auth_redirect"><code>auth_redirect</code></a>,
+<a
 href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#route_user_after_login"><code>route_user_after_login</code></a>,
 <a
 href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant_access"><code>require_tenant_access</code></a></td>
@@ -1529,7 +1531,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_role"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L47"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L48"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### has_min_role
@@ -1550,7 +1552,7 @@ Example: \>\>\> user = {‘role’: ‘editor’} \>\>\> has_min_role(user,
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L68"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L69"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_role
@@ -1572,7 +1574,7 @@ Returns: Effective role string: ‘admin’, ‘editor’, ‘viewer’, or None
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L113"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L114"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_role
@@ -1665,7 +1667,7 @@ auth data in the session to avoid database queries on every request.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L170"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L171"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### invalidate_auth_cache
@@ -1792,7 +1794,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_auth_be
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L243"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L244"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_auth_beforeware
@@ -1867,7 +1869,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L363"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L364"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_google_oauth_client
@@ -1919,7 +1921,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_s
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L379"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L380"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_oauth_state
@@ -1932,7 +1934,7 @@ protection).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L374"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L375"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_oauth_state
@@ -1979,7 +1981,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_members
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L431"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L432"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_membership
@@ -1992,7 +1994,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L423"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L424"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_membership
@@ -2004,7 +2006,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L392"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L393"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_or_get_global_user
@@ -2054,7 +2056,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L439"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L440"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### provision_new_user
@@ -2101,7 +2103,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L546"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L547"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### clear_session
@@ -2113,7 +2115,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L523"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L524"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_current_user
@@ -2133,7 +2135,7 @@ routes.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L513"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L514"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_user_session
@@ -2162,6 +2164,11 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 <tbody>
 <tr>
 <td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#auth_redirect"><code>auth_redirect</code></a></td>
+<td>HTMX-aware redirect to login page</td>
+</tr>
+<tr>
+<td><a
 href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#route_user_after_login"><code>route_user_after_login</code></a></td>
 <td>Determine redirect URL based on user type</td>
 </tr>
@@ -2176,7 +2183,35 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L560"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L552"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### auth_redirect
+
+>  auth_redirect (request, redirect_url:str='/login')
+
+*HTMX-aware redirect for authentication flows.*
+
+When HTMX makes a partial request and receives a standard redirect
+(302/303), it follows the redirect and swaps the response into the
+target element. This causes the login page to appear inside the partial
+content area.
+
+This function detects HTMX requests and uses the `HX-Redirect` header to
+trigger a full page navigation instead.
+
+Args: request: Starlette request object redirect_url: URL to redirect to
+(default: ‘/login’)
+
+Returns: Response with appropriate redirect mechanism
+
+Example:
+`python     @app.get('/dashboard')     def dashboard(request):         if not get_current_user(request.session):             return auth_redirect(request)         return render_dashboard()`
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L601"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_tenant_access
@@ -2188,7 +2223,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L551"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L592"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### route_user_after_login
@@ -2235,7 +2270,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L642"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L683"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_logout
@@ -2247,7 +2282,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L598"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L639"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_oauth_callback
@@ -2260,7 +2295,7 @@ redirect.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L582"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L623"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_login_request
@@ -2724,16 +2759,36 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#graphqlclie
 <td>GraphQL client with async generator pagination</td>
 </tr>
 <tr>
+<td><code>.from_url()</code></td>
+<td>✨ <strong>NEW</strong> - Create client from URL with optional
+bearer token</td>
+</tr>
+<tr>
+<td><code>.execute()</code></td>
+<td>✨ <strong>NEW</strong> - Unified method for queries and
+mutations</td>
+</tr>
+<tr>
 <td><code>.execute_query()</code></td>
-<td>Execute single query</td>
+<td>Execute single query (returns full response)</td>
 </tr>
 <tr>
 <td><code>.execute_mutation()</code></td>
-<td>Execute mutation</td>
+<td>Execute mutation (alias for execute_query)</td>
+</tr>
+<tr>
+<td><code>.fetch_pages_relay()</code></td>
+<td>✨ <strong>NEW</strong> - Fetch all pages from Relay-style
+pagination</td>
 </tr>
 <tr>
 <td><code>.fetch_pages_generator()</code></td>
-<td>Stream paginated data</td>
+<td>Stream paginated data (memory-efficient)</td>
+</tr>
+<tr>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#execute_graphql"><code>execute_graphql()</code></a></td>
+<td>✨ <strong>NEW</strong> - One-liner function for simple queries</td>
 </tr>
 </tbody>
 </table>
@@ -2756,6 +2811,10 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#graphqlclie
 ## 🔮 GraphQLClient
 
 <table>
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 52%" />
+</colgroup>
 <thead>
 <tr>
 <th>Method</th>
@@ -2764,42 +2823,109 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#graphqlclie
 </thead>
 <tbody>
 <tr>
+<td><code>.from_url()</code></td>
+<td>✨ <strong>NEW</strong> - Create client from URL + token</td>
+</tr>
+<tr>
+<td><code>.execute()</code></td>
+<td>✨ <strong>NEW</strong> - Unified query/mutation (returns data
+only)</td>
+</tr>
+<tr>
 <td><code>.execute_query()</code></td>
-<td>Execute single GraphQL query</td>
+<td>Execute single GraphQL query (full response)</td>
 </tr>
 <tr>
 <td><code>.execute_mutation()</code></td>
 <td>Execute GraphQL mutation</td>
 </tr>
 <tr>
+<td><code>.fetch_pages_relay()</code></td>
+<td>✨ <strong>NEW</strong> - Auto-accumulate Relay pagination</td>
+</tr>
+<tr>
 <td><code>.fetch_pages_generator()</code></td>
-<td>Async generator for paginated data</td>
+<td>Async generator for paginated data (streaming)</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
 
-### Usage Example
+### 🚀 Quick Start Examples
+
+#### One-Liner Query
+
+``` python
+from fh_saas.utils_graphql import execute_graphql
+
+# NEW: No client management needed
+result = await execute_graphql(
+    url="https://api.example.com/graphql",
+    query="query { users { id name } }",
+    bearer_token="your-token"
+)
+```
+
+#### Convenience Constructor
+
+``` python
+from fh_saas.utils_graphql import GraphQLClient
+
+# NEW: Direct from URL
+async with GraphQLClient.from_url(
+    url="https://api.example.com/graphql",
+    bearer_token="your-token"
+) as gql:
+    result = await gql.execute("query { users { id name } }")
+```
+
+#### Relay Pagination (Auto-Accumulate)
+
+``` python
+# NEW: Fetch all pages automatically
+async with GraphQLClient.from_url(url, bearer_token=token) as gql:
+    all_items = await gql.fetch_pages_relay(
+        query='''
+            query($first: Int, $after: String, $filter: Filter) {
+                transactionsConnection(first: $first, after: $after, filter: $filter) {
+                    edges { node { id amount } }
+                    pageInfo { hasNextPage endCursor }
+                }
+            }
+        ''',
+        connection_path="transactionsConnection",
+        variables={"filter": {"status": "completed"}},
+        page_size=100,
+        max_pages=50  # Safety limit
+    )
+    print(f"Fetched {len(all_items)} total items")
+```
+
+#### Legacy: Manual Client Management
 
 ``` python
 from fh_saas.utils_api import AsyncAPIClient, bearer_token_auth
 from fh_saas.utils_graphql import GraphQLClient
 
+# Still supported for advanced use cases
 async with AsyncAPIClient(
     'https://api.example.com/graphql',
     auth_headers=bearer_token_auth('TOKEN')
 ) as http_client:
     
     client = GraphQLClient(http_client)
-    
-    # Single query
     result = await client.execute_query(
         query='{ users { id name } }'
     )
-    
-    # Paginated streaming (memory-efficient)
-    async for batch in client.fetch_pages_generator(
+```
+
+#### Memory-Efficient Streaming (Generator)
+
+``` python
+# For very large datasets - process batches without accumulating
+async with GraphQLClient.from_url(url, bearer_token=token) as gql:
+    async for batch in gql.fetch_pages_generator(
         query_template='''
             query($cursor: String) {
                 users(after: $cursor, first: 1000) {
@@ -2814,13 +2940,13 @@ async with AsyncAPIClient(
         has_next_path=['data', 'users', 'pageInfo', 'hasNextPage']
     ):
         print(f"Processing batch of {len(batch)} records")
-        # Process batch immediately - never load full dataset
+        # Process immediately - never load full dataset
 ```
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L18"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L19"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient
@@ -2859,7 +2985,7 @@ fetching.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L21"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L22"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.\_\_init\_\_
@@ -2897,7 +3023,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L29"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L89"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.execute_query
@@ -2940,7 +3066,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L54"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L114"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.execute_mutation
@@ -2983,7 +3109,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L62"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L177"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.fetch_pages_generator
@@ -3059,6 +3185,189 @@ None)</td>
 </tbody>
 </table>
 
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L122"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### GraphQLClient.fetch_pages_relay
+
+>  GraphQLClient.fetch_pages_relay (query:str, connection_path:str,
+>                                       variables:dict|None=None,
+>                                       page_size:int=100,
+>                                       max_pages:int|None=None)
+
+*Fetch all pages from a Relay-style paginated GraphQL query.*
+
+Example query structure: query($first: Int, $after: String, $filter:
+TransactionFilter) { transactionsConnection(first: $first, after:
+$after, filter: $filter) { edges { node { id amount } } pageInfo {
+hasNextPage endCursor } } }
+
+Returns: List of all nodes from all pages
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>query</td>
+<td>str</td>
+<td></td>
+<td>GraphQL query with $first and $after variables</td>
+</tr>
+<tr>
+<td>connection_path</td>
+<td>str</td>
+<td></td>
+<td>Dot-notation path to connection object (e.g.,
+“transactionsConnection”)</td>
+</tr>
+<tr>
+<td>variables</td>
+<td>dict | None</td>
+<td>None</td>
+<td>Base variables for the query (excluding first/after)</td>
+</tr>
+<tr>
+<td>page_size</td>
+<td>int</td>
+<td>100</td>
+<td>Number of items per page</td>
+</tr>
+<tr>
+<td>max_pages</td>
+<td>int | None</td>
+<td>None</td>
+<td>Maximum pages to fetch (None for unlimited)</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>list</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L60"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### GraphQLClient.execute
+
+>  GraphQLClient.execute (query:str, variables:dict=None)
+
+*Execute a GraphQL query or mutation and return the data portion.*
+
+This is a unified method that works for both queries and mutations.
+Returns only the ‘data’ portion of the response for convenience.
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>query</td>
+<td>str</td>
+<td></td>
+<td>GraphQL query or mutation string</td>
+</tr>
+<tr>
+<td>variables</td>
+<td>dict</td>
+<td>None</td>
+<td>Query/mutation variables</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>Dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L33"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### GraphQLClient.from_url
+
+>  GraphQLClient.from_url (cls, url:str, bearer_token:str|None=None,
+>                              headers:dict|None=None)
+
+*Create GraphQL client directly from URL with optional bearer token.*
+
+Usage: async with GraphQLClient.from_url(url, bearer_token=token) as
+gql: result = await gql.execute(query)
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cls</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>url</td>
+<td>str</td>
+<td></td>
+<td>GraphQL endpoint URL</td>
+</tr>
+<tr>
+<td>bearer_token</td>
+<td>str | None</td>
+<td>None</td>
+<td>Optional bearer token for Authorization header</td>
+</tr>
+<tr>
+<td>headers</td>
+<td>dict | None</td>
+<td>None</td>
+<td>Optional additional headers</td>
+</tr>
+</tbody>
+</table>
+
 ### Streaming Pagination Details
 
 **Why use generators?** For large datasets (millions of rows),
@@ -3129,6 +3438,83 @@ async for batch in client.fetch_pages_generator(
     df = pl.DataFrame(batch)
     df.write_database('staging_table', connection=conn)
 ```
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L234"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### execute_graphql
+
+>  execute_graphql (url:str, query:str, variables:dict|None=None,
+>                       bearer_token:str|None=None, headers:dict|None=None)
+
+*Execute a single GraphQL query without managing client lifecycle.*
+
+This is a convenience function for one-off queries. For multiple
+queries, use GraphQLClient.from_url() to reuse the connection.
+
+Usage: result = await execute_graphql(
+url=“https://api.example.com/graphql”, query=“query { users { id name }
+}”, bearer_token=“your-token” )
+
+Raises: ValueError: If the response contains GraphQL errors
+
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>url</td>
+<td>str</td>
+<td></td>
+<td>GraphQL endpoint URL</td>
+</tr>
+<tr>
+<td>query</td>
+<td>str</td>
+<td></td>
+<td>GraphQL query string</td>
+</tr>
+<tr>
+<td>variables</td>
+<td>dict | None</td>
+<td>None</td>
+<td>Optional query variables</td>
+</tr>
+<tr>
+<td>bearer_token</td>
+<td>str | None</td>
+<td>None</td>
+<td>Optional bearer token for Authorization header</td>
+</tr>
+<tr>
+<td>headers</td>
+<td>dict | None</td>
+<td>None</td>
+<td>Optional additional headers</td>
+</tr>
+<tr>
+<td><strong>Returns</strong></td>
+<td><strong>dict</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 
 ========================================
