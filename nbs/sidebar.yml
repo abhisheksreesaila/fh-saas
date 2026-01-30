@@ -31,3 +31,7 @@ website:
       - 14_utils_webhook.ipynb
       - 14_utils_webhook_tests.ipynb
       - 15_utils_db.ipynb
+      - 16_utils_stripe.ipynb
+      - 16_utils_stripe_tests.ipynb
+      - 17_utils_migrate.ipynb
+      - 17_utils_migrate_tests.ipynb

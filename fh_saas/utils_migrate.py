@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 # %% ../nbs/17_utils_migrate.ipynb
 @dataclass
 class Migration:
-    """Parsed migration file with UP and DOWN sections."""
     version: int
     name: str
     filepath: Path
@@ -31,7 +30,6 @@ class Migration:
     
     @property
     def is_destructive(self) -> bool:
-        """Check if DOWN section contains destructive operations."""
         patterns = [r'\bDROP\s+TABLE\b', r'\bDROP\s+COLUMN\b', r'\bTRUNCATE\b', r'\bDELETE\s+FROM\b']
         for pattern in patterns:
             if re.search(pattern, self.down_sql, re.IGNORECASE):
@@ -40,58 +38,46 @@ class Migration:
 
 # %% ../nbs/17_utils_migrate.ipynb
 def parse_migration(filepath: Path) -> Migration:
-    """Parse a migration SQL file into a Migration object."""
     match = re.match(r'^(\d+)_(.+)\.sql$', filepath.name)
     if not match:
         raise ValueError(f"Invalid migration filename: {filepath.name}. Expected: 001_description.sql")
-    
     version = int(match.group(1))
     name = match.group(2)
     content = filepath.read_text(encoding='utf-8')
-    
     up_match = re.search(r'--\s*UP\s*--\s*\n(.*?)(?=--\s*DOWN\s*--|$)', content, re.DOTALL | re.IGNORECASE)
     down_match = re.search(r'--\s*DOWN\s*--\s*\n(.*?)$', content, re.DOTALL | re.IGNORECASE)
-    
     if not up_match:
         raise ValueError(f"Migration {filepath.name} missing '-- UP --' section")
     if not down_match:
         raise ValueError(f"Migration {filepath.name} missing '-- DOWN --' section")
-    
     up_sql = up_match.group(1).strip()
     down_sql = down_match.group(1).strip()
-    
     if not up_sql:
         raise ValueError(f"Migration {filepath.name} has empty UP section")
-    
     checksum = hashlib.sha256(up_sql.encode()).hexdigest()[:16]
     return Migration(version=version, name=name, filepath=filepath, up_sql=up_sql, down_sql=down_sql, checksum=checksum)
 
 # %% ../nbs/17_utils_migrate.ipynb
-def discover_migrations(migrations_dir: str | Path) -> List[Migration]:
-    """Discover and parse all migration files in a directory."""
+def discover_migrations(migrations_dir) -> List[Migration]:
     path = Path(migrations_dir)
     if not path.exists():
         logger.warning(f"Migrations directory not found: {path}")
         return []
-    
     migrations = []
     for sql_file in sorted(path.glob('*.sql')):
         try:
             migrations.append(parse_migration(sql_file))
         except ValueError as e:
             logger.warning(f"Skipping invalid migration: {e}")
-    
     migrations.sort(key=lambda m: m.version)
     versions = [m.version for m in migrations]
     if len(versions) != len(set(versions)):
         raise ValueError("Duplicate migration versions found")
-    
     return migrations
 
 # %% ../nbs/17_utils_migrate.ipynb
 @dataclass
 class MigrationStatus:
-    """Current migration status for a database."""
     current_version: int
     pending_count: int
     applied_migrations: List[dict]
@@ -99,20 +85,16 @@ class MigrationStatus:
 
 # %% ../nbs/17_utils_migrate.ipynb
 def _ensure_migrations_table(db: Database) -> None:
-    """Create _migrations tracking table if it doesn't exist."""
     db.execute(text("CREATE TABLE IF NOT EXISTS _migrations (version INTEGER PRIMARY KEY, name TEXT NOT NULL, checksum TEXT NOT NULL, applied_at TEXT NOT NULL)"))
     db.conn.commit()
 
-
 def _get_applied_versions(db: Database) -> dict:
-    """Get dict of applied migrations."""
     _ensure_migrations_table(db)
     rows = db.execute(text("SELECT version, name, checksum, applied_at FROM _migrations ORDER BY version")).fetchall()
     return {row[0]: {'name': row[1], 'checksum': row[2], 'applied_at': row[3]} for row in rows}
 
 # %% ../nbs/17_utils_migrate.ipynb
-def get_status(db: Database, migrations_dir: str | Path = "migrations") -> MigrationStatus:
-    """Get current migration status for a database."""
+def get_status(db: Database, migrations_dir="migrations") -> MigrationStatus:
     applied = _get_applied_versions(db)
     all_migrations = discover_migrations(migrations_dir)
     current_version = max(applied.keys()) if applied else 0
@@ -125,29 +107,19 @@ def get_status(db: Database, migrations_dir: str | Path = "migrations") -> Migra
     )
 
 # %% ../nbs/17_utils_migrate.ipynb
-def apply_migrations(
-    db: Database,
-    migrations_dir: str | Path = "migrations",
-    target_version: int = None,
-    dry_run: bool = False,
-) -> List[Migration]:
-    """Apply pending migrations to the database."""
+def apply_migrations(db: Database, migrations_dir="migrations", target_version: int = None, dry_run: bool = False) -> List[Migration]:
     status = get_status(db, migrations_dir)
     pending = status.pending_migrations
-    
     if target_version is not None:
         pending = [m for m in pending if m.version <= target_version]
-    
     if not pending:
         logger.info("No pending migrations")
         return []
-    
     if dry_run:
         logger.info(f"[DRY RUN] Would apply {len(pending)} migration(s):")
         for m in pending:
             logger.info(f"  {m.version:03d}_{m.name}")
         return pending
-    
     applied = []
     for migration in pending:
         try:
@@ -162,61 +134,44 @@ def apply_migrations(
             db.conn.rollback()
             logger.error(f"  Failed {migration.version:03d}_{migration.name}: {e}")
             raise Exception(f"Migration {migration.version:03d}_{migration.name} failed: {e}") from e
-    
     logger.info(f"Successfully applied {len(applied)} migration(s)")
     return applied
 
 # %% ../nbs/17_utils_migrate.ipynb
 class DestructiveRollbackError(Exception):
-    """Raised when rollback would cause data loss and force=False."""
     pass
 
 # %% ../nbs/17_utils_migrate.ipynb
-def rollback(
-    db: Database,
-    migrations_dir: str | Path = "migrations",
-    steps: int = 1,
-    target_version: int = None,
-    force: bool = False,
-    dry_run: bool = False,
-) -> List[Migration]:
-    """Rollback applied migrations. Requires force=True for destructive operations."""
+def rollback(db: Database, migrations_dir="migrations", steps: int = 1, target_version: int = None, force: bool = False, dry_run: bool = False) -> List[Migration]:
     applied = _get_applied_versions(db)
     if not applied:
         logger.info("No migrations to rollback")
         return []
-    
     all_migrations = discover_migrations(migrations_dir)
     migrations_by_version = {m.version: m for m in all_migrations}
     applied_versions = sorted(applied.keys(), reverse=True)
-    
     if target_version is not None:
         to_rollback = [v for v in applied_versions if v > target_version]
     else:
         to_rollback = applied_versions[:steps]
-    
     if not to_rollback:
         logger.info("Nothing to rollback")
         return []
-    
     rollback_migrations = []
     for version in to_rollback:
         if version not in migrations_by_version:
             raise ValueError(f"Migration file for version {version} not found")
         rollback_migrations.append(migrations_by_version[version])
-    
     destructive = [m for m in rollback_migrations if m.is_destructive]
     if destructive and not force:
         names = ', '.join(f"{m.version:03d}_{m.name}" for m in destructive)
         raise DestructiveRollbackError(f"Destructive rollback in: {names}. Use force=True. WARNING: Data loss!")
-    
     if dry_run:
         logger.info(f"[DRY RUN] Would rollback {len(rollback_migrations)} migration(s):")
         for m in rollback_migrations:
             flag = " DESTRUCTIVE" if m.is_destructive else ""
             logger.info(f"  {m.version:03d}_{m.name}{flag}")
         return rollback_migrations
-    
     rolled_back = []
     for migration in rollback_migrations:
         try:
@@ -231,19 +186,12 @@ def rollback(
             db.conn.rollback()
             logger.error(f"  Rollback failed {migration.version:03d}_{migration.name}: {e}")
             raise Exception(f"Rollback of {migration.version:03d}_{migration.name} failed: {e}") from e
-    
     logger.info(f"Successfully rolled back {len(rolled_back)} migration(s)")
     return rolled_back
 
 # %% ../nbs/17_utils_migrate.ipynb
-def run_migrations(
-    migrations_dir: str | Path = "migrations",
-    db_url: str = None,
-    dry_run: bool = False,
-) -> MigrationStatus:
-    """Production helper: apply pending migrations using env vars."""
+def run_migrations(migrations_dir="migrations", db_url: str = None, dry_run: bool = False) -> MigrationStatus:
     import urllib.parse
-    
     if db_url is None:
         db_type = os.getenv("DB_TYPE", "POSTGRESQL")
         if db_type == "POSTGRESQL":
@@ -257,7 +205,6 @@ def run_migrations(
         else:
             name = os.getenv("DB_NAME", "app")
             db_url = f"sqlite:///{name}.db"
-    
     db = Database(db_url)
     try:
         apply_migrations(db, migrations_dir, dry_run=dry_run)
@@ -269,19 +216,16 @@ def run_migrations(
             pass
 
 # %% ../nbs/17_utils_migrate.ipynb
-def print_status(db: Database, migrations_dir: str | Path = "migrations") -> None:
-    """Print migration status in a readable format."""
+def print_status(db: Database, migrations_dir="migrations") -> None:
     status = get_status(db, migrations_dir)
     print("Migration Status")
     print("================")
     print(f"Current version: {status.current_version:03d}")
     print(f"Pending: {status.pending_count} migration(s)")
-    
     if status.applied_migrations:
         print("\nApplied:")
         for m in status.applied_migrations:
             print(f"  {m['version']:03d}_{m['name']} ({m['applied_at'][:10]})")
-    
     if status.pending_migrations:
         print("\nPending:")
         for m in status.pending_migrations:

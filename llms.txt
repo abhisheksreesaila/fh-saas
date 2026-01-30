@@ -29,7 +29,12 @@ fh-saas is a production-ready multi-tenant SaaS toolkit for FastHTML application
 - [02_utils_sql](_proc/02_utils_sql.html.md): SQL helpers, query builders, and database type detection
 - [03_utils_bgtsk](_proc/03_utils_bgtsk.html.md): Background task manager with retry logic and job tracking
 - [09_utils_polars_mapper](_proc/09_utils_polars_mapper.html.md): JSON to Polars DataFrame transformations
-- [10_utils_sync](_proc/10_utils_sync.html.md): End-to-end API to database synchronization pipeline
+
+## Payments & Subscriptions
+- [16_utils_stripe](_proc/16_utils_stripe.html.md): Stripe integration with subscriptions, trials, and access control
+
+## Database Migrations
+- [17_utils_migrate](_proc/17_utils_migrate.html.md): PostgreSQL/SQLite migrations with version tracking and rollback support
 
 ## Content & Publishing
 - [05_utils_email](_proc/05_utils_email.html.md): Transactional email sending via Resend API

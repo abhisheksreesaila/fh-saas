@@ -203,7 +203,40 @@ table with the `core_` or `sys_` prefix.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L105"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L116"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### PricingPlan
+
+>  PricingPlan ()
+
+*Pricing: Available subscription tiers with Stripe price IDs.*
+
+Stores pricing configuration in database for admin-configurable tiers.
+Each plan can have monthly and/or yearly billing intervals.
+
+Attributes: id: Unique plan identifier (e.g., ‘basic’, ‘pro’,
+‘enterprise’) name: Display name for UI (e.g., ‘Basic Plan’)
+description: Plan description for pricing page stripe_price_monthly:
+Stripe Price ID for monthly billing (price_xxx) stripe_price_yearly:
+Stripe Price ID for yearly billing (price_xxx) amount_monthly: Monthly
+price in cents (for display, e.g., 799 = $7.99) amount_yearly: Yearly
+price in cents (for display, e.g., 7900 = $79.00) currency: ISO currency
+code (default: ‘usd’) trial_days: Free trial period in days (default:
+30) features: JSON array of feature keys enabled for this plan
+tier_level: Numeric level for feature gating (higher = more access)
+is_active: Whether plan is available for new subscriptions sort_order:
+Display order on pricing page created_at: Record creation timestamp
+
+Example: \>\>\> plan = PricingPlan( … id=‘pro’, … name=‘Pro Plan’, …
+stripe_price_monthly=‘price_1234’, … stripe_price_yearly=‘price_5678’, …
+amount_monthly=1999, … amount_yearly=19900, … tier_level=2, …
+features=‘\[“api_access”, “exports”, “priority_support”\]’, … )
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L110"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### SystemJob
@@ -215,7 +248,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L99"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L104"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostAuditLog
@@ -322,6 +355,13 @@ href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#subscription"><co
 </tr>
 <tr>
 <td><a
+href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#pricingplan"><code>PricingPlan</code></a></td>
+<td><code>core_pricing_plans</code></td>
+<td><code>id</code></td>
+<td>Available subscription tiers with Stripe price IDs</td>
+</tr>
+<tr>
+<td><a
 href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#hostauditlog"><code>HostAuditLog</code></a></td>
 <td><code>sys_audit_logs</code></td>
 <td><code>id</code></td>
@@ -370,7 +410,7 @@ injection for testing
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L114"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L166"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase
@@ -459,7 +499,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L152"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L205"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.from_env
@@ -471,7 +511,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L171"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L224"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.commit
@@ -483,7 +523,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L175"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L228"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.rollback
@@ -495,7 +535,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L195"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L248"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.reset_instance
@@ -1805,7 +1845,10 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 >                              setup_tenant_db:bool=True, schema_init:Callable[[
 >                              fastsql.core.Database],dict[str,Any]]=None,
 >                              session_cache:bool=False,
->                              session_cache_ttl:int=300)
+>                              session_cache_ttl:int=300,
+>                              require_subscription:bool=False,
+>                              subscription_redirect:str=None,
+>                              grace_period_days:int=3)
 
 *Create Beforeware that checks for authenticated session and sets up
 request.state.*
@@ -1819,12 +1862,18 @@ schema_init: Optional callback to initialize tables dict. Signature:
 request.state.tables session_cache: Enable caching user dict in session
 to reduce DB queries. Recommended for HTMX-heavy apps. Default: False
 session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes)
+require_subscription: If True, check for active subscription and return
+402 if not found. Default: False subscription_redirect: Optional URL to
+redirect if subscription required. If None, returns 402 Payment Required
+response. grace_period_days: Days to allow access after payment failure
+(default: 3)
 
 Returns: Beforeware instance for FastHTML apps
 
 Sets on request.state: - user: dict with user_id, email, tenant_id,
 role, is_owner - tenant_id: str - tenant_db: Database connection -
-tables: dict of Table objects (if schema_init provided)
+tables: dict of Table objects (if schema_init provided) - subscription:
+Subscription object (if require_subscription enabled)
 
 Example: \>\>\> \# Basic usage \>\>\> beforeware =
 create_auth_beforeware()
@@ -1839,6 +1888,12 @@ create_auth_beforeware()
     >>> def get_app_tables(db):
     ...     return {'users': db.create(User, pk='id')}
     >>> beforeware = create_auth_beforeware(schema_init=get_app_tables)
+
+    >>> # With subscription requirement
+    >>> beforeware = create_auth_beforeware(
+    ...     require_subscription=True,
+    ...     subscription_redirect='/pricing'
+    ... )
 
 ------------------------------------------------------------------------
 
@@ -1869,7 +1924,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L364"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L405"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_google_oauth_client
@@ -1921,7 +1976,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_s
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L380"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L421"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_oauth_state
@@ -1934,7 +1989,7 @@ protection).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L375"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L416"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_oauth_state
@@ -1981,7 +2036,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_members
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L432"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L473"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_membership
@@ -1994,7 +2049,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L424"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L465"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_membership
@@ -2006,7 +2061,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L393"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L434"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_or_get_global_user
@@ -2056,7 +2111,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L440"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L481"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### provision_new_user
@@ -2103,7 +2158,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L547"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L588"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### clear_session
@@ -2115,7 +2170,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L524"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L565"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_current_user
@@ -2135,7 +2190,7 @@ routes.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L514"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L555"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_user_session
@@ -2183,7 +2238,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L552"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L593"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### auth_redirect
@@ -2211,7 +2266,7 @@ Example:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L601"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L642"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_tenant_access
@@ -2223,7 +2278,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L592"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L633"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### route_user_after_login
@@ -2270,7 +2325,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L683"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L724"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_logout
@@ -2282,7 +2337,7 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L639"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L680"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_oauth_callback
@@ -2295,7 +2350,7 @@ redirect.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L623"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L664"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_login_request
@@ -5651,6 +5706,886 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 </tr>
 </tbody>
 </table>
+
+
+========================================
+
+FILE: _proc/16_utils_stripe.html.md
+
+# 💳 Stripe Utilities
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+
+## 🎯 Overview
+
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 37%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Category</th>
+<th>Functions</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⚙️ Configuration</td>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#stripeconfig"><code>StripeConfig</code></a>,
+<a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#stripeconfig.from_env"><code>StripeConfig.from_env()</code></a></td>
+<td>Configure Stripe with env vars or explicit values</td>
+</tr>
+<tr>
+<td>💳 Service</td>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#stripeservice"><code>StripeService</code></a></td>
+<td>Unified API for checkouts, subscriptions, webhooks</td>
+</tr>
+<tr>
+<td>🛒 Checkout</td>
+<td><code>create_subscription_checkout</code>,
+<code>create_one_time_checkout</code></td>
+<td>Generate Stripe checkout sessions</td>
+</tr>
+<tr>
+<td>🔄 Subscriptions</td>
+<td><code>get_subscription</code>, <code>cancel_subscription</code>,
+<code>change_plan</code></td>
+<td>Manage active subscriptions</td>
+</tr>
+<tr>
+<td>🪝 Webhooks</td>
+<td><code>verify_signature</code>, <code>handle_event</code></td>
+<td>Process Stripe webhook events</td>
+</tr>
+<tr>
+<td>🔐 Access Control</td>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#get_active_subscription"><code>get_active_subscription</code></a>,
+<a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#has_active_subscription"><code>has_active_subscription</code></a>,
+<a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#require_active_subscription"><code>require_active_subscription</code></a></td>
+<td>Gate features by payment status</td>
+</tr>
+<tr>
+<td>📊 Feature Gating</td>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#check_feature_access"><code>check_feature_access</code></a></td>
+<td>Control features by plan tier</td>
+</tr>
+<tr>
+<td>🛤️ Route Helpers</td>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#create_webhook_route"><code>create_webhook_route</code></a>,
+<code>create_checkout_route</code>, <a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#create_portal_route"><code>create_portal_route</code></a></td>
+<td>FastHTML route factories</td>
+</tr>
+</tbody>
+</table>
+
+------------------------------------------------------------------------
+
+## 🏗️ Architecture
+
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                    Payment Flow                                  │
+    ├─────────────────────────────────────────────────────────────────┤
+    │  1. User clicks "Subscribe" or "Buy"                           │
+    │  2. StripeService.create_*_checkout() → Stripe Session          │
+    │  3. User completes payment on Stripe                            │
+    │  4. Stripe sends webhook → handle_event()                       │
+    │  5. Subscription saved to core_subscriptions                    │
+    │  6. Access control checks subscription status                   │
+    └─────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                    Access Control                               │
+    ├─────────────────────────────────────────────────────────────────┤
+    │  require_active_subscription(tenant_id)                         │
+    │    ├─ status = 'active' → ✅ Access granted                    │
+    │    ├─ status = 'trialing' → ✅ Access granted                  │
+    │    ├─ status = 'past_due' + within grace → ⚠️ Access granted   │
+    │    └─ Otherwise → 🚫 402 Payment Required                       │
+    └─────────────────────────────────────────────────────────────────┘
+
+------------------------------------------------------------------------
+
+## 🌍 Environment Variables
+
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONFIG_STRIPE_SECRETKEY</code></td>
+<td>✅</td>
+<td>Stripe secret API key (sk_live_* or sk_test_*)</td>
+</tr>
+<tr>
+<td><code>CONFIG_STRIPE_WEBHOOKSECRET</code></td>
+<td>✅</td>
+<td>Webhook endpoint signing secret (whsec_*)</td>
+</tr>
+<tr>
+<td><code>CONFIG_STRIPE_MONTHLY_PRICE_ID</code></td>
+<td>⚠️</td>
+<td>Pre-created monthly price ID (price_*)</td>
+</tr>
+<tr>
+<td><code>CONFIG_STRIPE_YEARLY_PRICE_ID</code></td>
+<td>⚠️</td>
+<td>Pre-created yearly price ID (price_*)</td>
+</tr>
+<tr>
+<td><code>CONFIG_STRIPE_BASE_URL</code></td>
+<td>⚠️</td>
+<td>Application base URL for callbacks</td>
+</tr>
+</tbody>
+</table>
+
+> ⚠️ Price IDs are required for subscription checkouts. Create them in
+> Stripe Dashboard first.
+
+------------------------------------------------------------------------
+
+``` python
+from nbdev.showdoc import show_doc
+```
+
+## ⚙️ Configuration
+
+Configure Stripe integration with sensible defaults and environment
+variable support.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L30"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeConfig
+
+>  StripeConfig (secret_key:str, webhook_secret:str=None,
+>                    monthly_price_id:str=None, yearly_price_id:str=None,
+>                    trial_days:int=30, grace_period_days:int=3,
+>                    base_url:str='http://localhost:5001',
+>                    success_path:str='/payment-success',
+>                    cancel_path:str='/settings/payment',
+>                    allow_promotions:bool=True, is_development:bool=False,
+>                    feature_tiers:Dict[str,str]=<factory>)
+
+*Configuration for Stripe integration.*
+
+Supports both subscription and one-time payment modes with configurable
+trial periods, grace periods, and callback URLs.
+
+Attributes: secret_key: Stripe secret API key webhook_secret: Webhook
+signing secret for signature verification monthly_price_id: Pre-created
+Stripe price ID for monthly subscriptions yearly_price_id: Pre-created
+Stripe price ID for yearly subscriptions trial_days: Number of days for
+free trial (default: 30) grace_period_days: Days to allow access after
+payment failure (default: 3) base_url: Application base URL for redirect
+callbacks success_path: Path for successful payment redirect
+cancel_path: Path for canceled payment redirect allow_promotions: Enable
+Stripe promotion codes in checkout is_development: Enable development
+mode (skip signature verification)
+
+Example: \>\>\> config = StripeConfig.from_env() \>\>\> service =
+StripeService(config)
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L74"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeConfig.from_env
+
+>  StripeConfig.from_env ()
+
+*Create StripeConfig from environment variables.*
+
+Reads CONFIG_STRIPE\_\* environment variables with sensible defaults.
+
+Returns: Configured StripeConfig instance
+
+Raises: ValueError: If CONFIG_STRIPE_SECRETKEY is not set
+
+Example: \>\>\> \# Set environment variables first \>\>\>
+os.environ\[‘CONFIG_STRIPE_SECRETKEY’\] = ‘sk_test\_…’ \>\>\> config =
+StripeConfig.from_env()
+
+------------------------------------------------------------------------
+
+## 💳 Stripe Service
+
+Unified service class for all Stripe operations: checkouts,
+subscriptions, and webhooks.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L122"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeService
+
+>  StripeService (config:__main__.StripeConfig,
+>                     host_db:fh_saas.db_host.HostDatabase=None)
+
+*Unified Stripe service for payments, subscriptions, and webhooks.*
+
+Consolidates checkout creation, subscription management, and webhook
+handling into a single service with consistent patterns.
+
+Attributes: config: StripeConfig instance api: FastStripe API wrapper
+host_db: HostDatabase for subscription persistence
+
+Example: \>\>\> config = StripeConfig.from_env() \>\>\> service =
+StripeService(config) \>\>\> checkout =
+service.create_subscription_checkout( … plan_type=‘monthly’, …
+tenant_id=‘tnt_123’, … user_email=‘user@example.com’ … ) \>\>\>
+print(checkout.url) \# Redirect user here
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L162"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeService.create_subscription_checkout
+
+>  StripeService.create_subscription_checkout (plan_type:str, tenant_id:str,
+>                                                  user_email:str,
+>                                                  metadata:Dict[str,Any]=None)
+
+*Create a subscription checkout session with trial.*
+
+Args: plan_type: ‘monthly’ or ‘yearly’ tenant_id: Tenant ID to associate
+subscription with user_email: Customer email for Stripe metadata:
+Additional metadata to store with subscription
+
+Returns: Stripe Checkout Session with ‘url’ and ‘id’ attributes
+
+Raises: ValueError: If plan_type is invalid or price ID not configured
+
+Example: \>\>\> checkout = service.create_subscription_checkout( …
+plan_type=‘monthly’, … tenant_id=‘tnt_abc123’, …
+user_email=‘user@example.com’ … ) \>\>\> return
+RedirectResponse(checkout.url)
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L230"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeService.create_one_time_checkout
+
+>  StripeService.create_one_time_checkout (amount_cents:int,
+>                                              product_name:str, tenant_id:str,
+>                                              user_email:str,
+>                                              currency:str='usd',
+>                                              metadata:Dict[str,Any]=None)
+
+*Create a one-time payment checkout session.*
+
+Args: amount_cents: Payment amount in cents (e.g., 1999 for $19.99)
+product_name: Name displayed on checkout tenant_id: Tenant ID for record
+keeping user_email: Customer email for Stripe currency: ISO currency
+code (default: ‘usd’) metadata: Additional metadata to store
+
+Returns: Stripe Checkout Session with ‘url’ and ‘id’ attributes
+
+Example: \>\>\> checkout = service.create_one_time_checkout( …
+amount_cents=4999, … product_name=‘Premium Report’, …
+tenant_id=‘tnt_abc123’, … user_email=‘user@example.com’ … ) \>\>\>
+return RedirectResponse(checkout.url)
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L298"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeService.create_customer_portal_session
+
+>  StripeService.create_customer_portal_session (customer_id:str,
+>                                                    return_url:str=None)
+
+*Create a Stripe Customer Portal session for self-service billing.*
+
+Args: customer_id: Stripe customer ID (cus\_\*) return_url: URL to
+redirect after portal session (default: base_url)
+
+Returns: Portal session with ‘url’ attribute
+
+Example: \>\>\> portal =
+service.create_customer_portal_session(‘cus_123’) \>\>\> return
+RedirectResponse(portal.url)
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L342"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeService.cancel_subscription
+
+>  StripeService.cancel_subscription (subscription_id:str,
+>                                         at_period_end:bool=True)
+
+*Cancel a subscription.*
+
+Args: subscription_id: Stripe subscription ID at_period_end: If True,
+cancel at end of billing period (default) If False, cancel immediately
+
+Returns: Updated Stripe Subscription object
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L441"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### StripeService.handle_event
+
+>  StripeService.handle_event (event:Dict[str,Any])
+
+*Route webhook event to appropriate handler.*
+
+Handles both subscription and one-time payment events.
+
+Args: event: Parsed Stripe event dict
+
+Returns: Dict with ‘status’ (‘success’, ‘warning’, ‘error’, ‘ignored’)
+and ‘message’ describing the result
+
+------------------------------------------------------------------------
+
+## 💰 Pricing Plans
+
+Database-backed pricing tiers for multi-tier subscription management.
+Store your Stripe price IDs in the database for admin-configurable
+pricing without code changes.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L740"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_pricing_plans
+
+>  get_pricing_plans (host_db:fh_saas.db_host.HostDatabase=None,
+>                         active_only:bool=True)
+
+*Get all pricing plans from the database.*
+
+Retrieves pricing plan configurations stored in the `core_pricing_plans`
+table. Plans define available subscription tiers with their Stripe price
+IDs, amounts, features, and display settings.
+
+Args: host_db: Optional HostDatabase instance. Uses from_env() if not
+provided. active_only: If True (default), only returns plans where
+is_active=True. Set to False to include inactive/archived plans.
+
+Returns: List of PricingPlan objects sorted by sort_order, then by
+tier_level. Empty list if no plans are configured.
+
+Example: \>\>\> \# Get all active plans for pricing page \>\>\> plans =
+get_pricing_plans() \>\>\> for plan in plans: … print(f”{plan.name}:
+${plan.amount_monthly/100}/mo”) Basic Plan: $7.99/mo Pro Plan: $19.99/mo
+Enterprise Plan: $49.99/mo
+
+    >>> # Get specific plan for checkout
+    >>> plans = get_pricing_plans()
+    >>> pro_plan = next((p for p in plans if p.id == 'pro'), None)
+    >>> if pro_plan:
+    ...     price_id = pro_plan.stripe_price_monthly
+
+    >>> # Setting up plans (typically in admin or migration)
+    >>> from fh_saas.db_host import HostDatabase, PricingPlan, gen_id, timestamp
+    >>> host_db = HostDatabase.from_env()
+    >>> 
+    >>> plans_data = [
+    ...     {
+    ...         'id': 'basic',
+    ...         'name': 'Basic Plan',
+    ...         'description': 'Essential features for individuals',
+    ...         'stripe_price_monthly': 'price_basic_monthly_xxx',
+    ...         'stripe_price_yearly': 'price_basic_yearly_xxx',
+    ...         'amount_monthly': 799,   # $7.99
+    ...         'amount_yearly': 7990,   # $79.90 (save ~17%)
+    ...         'tier_level': 1,
+    ...         'features': '["basic_reports", "email_support"]',
+    ...         'sort_order': 1,
+    ...     },
+    ...     {
+    ...         'id': 'pro',
+    ...         'name': 'Pro Plan', 
+    ...         'description': 'Advanced features for teams',
+    ...         'stripe_price_monthly': 'price_pro_monthly_xxx',
+    ...         'stripe_price_yearly': 'price_pro_yearly_xxx',
+    ...         'amount_monthly': 1999,  # $19.99
+    ...         'amount_yearly': 19990,  # $199.90
+    ...         'tier_level': 2,
+    ...         'features': '["basic_reports", "advanced_analytics", "api_access", "priority_support"]',
+    ...         'sort_order': 2,
+    ...     },
+    ...     {
+    ...         'id': 'enterprise',
+    ...         'name': 'Enterprise Plan',
+    ...         'description': 'Full platform access with custom solutions',
+    ...         'stripe_price_monthly': 'price_ent_monthly_xxx',
+    ...         'stripe_price_yearly': 'price_ent_yearly_xxx',
+    ...         'amount_monthly': 4999,  # $49.99
+    ...         'amount_yearly': 49990,  # $499.90
+    ...         'tier_level': 3,
+    ...         'features': '["all_features", "dedicated_support", "custom_integrations", "sla"]',
+    ...         'sort_order': 3,
+    ...     },
+    ... ]
+    >>> 
+    >>> for plan_data in plans_data:
+    ...     plan = PricingPlan(**plan_data, created_at=timestamp())
+    ...     host_db.pricing_plans.insert(plan)
+    >>> host_db.commit()
+
+Note: - Create your Stripe Products and Prices in the Stripe Dashboard
+first - Copy the price IDs (price_xxx) into your database records - The
+`tier_level` field is used by
+[`check_feature_access()`](https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#check_feature_access)
+for feature gating - The `features` field should be a JSON array of
+feature keys
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L845"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_pricing_plan
+
+>  get_pricing_plan (plan_id:str, host_db:fh_saas.db_host.HostDatabase=None)
+
+*Get a specific pricing plan by ID.*
+
+Args: plan_id: The plan identifier (e.g., ‘basic’, ‘pro’, ‘enterprise’)
+host_db: Optional HostDatabase instance
+
+Returns: PricingPlan object if found, None otherwise
+
+Example: \>\>\> plan = get_pricing_plan(‘pro’) \>\>\> if plan: …
+checkout = service.create_subscription_checkout( …
+price_id=plan.stripe_price_monthly, … … … )
+
+------------------------------------------------------------------------
+
+## 🔐 Access Control
+
+Functions to gate features based on subscription status with grace
+period support.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L877"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_active_subscription
+
+>  get_active_subscription (tenant_id:str,
+>                               host_db:fh_saas.db_host.HostDatabase=None,
+>                               grace_period_days:int=3)
+
+*Get active subscription for a tenant with grace period support.*
+
+Returns subscription if: - Status is ‘active’ or ‘trialing’ - Status is
+‘past_due’ but within grace period from current_period_end
+
+Args: tenant_id: Tenant ID to check host_db: Optional HostDatabase, uses
+from_env() if not provided grace_period_days: Days to allow access after
+payment failure (default: 3)
+
+Returns: Active Subscription object, or None if no valid subscription
+
+Example: \>\>\> sub = get_active_subscription(‘tnt_123’) \>\>\> if sub:
+… print(f”Active until {sub.current_period_end}“)
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L937"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### has_active_subscription
+
+>  has_active_subscription (tenant_id:str,
+>                               host_db:fh_saas.db_host.HostDatabase=None,
+>                               grace_period_days:int=3)
+
+*Check if tenant has an active subscription.*
+
+Args: tenant_id: Tenant ID to check host_db: Optional HostDatabase
+grace_period_days: Days to allow access after payment failure
+
+Returns: True if tenant has valid subscription, False otherwise
+
+Example: \>\>\> if has_active_subscription(‘tnt_123’): …
+show_premium_features()
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L959"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### require_active_subscription
+
+>  require_active_subscription (tenant_id:str,
+>                                   host_db:fh_saas.db_host.HostDatabase=None,
+>                                   grace_period_days:int=3,
+>                                   redirect_url:str=None)
+
+*Require active subscription, returning 402 if not found.*
+
+Use in route handlers to gate premium features.
+
+Args: tenant_id: Tenant ID to check host_db: Optional HostDatabase
+grace_period_days: Days to allow access after payment failure
+redirect_url: Optional URL to redirect instead of 402
+
+Returns: None if subscription is valid (allow access) Response(402) or
+RedirectResponse if subscription required
+
+Example: \>\>\> @app.get(‘/premium-feature’) \>\>\> def
+premium_feature(request): … error =
+require_active_subscription(request.state.tenant_id) … if error: …
+return error … return render_premium_content()
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1000"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_subscription_status
+
+>  get_subscription_status (tenant_id:str,
+>                               host_db:fh_saas.db_host.HostDatabase=None,
+>                               grace_period_days:int=3)
+
+*Get detailed subscription status for UI display.*
+
+Args: tenant_id: Tenant ID to check host_db: Optional HostDatabase
+grace_period_days: Days for grace period calculation
+
+Returns: Dict with subscription details for UI: - has_subscription:
+bool - status: str (‘active’, ‘trialing’, ‘past_due’, ‘canceled’,
+‘none’) - plan_tier: str or None - is_trial: bool - trial_ends_at: str
+(ISO) or None - current_period_end: str (ISO) or None - days_remaining:
+int or None - in_grace_period: bool - cancel_at_period_end: bool
+
+Example: \>\>\> status = get_subscription_status(‘tnt_123’) \>\>\> if
+status\[‘is_trial’\]: … show_trial_banner(status\[‘days_remaining’\])
+
+------------------------------------------------------------------------
+
+## 📊 Feature Gating
+
+Control access to features based on subscription plan tier.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1109"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### check_feature_access
+
+>  check_feature_access (tenant_id:str, feature:str,
+>                            feature_tiers:Dict[str,str]=None,
+>                            host_db:fh_saas.db_host.HostDatabase=None,
+>                            grace_period_days:int=3)
+
+*Check if tenant’s plan tier allows access to a feature.*
+
+Args: tenant_id: Tenant ID to check feature: Feature name to check
+access for feature_tiers: Optional mapping of feature -\> required tier.
+Defaults to {‘advanced_analytics’: ‘yearly’, …} host_db: Optional
+HostDatabase grace_period_days: Days for grace period
+
+Returns: True if tenant’s plan allows the feature, False otherwise
+
+Example: \>\>\> if check_feature_access(‘tnt_123’,
+‘advanced_analytics’): … return render_analytics() \>\>\> else: … return
+render_upgrade_prompt()
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1161"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### require_feature_access
+
+>  require_feature_access (tenant_id:str, feature:str,
+>                              feature_tiers:Dict[str,str]=None,
+>                              host_db:fh_saas.db_host.HostDatabase=None,
+>                              redirect_url:str=None)
+
+*Require feature access, returning 403 if not allowed.*
+
+Args: tenant_id: Tenant ID to check feature: Feature name to check
+feature_tiers: Optional feature -\> tier mapping host_db: Optional
+HostDatabase redirect_url: Optional URL to redirect instead of 403
+
+Returns: None if access allowed, Response(403) or redirect otherwise
+
+Example: \>\>\> @app.get(‘/analytics’) \>\>\> def analytics(request): …
+error = require_feature_access( … request.state.tenant_id, …
+‘advanced_analytics’, … redirect_url=‘/upgrade’ … ) … if error: … return
+error … return render_analytics()
+
+------------------------------------------------------------------------
+
+## 🛤️ Route Helpers
+
+Ready-to-use FastHTML route factories for Stripe integration.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1205"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### create_webhook_route
+
+>  create_webhook_route (app, service:__main__.StripeService,
+>                            path:str='/stripe/webhook')
+
+*Create a POST route handler for Stripe webhooks.*
+
+Args: app: FastHTML application instance service: Configured
+StripeService instance path: URL path for webhook endpoint
+
+Returns: The registered route handler
+
+Example: \>\>\> from fh_saas.utils_stripe import StripeService,
+StripeConfig, create_webhook_route \>\>\> config =
+StripeConfig.from_env() \>\>\> service = StripeService(config) \>\>\>
+create_webhook_route(app, service) \>\>\> \# Webhook now available at
+POST /stripe/webhook
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1246"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### create_subscription_checkout_route
+
+>  create_subscription_checkout_route (app, service:__main__.StripeService,
+>                                          path:str='/checkout/{plan_type}')
+
+*Create a GET route for subscription checkout redirect.*
+
+Expects authenticated user with tenant_id in request.state.
+
+Args: app: FastHTML application instance service: Configured
+StripeService instance path: URL path pattern with {plan_type}
+placeholder
+
+Returns: The registered route handler
+
+Example: \>\>\> create_subscription_checkout_route(app, service) \>\>\>
+\# Checkout available at GET /checkout/monthly or /checkout/yearly
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1293"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### create_one_time_checkout_route
+
+>  create_one_time_checkout_route (app, service:__main__.StripeService,
+>                                      products:Dict[str,Dict[str,Any]],
+>                                      path:str='/buy/{product_id}')
+
+*Create a GET route for one-time payment checkout.*
+
+Args: app: FastHTML application instance service: Configured
+StripeService instance products: Dict mapping product_id to {‘name’:
+str, ‘amount_cents’: int} path: URL path pattern with {product_id}
+placeholder
+
+Returns: The registered route handler
+
+Example: \>\>\> products = { … ‘report’: {‘name’: ‘Premium Report’,
+‘amount_cents’: 4999}, … ‘credits’: {‘name’: ‘100 Credits’,
+‘amount_cents’: 1999}, … } \>\>\> create_one_time_checkout_route(app,
+service, products) \>\>\> \# Checkout available at GET /buy/report or
+/buy/credits
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1346"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### create_portal_route
+
+>  create_portal_route (app, service:__main__.StripeService,
+>                           path:str='/billing-portal')
+
+*Create a GET route for Stripe Customer Portal redirect.*
+
+Args: app: FastHTML application instance service: Configured
+StripeService instance path: URL path for portal endpoint
+
+Returns: The registered route handler
+
+Example: \>\>\> create_portal_route(app, service) \>\>\> \# Portal
+available at GET /billing-portal
+
+------------------------------------------------------------------------
+
+## 🏭 Service Factory
+
+Singleton pattern for easy service access across the application.
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1415"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### reset_stripe_service
+
+>  reset_stripe_service ()
+
+*Reset singleton instance (for testing only).*
+
+------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1392"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
+### get_stripe_service
+
+>  get_stripe_service (config:__main__.StripeConfig=None)
+
+*Get or create singleton StripeService instance.*
+
+Args: config: Optional StripeConfig. Uses from_env() on first call if
+not provided.
+
+Returns: StripeService singleton instance
+
+Example: \>\>\> service = get_stripe_service() \>\>\> checkout =
+service.create_subscription_checkout(…)
+
+------------------------------------------------------------------------
+
+## 🚀 Quick Start
+
+### 1. Set Environment Variables
+
+``` bash
+# Required
+export CONFIG_STRIPE_SECRETKEY="sk_test_..."
+export CONFIG_STRIPE_WEBHOOKSECRET="whsec_..."
+
+# Create prices in Stripe Dashboard, then set IDs
+export CONFIG_STRIPE_MONTHLY_PRICE_ID="price_..."
+export CONFIG_STRIPE_YEARLY_PRICE_ID="price_..."
+
+# Application URL
+export CONFIG_STRIPE_BASE_URL="https://yourapp.com"
+```
+
+### 2. Initialize Service & Routes
+
+``` python
+from fasthtml.common import FastHTML
+from fh_saas.utils_stripe import (
+    get_stripe_service,
+    create_webhook_route,
+    create_subscription_checkout_route,
+    create_portal_route,
+)
+
+app = FastHTML()
+service = get_stripe_service()
+
+# Register routes
+create_webhook_route(app, service)
+create_subscription_checkout_route(app, service)
+create_portal_route(app, service)
+
+# Now available:
+# POST /stripe/webhook       - Stripe webhook handler
+# GET  /checkout/monthly     - Monthly subscription checkout
+# GET  /checkout/yearly      - Yearly subscription checkout
+# GET  /billing-portal       - Customer self-service portal
+```
+
+### 3. Gate Premium Features
+
+``` python
+from fh_saas.utils_stripe import require_active_subscription
+
+@app.get('/premium')
+def premium_feature(request):
+    error = require_active_subscription(request.state.tenant_id)
+    if error:
+        return error  # 402 Payment Required
+    return render_premium_content()
+```
+
+### 4. Integrate with Auth Beforeware
+
+``` python
+from fh_saas.utils_auth import create_auth_beforeware
+
+# Optional: Add require_subscription=True to beforeware
+# See utils_auth for integration examples
+```
+
+
+========================================
+
+FILE: _proc/17_utils_migrate.html.md
+
+# utils_migrate
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+
+See [utils_migrate.py](../fh_saas/utils_migrate.py) for the source code.
 
 
 ========================================

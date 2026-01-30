@@ -125,6 +125,9 @@ tenant_db.conn.commit()
 | [HTTP Client](https://abhisheksreesaila.github.io/fh-saas/utils_api.html) | REST APIs with retries, rate limiting, auth |
 | [GraphQL Client](https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html) | Streaming pagination for large datasets |
 | [Webhooks](https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html) | Receive & verify external webhooks |
+| **💳 Payments & Migrations** |  |
+| [Stripe Payments](https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html) | Subscriptions, trials, access control |
+| [DB Migrations](https://abhisheksreesaila.github.io/fh-saas/utils_migrate.html) | Version tracking, rollback support |
 | **⚙️ Data Pipeline** |  |
 | [Background Tasks](https://abhisheksreesaila.github.io/fh-saas/utils_bgtsk.html) | Async job execution |
 | [Data Transforms](https://abhisheksreesaila.github.io/fh-saas/utils_polars_mapper.html) | JSON → Polars → Database pipeline |
