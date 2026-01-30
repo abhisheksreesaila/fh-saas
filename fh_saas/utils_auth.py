@@ -250,6 +250,9 @@ def create_auth_beforeware(
     schema_init: Callable[[Database], dict[str, Any]] = None,
     session_cache: bool = False,
     session_cache_ttl: int = 300,
+    require_subscription: bool = False,
+    subscription_redirect: str = None,
+    grace_period_days: int = 3,
 ):
     """Create Beforeware that checks for authenticated session and sets up request.state.
     
@@ -265,6 +268,11 @@ def create_auth_beforeware(
         session_cache: Enable caching user dict in session to reduce DB queries.
                        Recommended for HTMX-heavy apps. Default: False
         session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes)
+        require_subscription: If True, check for active subscription and return 402
+                             if not found. Default: False
+        subscription_redirect: Optional URL to redirect if subscription required.
+                              If None, returns 402 Payment Required response.
+        grace_period_days: Days to allow access after payment failure (default: 3)
     
     Returns:
         Beforeware instance for FastHTML apps
@@ -274,6 +282,7 @@ def create_auth_beforeware(
         - tenant_id: str
         - tenant_db: Database connection
         - tables: dict of Table objects (if schema_init provided)
+        - subscription: Subscription object (if require_subscription enabled)
         
     Example:
         >>> # Basic usage
@@ -289,6 +298,12 @@ def create_auth_beforeware(
         >>> def get_app_tables(db):
         ...     return {'users': db.create(User, pk='id')}
         >>> beforeware = create_auth_beforeware(schema_init=get_app_tables)
+        
+        >>> # With subscription requirement
+        >>> beforeware = create_auth_beforeware(
+        ...     require_subscription=True,
+        ...     subscription_redirect='/pricing'
+        ... )
     """
     skip_patterns = []
     if include_defaults:
@@ -357,6 +372,32 @@ def create_auth_beforeware(
                     req.state.tables = {}
             else:
                 req.state.tables = {}
+            
+            # Check subscription requirement
+            if require_subscription and hasattr(req.state, 'tenant_id') and req.state.tenant_id:
+                try:
+                    from fh_saas.utils_stripe import get_active_subscription
+                    subscription = get_active_subscription(
+                        req.state.tenant_id,
+                        grace_period_days=grace_period_days
+                    )
+                    req.state.subscription = subscription
+                    
+                    if not subscription:
+                        logger.warning(f"Subscription required for tenant {req.state.tenant_id}")
+                        if subscription_redirect:
+                            return RedirectResponse(subscription_redirect, status_code=303)
+                        return Response(
+                            content='Payment required',
+                            status_code=402,
+                            media_type='text/plain'
+                        )
+                except ImportError:
+                    logger.error("utils_stripe not available for subscription check")
+                    req.state.subscription = None
+                except Exception as e:
+                    logger.error(f"Error checking subscription: {e}")
+                    req.state.subscription = None
     
     return Beforeware(check_auth, skip=skip_patterns)
 

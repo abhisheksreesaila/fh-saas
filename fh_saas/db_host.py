@@ -4,7 +4,7 @@
 
 # %% auto 0
 __all__ = ['timestamp', 'gen_id', 'get_db_uri', 'GlobalUser', 'TenantCatalog', 'Membership', 'Subscription', 'HostAuditLog',
-           'SystemJob', 'HostDatabase']
+           'SystemJob', 'PricingPlan', 'HostDatabase']
 
 # %% ../nbs/00_db_host.ipynb 2
 from fastsql import *
@@ -95,6 +95,11 @@ class Subscription:
     stripe_sub_id: str; stripe_cust_id: str
     plan_tier: str; status: str
     current_period_end: str; cancel_at_period_end: bool = False
+    payment_type: str = "subscription"  # 'subscription' or 'one_time'
+    amount_cents: int = None  # For one-time payments
+    product_name: str = None  # Product/plan description
+    trial_end: str = None  # Trial end timestamp (ISO format)
+    created_at: str = None  # Record creation timestamp
 
 class HostAuditLog:
     """Security: Who changed the system?"""
@@ -108,7 +113,54 @@ class SystemJob:
     payload: str = None; error_log: str = None
     created_at: str; completed_at: str = None
 
-
+class PricingPlan:
+    """Pricing: Available subscription tiers with Stripe price IDs.
+    
+    Stores pricing configuration in database for admin-configurable tiers.
+    Each plan can have monthly and/or yearly billing intervals.
+    
+    Attributes:
+        id: Unique plan identifier (e.g., 'basic', 'pro', 'enterprise')
+        name: Display name for UI (e.g., 'Basic Plan')
+        description: Plan description for pricing page
+        stripe_price_monthly: Stripe Price ID for monthly billing (price_xxx)
+        stripe_price_yearly: Stripe Price ID for yearly billing (price_xxx)
+        amount_monthly: Monthly price in cents (for display, e.g., 799 = $7.99)
+        amount_yearly: Yearly price in cents (for display, e.g., 7900 = $79.00)
+        currency: ISO currency code (default: 'usd')
+        trial_days: Free trial period in days (default: 30)
+        features: JSON array of feature keys enabled for this plan
+        tier_level: Numeric level for feature gating (higher = more access)
+        is_active: Whether plan is available for new subscriptions
+        sort_order: Display order on pricing page
+        created_at: Record creation timestamp
+    
+    Example:
+        >>> plan = PricingPlan(
+        ...     id='pro',
+        ...     name='Pro Plan',
+        ...     stripe_price_monthly='price_1234',
+        ...     stripe_price_yearly='price_5678',
+        ...     amount_monthly=1999,
+        ...     amount_yearly=19900,
+        ...     tier_level=2,
+        ...     features='["api_access", "exports", "priority_support"]',
+        ... )
+    """
+    id: str
+    name: str
+    description: str = None
+    stripe_price_monthly: str = None
+    stripe_price_yearly: str = None
+    amount_monthly: int = None
+    amount_yearly: int = None
+    currency: str = "usd"
+    trial_days: int = 30
+    features: str = None  # JSON array
+    tier_level: int = 1
+    is_active: bool = True
+    sort_order: int = 0
+    created_at: str = None
 
 # %% ../nbs/00_db_host.ipynb 12
 class HostDatabase:
@@ -138,6 +190,7 @@ class HostDatabase:
         self.tenant_catalogs = self.db.create(TenantCatalog, name="core_tenants", pk='id')
         self.memberships = self.db.create(Membership, name="core_memberships", pk='id')
         self.subscriptions = self.db.create(Subscription, name="core_subscriptions", pk='id')
+        self.pricing_plans = self.db.create(PricingPlan, name="core_pricing_plans", pk='id')
         self.audit_logs = self.db.create(HostAuditLog, name="sys_audit_logs", pk='id')
         self.system_jobs = self.db.create(SystemJob, name="sys_jobs", pk='id')
         
