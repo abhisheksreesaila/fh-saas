@@ -313,7 +313,7 @@ def create_auth_beforeware(
     
     def check_auth(req, sess):
         if session_key not in sess:
-            return RedirectResponse(redirect_path, status_code=303)
+            return auth_redirect(req, redirect_path)
         
         if setup_tenant_db:
             # Check session cache first (if enabled)
@@ -386,7 +386,7 @@ def create_auth_beforeware(
                     if not subscription:
                         logger.warning(f"Subscription required for tenant {req.state.tenant_id}")
                         if subscription_redirect:
-                            return RedirectResponse(subscription_redirect, status_code=303)
+                            return auth_redirect(req, subscription_redirect)
                         return Response(
                             content='Payment required',
                             status_code=402,

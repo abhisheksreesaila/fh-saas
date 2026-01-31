@@ -207,23 +207,3 @@ signatures formatted for optimal LLM understanding.
 Contributions are welcome! Please check the [GitHub
 repository](https://github.com/abhisheksreesaila/fh-saas) for issues and
 discussions.
-
-## 🤖 AI Assistant Context
-
-**For AI coding assistants** (GitHub Copilot, Claude, ChatGPT, Cursor,
-etc.), download the complete API documentation:
-
-### [📥 Download llms-ctx.txt](https://raw.githubusercontent.com/abhisheksreesaila/fh-saas/main/llms-ctx.txt)
-
-**What’s included:** - Complete module documentation and API
-signatures - Code examples and usage patterns - Multi-tenant
-architecture patterns - Authentication and security flows - Data
-pipeline implementations
-
-**How to use:** 1. Download the `llms-ctx.txt` file 2. Add it to your AI
-assistant’s project context or instructions 3. Get accurate,
-context-aware code suggestions for fh-saas
-
-This consolidated context file (~500KB) contains all documentation
-formatted for optimal LLM understanding, enabling your AI assistant to
-provide precise help with fh-saas APIs.
