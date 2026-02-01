@@ -51,5 +51,12 @@
 # ============================================================
 # DEFAULT: Run all tests sequentially
 # ============================================================
+
+# Navigate to project root (parent of scripts folder)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+Set-Location $ProjectRoot
+Write-Host "📁 Working from: $ProjectRoot" -ForegroundColor DarkGray
+
 Write-Host "Running all tests sequentially..." -ForegroundColor Cyan
 nbdev_test --n_workers 1 --do_print --flags ''

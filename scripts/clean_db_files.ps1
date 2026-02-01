@@ -2,6 +2,12 @@
 # Clean Database Files Script
 # Removes SQLite database files and related artifacts from the fh-saas project
 
+# Navigate to project root (parent of scripts folder)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+Set-Location $ProjectRoot
+Write-Host "📁 Working from: $ProjectRoot" -ForegroundColor DarkGray
+
 Write-Host "🧹 Cleaning Database Files..." -ForegroundColor Cyan
 
 # Define patterns to search for

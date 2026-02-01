@@ -3,11 +3,11 @@ repos:
   hooks:
   - id: nbdev_clean
     name: nbdev_clean
-    entry: nbdev_clean
+    entry: python -m nbdev.clean
     language: system
     pass_filenames: false
   - id: nbdev_export
     name: nbdev_export
-    entry: nbdev_export
+    entry: python -m nbdev.export
     language: system
     pass_filenames: false

@@ -24,13 +24,18 @@
 # ========================================
 # USAGE
 # ========================================
-# .\release_publish.ps1
+# .\scripts\release_publish.ps1
 #
 # Prerequisites:
 # - GitHub token set: [Environment]::SetEnvironmentVariable('GITHUB_TOKEN', 'ghp_...', 'User')
 # - PyPI token configured in ~/.pypirc or pass to twine
 #
 # ========================================
+
+# Navigate to project root (parent of scripts folder)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+Set-Location $ProjectRoot
 
 Write-Host "`n===== RELEASE & PUBLISH PROCESS =====" -ForegroundColor Cyan
 Write-Host "Package: fh-saas`n" -ForegroundColor White

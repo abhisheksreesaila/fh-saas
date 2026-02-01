@@ -1,5 +1,11 @@
 import re
+import os
 from pathlib import Path
+
+# Navigate to project root (parent of scripts folder)
+script_dir = Path(__file__).parent
+project_root = script_dir.parent
+os.chdir(project_root)
 
 def generate_local_ctx(llms_file='llms.txt', output_file='llms-ctx.txt'):
     llms_path = Path(llms_file)

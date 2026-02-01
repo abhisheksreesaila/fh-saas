@@ -2,16 +2,21 @@
 # Handles nbdev pre-commit hooks that modify files during commit
 #
 # Usage: 
-#   .\git_commit_push.ps1 "Your commit message"
+#   .\scripts\git_commit_push.ps1 "Your commit message"
 #
 # Or source this file and use the gcap function:
-#   . .\git_commit_push.ps1
+#   . .\scripts\git_commit_push.ps1
 #   gcap "Your commit message"
 
 param(
     [Parameter(Position=0)]
     [string]$message
 )
+
+# Navigate to project root (parent of scripts folder)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+Set-Location $ProjectRoot
 
 function gcap {
     param(
@@ -23,7 +28,7 @@ function gcap {
     git add -A
     
     Write-Host "[1.5/4] Regenerating LLM context file..." -ForegroundColor Cyan
-    python local_ctx.py
+    python scripts/local_ctx.py
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  ✓ llms-ctx.txt updated" -ForegroundColor Green
         git add llms-ctx.txt

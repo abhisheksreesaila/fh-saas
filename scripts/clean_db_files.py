@@ -9,6 +9,12 @@ import glob
 import sys
 from pathlib import Path
 
+# Navigate to project root (parent of scripts folder)
+script_dir = Path(__file__).parent
+project_root = script_dir.parent
+os.chdir(project_root)
+print(f"📁 Working from: {project_root}")
+
 def find_db_files(base_path="."):
     """Find all database files in the project."""
     patterns = [
