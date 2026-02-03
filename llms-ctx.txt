@@ -100,7 +100,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### gen_id
 
->  gen_id ()
+``` python
+
+def gen_id(
+    
+):
+
+```
 
 ------------------------------------------------------------------------
 
@@ -110,7 +116,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### timestamp
 
->  timestamp ()
+``` python
+
+def timestamp(
+    
+):
+
+```
 
 ------------------------------------------------------------------------
 
@@ -120,7 +132,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_db_uri
 
->  get_db_uri (db)
+``` python
+
+def get_db_uri(
+    db
+)->str:
+
+```
 
 *Extract SQLAlchemy connection URI from a Database object.*
 
@@ -208,7 +226,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### PricingPlan
 
->  PricingPlan ()
+``` python
+
+def PricingPlan(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Pricing: Available subscription tiers with Stripe price IDs.*
 
@@ -241,7 +265,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### SystemJob
 
->  SystemJob ()
+``` python
+
+def SystemJob(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Maintenance: Provisioning & Cleanups*
 
@@ -253,7 +283,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostAuditLog
 
->  HostAuditLog ()
+``` python
+
+def HostAuditLog(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Security: Who changed the system?*
 
@@ -265,7 +301,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Subscription
 
->  Subscription ()
+``` python
+
+def Subscription(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Billing: Are they allowed to use the app?*
 
@@ -277,7 +319,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Membership
 
->  Membership ()
+``` python
+
+def Membership(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Router: Which tenants can they access?*
 
@@ -289,7 +337,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantCatalog
 
->  TenantCatalog ()
+``` python
+
+def TenantCatalog(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Registry: Where is the database?*
 
@@ -301,7 +355,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GlobalUser
 
->  GlobalUser ()
+``` python
+
+def GlobalUser(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Identity: Who is this person?*
 
@@ -415,7 +475,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase
 
->  HostDatabase (db_url:str=None)
+``` python
+
+def HostDatabase(
+    db_url:str=None
+):
+
+```
 
 *Singleton connection manager for the host database.*
 
@@ -504,7 +570,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.from_env
 
->  HostDatabase.from_env ()
+``` python
+
+def from_env(
+    
+):
+
+```
 
 *Create HostDatabase from DB\_* environment variables.\*
 
@@ -516,7 +588,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.commit
 
->  HostDatabase.commit ()
+``` python
+
+def commit(
+    
+):
+
+```
 
 *Commit current transaction.*
 
@@ -528,7 +606,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.rollback
 
->  HostDatabase.rollback ()
+``` python
+
+def rollback(
+    
+):
+
+```
 
 *Rollback current transaction.*
 
@@ -540,7 +624,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.reset_instance
 
->  HostDatabase.reset_instance ()
+``` python
+
+def reset_instance(
+    
+):
+
+```
 
 *Reset singleton instance (testing only).*
 
@@ -707,7 +797,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_or_create_tenant_db
 
->  get_or_create_tenant_db (tenant_id:str, tenant_name:str=None)
+``` python
+
+def get_or_create_tenant_db(
+    tenant_id:str, tenant_name:str=None
+):
+
+```
 
 *Get or create a tenant database connection by tenant ID.*
 
@@ -730,7 +826,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantSettings
 
->  TenantSettings ()
+``` python
+
+def TenantSettings(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Tenant-wide configuration and feature flags.*
 
@@ -742,7 +844,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantPermission
 
->  TenantPermission ()
+``` python
+
+def TenantPermission(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Fine-grained resource permission for a tenant user.*
 
@@ -754,7 +862,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantUser
 
->  TenantUser ()
+``` python
+
+def TenantUser(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Local user profile linked to GlobalUser in host database.*
 
@@ -825,7 +939,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### init_tenant_core_schema
 
->  init_tenant_core_schema (tenant_db:fastsql.core.Database)
+``` python
+
+def init_tenant_core_schema(
+    tenant_db:Database
+):
+
+```
 
 *Create all core tenant tables and return table accessors.*
 
@@ -1086,8 +1206,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### register_table
 
->  register_table (tenant_db:fastsql.core.Database, model_class:Type,
->                      table_name:str, pk:str='id')
+``` python
+
+def register_table(
+    tenant_db:Database, model_class:Type, table_name:str, pk:str='id'
+):
+
+```
 
 *Create a table from a dataclass model if it doesn’t exist (atomic).*
 
@@ -1099,8 +1224,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### register_tables
 
->  register_tables (tenant_db:fastsql.core.Database,
->                       models:List[Tuple[Type,str,str]])
+``` python
+
+def register_tables(
+    tenant_db:Database, models:List
+)->Dict:
+
+```
 
 *Create multiple tables atomically (all succeed or all rollback).*
 
@@ -1135,7 +1265,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### drop_table
 
->  drop_table (tenant_db:fastsql.core.Database, table_name:str)
+``` python
+
+def drop_table(
+    tenant_db:Database, table_name:str
+)->None:
+
+```
 
 *Drop a table if it exists (atomic operation).*
 
@@ -1227,8 +1363,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_index
 
->  create_index (tenant_db:fastsql.core.Database, table_name:str,
->                    columns:List[str], unique:bool=False, index_name:str=None)
+``` python
+
+def create_index(
+    tenant_db:Database, table_name:str, columns:List, unique:bool=False, index_name:str=None
+)->None:
+
+```
 
 *Create an index on a table if it doesn’t exist (atomic operation).*
 
@@ -1240,8 +1381,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_indexes
 
->  create_indexes (tenant_db:fastsql.core.Database,
->                      indexes:List[Tuple[str,List[str],bool,Optional[str]]])
+``` python
+
+def create_indexes(
+    tenant_db:Database, indexes:List
+)->None:
+
+```
 
 *Create multiple indexes atomically (all succeed or all rollback).*
 
@@ -1267,8 +1413,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### drop_index
 
->  drop_index (tenant_db:fastsql.core.Database, index_name:str,
->                  table_name:str=None)
+``` python
+
+def drop_index(
+    tenant_db:Database, index_name:str, table_name:str=None
+)->None:
+
+```
 
 *Drop an index if it exists (atomic operation).*
 
@@ -1309,7 +1460,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### table_exists
 
->  table_exists (tenant_db:fastsql.core.Database, table_name:str)
+``` python
+
+def table_exists(
+    tenant_db:Database, table_name:str
+)->bool:
+
+```
 
 *Check if a table exists in the database.*
 
@@ -1328,6 +1485,165 @@ FILE: _proc/04_utils_auth.html.md
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
 
+------------------------------------------------------------------------
+
+## ⏰ Sliding Session Configuration
+
+Configure session timeout behavior with sliding expiry.
+
+<table style="width:100%;">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 27%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_age</code></td>
+<td><code>3600</code></td>
+<td>Session expires after this many seconds of inactivity</td>
+</tr>
+<tr>
+<td><code>sliding</code></td>
+<td><code>True</code></td>
+<td>Refresh session on each request</td>
+</tr>
+<tr>
+<td><code>absolute_max</code></td>
+<td><code>None</code></td>
+<td>Optional hard limit regardless of activity (e.g., 86400 for
+24h)</td>
+</tr>
+<tr>
+<td><code>secure</code></td>
+<td><code>True</code></td>
+<td>HTTPS-only cookies in production</td>
+</tr>
+<tr>
+<td><code>same_site</code></td>
+<td><code>"lax"</code></td>
+<td>SameSite cookie policy for CSRF protection</td>
+</tr>
+</tbody>
+</table>
+
+### How Sliding Sessions Work
+
+    Current (Fixed Timeout):
+      Login at 10:00 → Expires at 11:00 (regardless of activity)
+      User active at 10:55 → STILL logged out at 11:00 ❌
+
+    Sliding Timeout:
+      Login at 10:00 → Expires at 11:00
+      User active at 10:55 → Expires at 11:55 ✓
+      User active at 11:50 → Expires at 12:50 ✓
+      User idle for 1 hour → Logged out ✓
+
+------------------------------------------------------------------------
+
+## 🔄 Sliding Session Middleware
+
+Custom middleware that extends Starlette’s SessionMiddleware to refresh
+cookie `max_age` on each authenticated request.
+
+------------------------------------------------------------------------
+
+### SessionConfig
+
+``` python
+
+def SessionConfig(
+    max_age:int=3600, sliding:bool=True, absolute_max:int=None, secure:bool=True, same_site:str='lax',
+    http_only:bool=True
+)->None:
+
+```
+
+*Configuration for sliding session behavior.*
+
+Attributes: max_age: Session expires after this many seconds of
+inactivity. Default: 3600 (1 hour) sliding: If True, refresh session
+expiry on each request. Default: True absolute_max: Optional hard limit
+in seconds regardless of activity. Default: None secure: If True, cookie
+only sent over HTTPS. Default: True same_site: SameSite cookie policy
+(‘lax’, ‘strict’, ‘none’). Default: ‘lax’ http_only: If True, cookie not
+accessible via JavaScript. Default: True
+
+Example: \>\>\> config = SessionConfig() \# 1 hour inactivity timeout,
+sliding enabled \>\>\> config = SessionConfig(max_age=1800) \# 30 min
+inactivity timeout \>\>\> config = SessionConfig(max_age=3600,
+absolute_max=86400) \# 1h sliding, 24h hard limit
+
+------------------------------------------------------------------------
+
+### SlidingSessionMiddleware
+
+``` python
+
+def SlidingSessionMiddleware(
+    app, secret_key:str, session_config:SessionConfig=None, session_cookie:str='session', path:str='/'
+):
+
+```
+
+*Session middleware with sliding expiry.*
+
+Extends Starlette’s SessionMiddleware to refresh the session cookie
+max_age on each request, implementing sliding session expiry.
+
+Sessions expire after `max_age` seconds of INACTIVITY, not from login
+time.
+
+Args: app: ASGI application secret_key: Secret key for signing cookies
+session_config: SessionConfig instance for timeout settings
+session_cookie: Cookie name. Default: ‘session’ path: Cookie path.
+Default: ‘/’
+
+Example: \>\>\> from starlette.applications import Starlette \>\>\> app
+= Starlette() \>\>\> config = SessionConfig(max_age=3600) \# 1 hour
+inactivity \>\>\> app = SlidingSessionMiddleware(app, secret_key=‘…’,
+session_config=config)
+
+------------------------------------------------------------------------
+
+### create_session_middleware
+
+``` python
+
+def create_session_middleware(
+    secret_key:str, session_config:SessionConfig=None, session_cookie:str='session'
+)->SlidingSessionMiddleware:
+
+```
+
+*Factory to create SlidingSessionMiddleware for FastHTML apps.*
+
+Args: secret_key: Secret key for signing session cookies (required)
+session_config: SessionConfig instance. Default: SessionConfig.default()
+session_cookie: Cookie name. Default: ‘session’
+
+Returns: Configured SlidingSessionMiddleware instance
+
+Example: \>\>\> from fasthtml.common import FastHTML \>\>\> \>\>\> \#
+Create app WITHOUT default session middleware \>\>\> app =
+FastHTML(sess_cls=None) \# Disable default sessions \>\>\> \>\>\> \# Add
+sliding session middleware \>\>\> config = SessionConfig(max_age=3600)
+\# 1 hour inactivity \>\>\> app =
+create_session_middleware(‘your-secret-key’, config)(app) \>\>\> \>\>\>
+\# Or wrap during app creation (recommended) \>\>\> middleware =
+create_session_middleware(‘your-secret-key’, config) \>\>\> \# Then
+configure FastHTML to use it
+
+Note: FastHTML’s default SessionMiddleware needs to be disabled first.
+See integration documentation for patterns.
+
 ## 🎯 Overview
 
 <table>
@@ -1344,6 +1660,12 @@ FILE: _proc/04_utils_auth.html.md
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>⏰ Sliding Sessions</td>
+<td><code>SessionConfig</code>, <code>SlidingSessionMiddleware</code>,
+<code>create_session_middleware</code></td>
+<td>Sliding session expiry (inactivity timeout)</td>
+</tr>
 <tr>
 <td>🛡️ Beforeware</td>
 <td><a
@@ -1473,29 +1795,36 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 ### Token Expiry
 
 <table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 26%" />
+<col style="width: 33%" />
+</colgroup>
 <thead>
 <tr>
 <th>Token Type</th>
 <th>Expiry</th>
-<th>Current Behavior</th>
+<th>Behavior</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Google OAuth</td>
 <td>1 hour</td>
-<td>User must re-login</td>
+<td>User must re-login (refresh tokens: future)</td>
 </tr>
 <tr>
-<td>Session</td>
-<td>Configurable</td>
-<td>Starlette signed cookie</td>
+<td>Session (sliding)</td>
+<td>1 hour inactivity</td>
+<td>Refreshes on each request via
+<code>SlidingSessionMiddleware</code></td>
 </tr>
 </tbody>
 </table>
 
-> 💡 **Future**: Implement refresh token flow for seamless
-> re-authentication
+> 💡 **Sliding Sessions**: Use `SlidingSessionMiddleware` or
+> `create_session_middleware()` to keep users logged in while active.
+> Sessions only expire after configured inactivity period.
 
 ``` python
 from nbdev.showdoc import show_doc
@@ -1576,7 +1905,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### has_min_role
 
->  has_min_role (user:dict, required_role:str)
+``` python
+
+def has_min_role(
+    user:dict, required_role:str
+)->bool:
+
+```
 
 *Check if user meets the minimum role requirement.*
 
@@ -1597,7 +1932,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_role
 
->  get_user_role (session:dict, tenant_db:fastsql.core.Database=None)
+``` python
+
+def get_user_role(
+    session:dict, tenant_db:Database=None
+)->str:
+
+```
 
 *Derive effective role from session and tenant database.*
 
@@ -1619,7 +1960,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_role
 
->  require_role (min_role:str)
+``` python
+
+def require_role(
+    min_role:str
+):
+
+```
 
 *Decorator to protect routes with minimum role requirement.*
 
@@ -1712,7 +2059,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### invalidate_auth_cache
 
->  invalidate_auth_cache (session:dict)
+``` python
+
+def invalidate_auth_cache(
+    session:dict
+):
+
+```
 
 *Clear the auth cache from session.*
 
@@ -1839,16 +2192,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_auth_beforeware
 
->  create_auth_beforeware (redirect_path:str='/login',
->                              session_key:str='user_id', skip:list[str]=None,
->                              include_defaults:bool=True,
->                              setup_tenant_db:bool=True, schema_init:Callable[[
->                              fastsql.core.Database],dict[str,Any]]=None,
->                              session_cache:bool=False,
->                              session_cache_ttl:int=300,
->                              require_subscription:bool=False,
->                              subscription_redirect:str=None,
->                              grace_period_days:int=3)
+``` python
+
+def create_auth_beforeware(
+    redirect_path:str='/login', session_key:str='user_id', skip:list=None, include_defaults:bool=True,
+    setup_tenant_db:bool=True, schema_init:Callable=None, session_cache:bool=False, session_cache_ttl:int=300,
+    require_subscription:bool=False, subscription_redirect:str=None, grace_period_days:int=3,
+    session_config:SessionConfig=None
+):
+
+```
 
 *Create Beforeware that checks for authenticated session and sets up
 request.state.*
@@ -1866,7 +2219,9 @@ require_subscription: If True, check for active subscription and return
 402 if not found. Default: False subscription_redirect: Optional URL to
 redirect if subscription required. If None, returns 402 Payment Required
 response. grace_period_days: Days to allow access after payment failure
-(default: 3)
+(default: 3) session_config: Optional SessionConfig for absolute timeout
+enforcement. Note: Sliding expiry requires SlidingSessionMiddleware.
+This parameter only enforces absolute_max if configured.
 
 Returns: Beforeware instance for FastHTML apps
 
@@ -1929,7 +2284,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_google_oauth_client
 
->  get_google_oauth_client ()
+``` python
+
+def get_google_oauth_client(
+    
+):
+
+```
 
 *Initialize Google OAuth client with credentials from environment.*
 
@@ -1981,7 +2342,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_oauth_state
 
->  verify_oauth_state (session:dict, callback_state:str)
+``` python
+
+def verify_oauth_state(
+    session:dict, callback_state:str
+):
+
+```
 
 *Verify OAuth callback state matches stored session state (CSRF
 protection).*
@@ -1994,7 +2361,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_oauth_state
 
->  generate_oauth_state ()
+``` python
+
+def generate_oauth_state(
+    
+):
+
+```
 
 *Generate cryptographically secure random state token for CSRF
 protection.*
@@ -2041,8 +2414,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_membership
 
->  verify_membership (host_db:fh_saas.db_host.HostDatabase, user_id:str,
->                         tenant_id:str)
+``` python
+
+def verify_membership(
+    host_db:HostDatabase, user_id:str, tenant_id:str
+)->bool:
+
+```
 
 *Verify user has active membership for specific tenant.*
 
@@ -2054,7 +2432,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_membership
 
->  get_user_membership (host_db:fh_saas.db_host.HostDatabase, user_id:str)
+``` python
+
+def get_user_membership(
+    host_db:HostDatabase, user_id:str
+):
+
+```
 
 *Get single active membership for user.*
 
@@ -2066,8 +2450,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_or_get_global_user
 
->  create_or_get_global_user (host_db:fh_saas.db_host.HostDatabase,
->                                 oauth_id:str, email:str, oauth_info:dict=None)
+``` python
+
+def create_or_get_global_user(
+    host_db:HostDatabase, oauth_id:str, email:str, oauth_info:dict=None
+):
+
+```
 
 *Create or retrieve GlobalUser from host database.*
 
@@ -2116,8 +2505,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### provision_new_user
 
->  provision_new_user (host_db:fh_saas.db_host.HostDatabase,
->                          global_user:fh_saas.db_host.GlobalUser)
+``` python
+
+def provision_new_user(
+    host_db:HostDatabase, global_user:GlobalUser
+)->str:
+
+```
 
 *Auto-provision new tenant for first-time user.*
 
@@ -2163,7 +2557,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### clear_session
 
->  clear_session (session:dict)
+``` python
+
+def clear_session(
+    session:dict
+):
+
+```
 
 *Clear all session data (logout).*
 
@@ -2175,7 +2575,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_current_user
 
->  get_current_user (session:dict)
+``` python
+
+def get_current_user(
+    session:dict
+)->dict | None:
+
+```
 
 *Extract current user info from session.*
 
@@ -2195,11 +2601,20 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_user_session
 
->  create_user_session (session:dict,
->                           global_user:fh_saas.db_host.GlobalUser,
->                           membership:fh_saas.db_host.Membership)
+``` python
+
+def create_user_session(
+    session:dict, global_user:GlobalUser, membership:Membership
+):
+
+```
 
 *Create authenticated session after successful OAuth login.*
+
+Sets session keys for user identity and tracking: - user_id, email,
+tenant_id, tenant_role, is_sys_admin: Identity - login_at: Timestamp
+when user logged in - session_started_at: Unix timestamp for absolute
+session timeout tracking
 
 ------------------------------------------------------------------------
 
@@ -2243,7 +2658,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### auth_redirect
 
->  auth_redirect (request, redirect_url:str='/login')
+``` python
+
+def auth_redirect(
+    request, redirect_url:str='/login'
+):
+
+```
 
 *HTMX-aware redirect for authentication flows.*
 
@@ -2271,7 +2692,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_tenant_access
 
->  require_tenant_access (request_or_session)
+``` python
+
+def require_tenant_access(
+    request_or_session
+):
+
+```
 
 *Get tenant database with membership validation.*
 
@@ -2283,8 +2710,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### route_user_after_login
 
->  route_user_after_login (global_user:fh_saas.db_host.GlobalUser,
->                              membership:fh_saas.db_host.Membership=None)
+``` python
+
+def route_user_after_login(
+    global_user:GlobalUser, membership:Membership=None
+)->str:
+
+```
 
 *Determine redirect URL based on user type and membership.*
 
@@ -2330,7 +2762,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_logout
 
->  handle_logout (session)
+``` python
+
+def handle_logout(
+    session
+):
+
+```
 
 *Clear session and redirect to login page.*
 
@@ -2342,7 +2780,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_oauth_callback
 
->  handle_oauth_callback (code:str, state:str, request, session)
+``` python
+
+def handle_oauth_callback(
+    code:str, state:str, request, session
+):
+
+```
 
 *Complete OAuth flow: CSRF verify → user info → provision → session →
 redirect.*
@@ -2355,7 +2799,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_login_request
 
->  handle_login_request (request, session)
+``` python
+
+def handle_login_request(
+    request, session
+):
+
+```
 
 *Generate Google OAuth URL with CSRF state protection.*
 
@@ -2431,8 +2881,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### configure_logging
 
->  configure_logging (log_file:str=None, level:str=None,
->                         max_bytes:int=10000000, backup_count:int=5)
+``` python
+
+def configure_logging(
+    log_file:str=None, level:str=None, max_bytes:int=10000000, backup_count:int=5
+):
+
+```
 
 *Configure logging for all fh_saas modules - call once at app startup.*
 
@@ -2674,7 +3129,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AsyncAPIClient
 
->  AsyncAPIClient (base_url:str, auth_headers:dict=None, timeout:int=30)
+``` python
+
+def AsyncAPIClient(
+    base_url:str, auth_headers:dict=None, timeout:int=30
+):
+
+```
 
 *Async HTTP client with retry logic for external API integrations.*
 
@@ -2686,8 +3147,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AsyncAPIClient.\_\_init\_\_
 
->  AsyncAPIClient.__init__ (base_url:str, auth_headers:dict=None,
->                               timeout:int=30)
+``` python
+
+def __init__(
+    base_url:str, auth_headers:dict=None, timeout:int=30
+):
+
+```
 
 *Initialize client with base URL, optional auth headers, and timeout.*
 
@@ -2699,8 +3165,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AsyncAPIClient.request
 
->  AsyncAPIClient.request (method:str, endpoint:str, params:dict=None,
->                              json:dict=None, headers:dict=None)
+``` python
+
+def request(
+    method:str, endpoint:str, params:dict=None, json:dict=None, headers:dict=None
+)->httpx.Response:
+
+```
 
 *Execute HTTP request with automatic retry on 429/500+ errors.*
 
@@ -2712,7 +3183,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AsyncAPIClient.get_json
 
->  AsyncAPIClient.get_json (endpoint:str, params:dict=None)
+``` python
+
+def get_json(
+    endpoint:str, params:dict=None
+)->Dict[str, Any]:
+
+```
 
 *Convenience GET that returns parsed JSON.*
 
@@ -2756,7 +3233,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bearer_token_auth
 
->  bearer_token_auth (token:str)
+``` python
+
+def bearer_token_auth(
+    token:str
+)->dict:
+
+```
 
 *Generate Bearer token authentication header.*
 
@@ -2768,7 +3251,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### api_key_auth
 
->  api_key_auth (api_key:str, header_name:str='X-API-Key')
+``` python
+
+def api_key_auth(
+    api_key:str, header_name:str='X-API-Key'
+)->dict:
+
+```
 
 *Generate API key header with customizable header name.*
 
@@ -2780,7 +3269,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### oauth_token_auth
 
->  oauth_token_auth (access_token:str)
+``` python
+
+def oauth_token_auth(
+    access_token:str
+)->dict:
+
+```
 
 *Generate OAuth 2.0 access token header (alias for bearer_token_auth).*
 
@@ -3006,36 +3501,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient
 
->  GraphQLClient (api_client:fh_saas.utils_api.AsyncAPIClient,
->                     endpoint:str='')
+``` python
+
+def GraphQLClient(
+    api_client:AsyncAPIClient, # Initialized AsyncAPIClient instance
+    endpoint:str='', # GraphQL endpoint path (default: '' for base URL)
+):
+
+```
 
 *GraphQL client with streaming pagination for memory-efficient data
 fetching.*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>api_client</td>
-<td>AsyncAPIClient</td>
-<td></td>
-<td>Initialized AsyncAPIClient instance</td>
-</tr>
-<tr>
-<td>endpoint</td>
-<td>str</td>
-<td></td>
-<td>GraphQL endpoint path (default: ’’ for base URL)</td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -3045,35 +3521,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.\_\_init\_\_
 
->  GraphQLClient.__init__ (api_client:fh_saas.utils_api.AsyncAPIClient,
->                              endpoint:str='')
+``` python
+
+def __init__(
+    api_client:AsyncAPIClient, # Initialized AsyncAPIClient instance
+    endpoint:str='', # GraphQL endpoint path (default: '' for base URL)
+):
+
+```
 
 *Initialize self. See help(type(self)) for accurate signature.*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>api_client</td>
-<td>AsyncAPIClient</td>
-<td></td>
-<td>Initialized AsyncAPIClient instance</td>
-</tr>
-<tr>
-<td>endpoint</td>
-<td>str</td>
-<td></td>
-<td>GraphQL endpoint path (default: ’’ for base URL)</td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -3083,40 +3540,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.execute_query
 
->  GraphQLClient.execute_query (query:str, variables:dict=None)
+``` python
+
+def execute_query(
+    query:str, # GraphQL query string
+    variables:dict=None, # Query variables
+)->Dict[str, Any]:
+
+```
 
 *Execute a single GraphQL query and return the JSON response.*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>query</td>
-<td>str</td>
-<td></td>
-<td>GraphQL query string</td>
-</tr>
-<tr>
-<td>variables</td>
-<td>dict</td>
-<td>None</td>
-<td>Query variables</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -3126,40 +3559,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.execute_mutation
 
->  GraphQLClient.execute_mutation (mutation:str, variables:dict=None)
+``` python
+
+def execute_mutation(
+    mutation:str, # GraphQL mutation string
+    variables:dict=None, # Mutation variables
+)->Dict[str, Any]:
+
+```
 
 *Execute a GraphQL mutation (alias for execute_query).*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>mutation</td>
-<td>str</td>
-<td></td>
-<td>GraphQL mutation string</td>
-</tr>
-<tr>
-<td>variables</td>
-<td>dict</td>
-<td>None</td>
-<td>Mutation variables</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -3169,76 +3578,20 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.fetch_pages_generator
 
->  GraphQLClient.fetch_pages_generator (query_template:str, variables:dict,
->                                           items_path:list[str],
->                                           cursor_path:list[str],
->                                           has_next_path:list[str]=None,
->                                           cursor_var:str='cursor')
+``` python
+
+def fetch_pages_generator(
+    query_template:str, # GraphQL query with $variables placeholders
+    variables:dict, # Initial variables (must include cursor key)
+    items_path:list[str], # JSONPath to list of items (e.g., ['data', 'users', 'nodes'])
+    cursor_path:list[str], # JSONPath to next cursor (e.g., ['data', 'users', 'pageInfo', 'endCursor'])
+    has_next_path:list[str]=None, # Optional path to hasNextPage boolean (if None, checks cursor != None)
+    cursor_var:str='cursor', # Variable name for cursor in query (default: 'cursor')
+)->AsyncGenerator[List[Dict], None]:
+
+```
 
 *Stream paginated GraphQL data page-by-page using async generator.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>query_template</td>
-<td>str</td>
-<td></td>
-<td>GraphQL query with $variables placeholders</td>
-</tr>
-<tr>
-<td>variables</td>
-<td>dict</td>
-<td></td>
-<td>Initial variables (must include cursor key)</td>
-</tr>
-<tr>
-<td>items_path</td>
-<td>list</td>
-<td></td>
-<td>JSONPath to list of items (e.g., [‘data’, ‘users’, ‘nodes’])</td>
-</tr>
-<tr>
-<td>cursor_path</td>
-<td>list</td>
-<td></td>
-<td>JSONPath to next cursor (e.g., [‘data’, ‘users’, ‘pageInfo’,
-‘endCursor’])</td>
-</tr>
-<tr>
-<td>has_next_path</td>
-<td>list</td>
-<td>None</td>
-<td>Optional path to hasNextPage boolean (if None, checks cursor !=
-None)</td>
-</tr>
-<tr>
-<td>cursor_var</td>
-<td>str</td>
-<td>cursor</td>
-<td>Variable name for cursor in query (default: ‘cursor’)</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>AsyncGenerator</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -3248,10 +3601,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.fetch_pages_relay
 
->  GraphQLClient.fetch_pages_relay (query:str, connection_path:str,
->                                       variables:dict|None=None,
->                                       page_size:int=100,
->                                       max_pages:int|None=None)
+``` python
+
+def fetch_pages_relay(
+    query:str, # GraphQL query with $first and $after variables
+    connection_path:str, # Dot-notation path to connection object (e.g., "transactionsConnection")
+    variables:dict | None=None, # Base variables for the query (excluding first/after)
+    page_size:int=100, # Number of items per page
+    max_pages:int | None=None, # Maximum pages to fetch (None for unlimited)
+)->list[dict]:
+
+```
 
 *Fetch all pages from a Relay-style paginated GraphQL query.*
 
@@ -3262,62 +3622,6 @@ hasNextPage endCursor } } }
 
 Returns: List of all nodes from all pages
 
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>query</td>
-<td>str</td>
-<td></td>
-<td>GraphQL query with $first and $after variables</td>
-</tr>
-<tr>
-<td>connection_path</td>
-<td>str</td>
-<td></td>
-<td>Dot-notation path to connection object (e.g.,
-“transactionsConnection”)</td>
-</tr>
-<tr>
-<td>variables</td>
-<td>dict | None</td>
-<td>None</td>
-<td>Base variables for the query (excluding first/after)</td>
-</tr>
-<tr>
-<td>page_size</td>
-<td>int</td>
-<td>100</td>
-<td>Number of items per page</td>
-</tr>
-<tr>
-<td>max_pages</td>
-<td>int | None</td>
-<td>None</td>
-<td>Maximum pages to fetch (None for unlimited)</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>list</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
 ------------------------------------------------------------------------
 
 <a
@@ -3326,43 +3630,19 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.execute
 
->  GraphQLClient.execute (query:str, variables:dict=None)
+``` python
+
+def execute(
+    query:str, # GraphQL query or mutation string
+    variables:dict=None, # Query/mutation variables
+)->Dict[str, Any]:
+
+```
 
 *Execute a GraphQL query or mutation and return the data portion.*
 
 This is a unified method that works for both queries and mutations.
 Returns only the ‘data’ portion of the response for convenience.
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>query</td>
-<td>str</td>
-<td></td>
-<td>GraphQL query or mutation string</td>
-</tr>
-<tr>
-<td>variables</td>
-<td>dict</td>
-<td>None</td>
-<td>Query/mutation variables</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -3372,56 +3652,20 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.from_url
 
->  GraphQLClient.from_url (cls, url:str, bearer_token:str|None=None,
->                              headers:dict|None=None)
+``` python
+
+def from_url(
+    cls, url:str, # GraphQL endpoint URL
+    bearer_token:str | None=None, # Optional bearer token for Authorization header
+    headers:dict | None=None, # Optional additional headers
+):
+
+```
 
 *Create GraphQL client directly from URL with optional bearer token.*
 
 Usage: async with GraphQLClient.from_url(url, bearer_token=token) as
 gql: result = await gql.execute(query)
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>cls</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>url</td>
-<td>str</td>
-<td></td>
-<td>GraphQL endpoint URL</td>
-</tr>
-<tr>
-<td>bearer_token</td>
-<td>str | None</td>
-<td>None</td>
-<td>Optional bearer token for Authorization header</td>
-</tr>
-<tr>
-<td>headers</td>
-<td>dict | None</td>
-<td>None</td>
-<td>Optional additional headers</td>
-</tr>
-</tbody>
-</table>
 
 ### Streaming Pagination Details
 
@@ -3502,8 +3746,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### execute_graphql
 
->  execute_graphql (url:str, query:str, variables:dict|None=None,
->                       bearer_token:str|None=None, headers:dict|None=None)
+``` python
+
+def execute_graphql(
+    url:str, # GraphQL endpoint URL
+    query:str, # GraphQL query string
+    variables:dict | None=None, # Optional query variables
+    bearer_token:str | None=None, # Optional bearer token for Authorization header
+    headers:dict | None=None, # Optional additional headers
+)->dict:
+
+```
 
 *Execute a single GraphQL query without managing client lifecycle.*
 
@@ -3515,61 +3768,6 @@ url=“https://api.example.com/graphql”, query=“query { users { id name }
 }”, bearer_token=“your-token” )
 
 Raises: ValueError: If the response contains GraphQL errors
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>url</td>
-<td>str</td>
-<td></td>
-<td>GraphQL endpoint URL</td>
-</tr>
-<tr>
-<td>query</td>
-<td>str</td>
-<td></td>
-<td>GraphQL query string</td>
-</tr>
-<tr>
-<td>variables</td>
-<td>dict | None</td>
-<td>None</td>
-<td>Optional query variables</td>
-</tr>
-<tr>
-<td>bearer_token</td>
-<td>str | None</td>
-<td>None</td>
-<td>Optional bearer token for Authorization header</td>
-</tr>
-<tr>
-<td>headers</td>
-<td>dict | None</td>
-<td>None</td>
-<td>Optional additional headers</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 
 ========================================
@@ -3669,54 +3867,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_webhook_signature
 
->  verify_webhook_signature (payload:str, signature:str,
->                                secret:Optional[str]=None)
+``` python
+
+def verify_webhook_signature(
+    payload:str, # Raw request body as string
+    signature:str, # Signature from header (format: "sha256=<hex>")
+    secret:Optional=None, # Secret key, defaults to WEBHOOK_SECRET env var
+)->bool:
+
+```
 
 *Verify HMAC-SHA256 signature for webhook payload. Returns True if
 valid.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>payload</td>
-<td>str</td>
-<td></td>
-<td>Raw request body as string</td>
-</tr>
-<tr>
-<td>signature</td>
-<td>str</td>
-<td></td>
-<td>Signature from header (format: “sha256=<hex>”)</td>
-</tr>
-<tr>
-<td>secret</td>
-<td>Optional</td>
-<td>None</td>
-<td>Secret key, defaults to WEBHOOK_SECRET env var</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>bool</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## 🔄 Idempotency
 
@@ -3748,36 +3910,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### check_idempotency
 
->  check_idempotency (db:fastsql.core.Database, idempotency_key:str)
+``` python
+
+def check_idempotency(
+    db:Database, # Tenant database connection
+    idempotency_key:str, # Unique key for this webhook event
+)->bool:
+
+```
 
 *Check if webhook event already processed. Returns True if duplicate.*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>idempotency_key</td>
-<td>str</td>
-<td>Unique key for this webhook event</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>bool</strong></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## 📝 Event Logging
 
@@ -3814,78 +3956,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### log_webhook_event
 
->  log_webhook_event (db:fastsql.core.Database, webhook_id:str, source:str,
->                         event_type:str, payload:Dict[str,Any], signature:str,
->                         idempotency_key:str, status:str='pending')
+``` python
+
+def log_webhook_event(
+    db:Database, # Tenant database connection
+    webhook_id:str, # Unique webhook ID
+    source:str, # Source system (e.g., "stripe", "github")
+    event_type:str, # Event type (e.g., "payment.success")
+    payload:Dict, # Full webhook payload
+    signature:str, # Request signature
+    idempotency_key:str, # Idempotency key
+    status:str='pending', # Status: pending, processing, completed, failed
+):
+
+```
 
 *Log webhook event to database*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td></td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>webhook_id</td>
-<td>str</td>
-<td></td>
-<td>Unique webhook ID</td>
-</tr>
-<tr>
-<td>source</td>
-<td>str</td>
-<td></td>
-<td>Source system (e.g., “stripe”, “github”)</td>
-</tr>
-<tr>
-<td>event_type</td>
-<td>str</td>
-<td></td>
-<td>Event type (e.g., “payment.success”)</td>
-</tr>
-<tr>
-<td>payload</td>
-<td>Dict</td>
-<td></td>
-<td>Full webhook payload</td>
-</tr>
-<tr>
-<td>signature</td>
-<td>str</td>
-<td></td>
-<td>Request signature</td>
-</tr>
-<tr>
-<td>idempotency_key</td>
-<td>str</td>
-<td></td>
-<td>Idempotency key</td>
-</tr>
-<tr>
-<td>status</td>
-<td>str</td>
-<td>pending</td>
-<td>Status: pending, processing, completed, failed</td>
-</tr>
-</tbody>
-</table>
 
 ## Update Webhook Status
 
@@ -3897,47 +3983,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### update_webhook_status
 
->  update_webhook_status (db:fastsql.core.Database, webhook_id:str,
->                             status:str, error_message:Optional[str]=None)
+``` python
+
+def update_webhook_status(
+    db:Database, # Tenant database connection
+    webhook_id:str, # Webhook ID to update
+    status:str, # New status
+    error_message:Optional=None, # Optional error message
+):
+
+```
 
 *Update webhook event status and processed timestamp*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td></td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>webhook_id</td>
-<td>str</td>
-<td></td>
-<td>Webhook ID to update</td>
-</tr>
-<tr>
-<td>status</td>
-<td>str</td>
-<td></td>
-<td>New status</td>
-</tr>
-<tr>
-<td>error_message</td>
-<td>Optional</td>
-<td>None</td>
-<td>Optional error message</td>
-</tr>
-</tbody>
-</table>
 
 ## ⚡ Process Webhook
 
@@ -3974,92 +4031,25 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### process_webhook
 
->  process_webhook (db:fastsql.core.Database, webhook_id:str, source:str,
->                       event_type:str, payload:Dict[str,Any], signature:str,
->                       idempotency_key:str, raw_body:str, handler:Callable,
->                       secret:Optional[str]=None)
+``` python
+
+def process_webhook(
+    db:Database, # Tenant database connection
+    webhook_id:str, # Unique webhook ID
+    source:str, # Source system
+    event_type:str, # Event type
+    payload:Dict, # Webhook payload
+    signature:str, # Request signature
+    idempotency_key:str, # Idempotency key
+    raw_body:str, # Raw request body for signature verification
+    handler:Callable, # App-specific webhook handler function
+    secret:Optional=None, # Optional webhook secret
+)->Dict:
+
+```
 
 *Process webhook with verification, idempotency, and custom handler
 execution*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td></td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>webhook_id</td>
-<td>str</td>
-<td></td>
-<td>Unique webhook ID</td>
-</tr>
-<tr>
-<td>source</td>
-<td>str</td>
-<td></td>
-<td>Source system</td>
-</tr>
-<tr>
-<td>event_type</td>
-<td>str</td>
-<td></td>
-<td>Event type</td>
-</tr>
-<tr>
-<td>payload</td>
-<td>Dict</td>
-<td></td>
-<td>Webhook payload</td>
-</tr>
-<tr>
-<td>signature</td>
-<td>str</td>
-<td></td>
-<td>Request signature</td>
-</tr>
-<tr>
-<td>idempotency_key</td>
-<td>str</td>
-<td></td>
-<td>Idempotency key</td>
-</tr>
-<tr>
-<td>raw_body</td>
-<td>str</td>
-<td></td>
-<td>Raw request body for signature verification</td>
-</tr>
-<tr>
-<td>handler</td>
-<td>Callable</td>
-<td></td>
-<td>App-specific webhook handler function</td>
-</tr>
-<tr>
-<td>secret</td>
-<td>Optional</td>
-<td>None</td>
-<td>Optional webhook secret</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ``` python
 from nbdev.showdoc import show_doc
@@ -4073,54 +4063,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_webhook_signature
 
->  verify_webhook_signature (payload:str, signature:str,
->                                secret:Optional[str]=None)
+``` python
+
+def verify_webhook_signature(
+    payload:str, # Raw request body as string
+    signature:str, # Signature from header (format: "sha256=<hex>")
+    secret:Optional=None, # Secret key, defaults to WEBHOOK_SECRET env var
+)->bool:
+
+```
 
 *Verify HMAC-SHA256 signature for webhook payload. Returns True if
 valid.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>payload</td>
-<td>str</td>
-<td></td>
-<td>Raw request body as string</td>
-</tr>
-<tr>
-<td>signature</td>
-<td>str</td>
-<td></td>
-<td>Signature from header (format: “sha256=<hex>”)</td>
-</tr>
-<tr>
-<td>secret</td>
-<td>Optional</td>
-<td>None</td>
-<td>Secret key, defaults to WEBHOOK_SECRET env var</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>bool</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -4130,36 +4084,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### check_idempotency
 
->  check_idempotency (db:fastsql.core.Database, idempotency_key:str)
+``` python
+
+def check_idempotency(
+    db:Database, # Tenant database connection
+    idempotency_key:str, # Unique key for this webhook event
+)->bool:
+
+```
 
 *Check if webhook event already processed. Returns True if duplicate.*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>idempotency_key</td>
-<td>str</td>
-<td>Unique key for this webhook event</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>bool</strong></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -4169,78 +4103,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### log_webhook_event
 
->  log_webhook_event (db:fastsql.core.Database, webhook_id:str, source:str,
->                         event_type:str, payload:Dict[str,Any], signature:str,
->                         idempotency_key:str, status:str='pending')
+``` python
+
+def log_webhook_event(
+    db:Database, # Tenant database connection
+    webhook_id:str, # Unique webhook ID
+    source:str, # Source system (e.g., "stripe", "github")
+    event_type:str, # Event type (e.g., "payment.success")
+    payload:Dict, # Full webhook payload
+    signature:str, # Request signature
+    idempotency_key:str, # Idempotency key
+    status:str='pending', # Status: pending, processing, completed, failed
+):
+
+```
 
 *Log webhook event to database*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td></td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>webhook_id</td>
-<td>str</td>
-<td></td>
-<td>Unique webhook ID</td>
-</tr>
-<tr>
-<td>source</td>
-<td>str</td>
-<td></td>
-<td>Source system (e.g., “stripe”, “github”)</td>
-</tr>
-<tr>
-<td>event_type</td>
-<td>str</td>
-<td></td>
-<td>Event type (e.g., “payment.success”)</td>
-</tr>
-<tr>
-<td>payload</td>
-<td>Dict</td>
-<td></td>
-<td>Full webhook payload</td>
-</tr>
-<tr>
-<td>signature</td>
-<td>str</td>
-<td></td>
-<td>Request signature</td>
-</tr>
-<tr>
-<td>idempotency_key</td>
-<td>str</td>
-<td></td>
-<td>Idempotency key</td>
-</tr>
-<tr>
-<td>status</td>
-<td>str</td>
-<td>pending</td>
-<td>Status: pending, processing, completed, failed</td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -4250,47 +4128,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### update_webhook_status
 
->  update_webhook_status (db:fastsql.core.Database, webhook_id:str,
->                             status:str, error_message:Optional[str]=None)
+``` python
+
+def update_webhook_status(
+    db:Database, # Tenant database connection
+    webhook_id:str, # Webhook ID to update
+    status:str, # New status
+    error_message:Optional=None, # Optional error message
+):
+
+```
 
 *Update webhook event status and processed timestamp*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td></td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>webhook_id</td>
-<td>str</td>
-<td></td>
-<td>Webhook ID to update</td>
-</tr>
-<tr>
-<td>status</td>
-<td>str</td>
-<td></td>
-<td>New status</td>
-</tr>
-<tr>
-<td>error_message</td>
-<td>Optional</td>
-<td>None</td>
-<td>Optional error message</td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -4300,92 +4149,25 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### process_webhook
 
->  process_webhook (db:fastsql.core.Database, webhook_id:str, source:str,
->                       event_type:str, payload:Dict[str,Any], signature:str,
->                       idempotency_key:str, raw_body:str, handler:Callable,
->                       secret:Optional[str]=None)
+``` python
+
+def process_webhook(
+    db:Database, # Tenant database connection
+    webhook_id:str, # Unique webhook ID
+    source:str, # Source system
+    event_type:str, # Event type
+    payload:Dict, # Webhook payload
+    signature:str, # Request signature
+    idempotency_key:str, # Idempotency key
+    raw_body:str, # Raw request body for signature verification
+    handler:Callable, # App-specific webhook handler function
+    secret:Optional=None, # Optional webhook secret
+)->Dict:
+
+```
 
 *Process webhook with verification, idempotency, and custom handler
 execution*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td></td>
-<td>Tenant database connection</td>
-</tr>
-<tr>
-<td>webhook_id</td>
-<td>str</td>
-<td></td>
-<td>Unique webhook ID</td>
-</tr>
-<tr>
-<td>source</td>
-<td>str</td>
-<td></td>
-<td>Source system</td>
-</tr>
-<tr>
-<td>event_type</td>
-<td>str</td>
-<td></td>
-<td>Event type</td>
-</tr>
-<tr>
-<td>payload</td>
-<td>Dict</td>
-<td></td>
-<td>Webhook payload</td>
-</tr>
-<tr>
-<td>signature</td>
-<td>str</td>
-<td></td>
-<td>Request signature</td>
-</tr>
-<tr>
-<td>idempotency_key</td>
-<td>str</td>
-<td></td>
-<td>Idempotency key</td>
-</tr>
-<tr>
-<td>raw_body</td>
-<td>str</td>
-<td></td>
-<td>Raw request body for signature verification</td>
-</tr>
-<tr>
-<td>handler</td>
-<td>Callable</td>
-<td></td>
-<td>App-specific webhook handler function</td>
-</tr>
-<tr>
-<td>secret</td>
-<td>Optional</td>
-<td>None</td>
-<td>Optional webhook secret</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -4395,12 +4177,20 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_webhook_request
 
->  handle_webhook_request (request, db:fastsql.core.Database, source:str,
->                              handler:Callable,
->                              signature_header:str='X-Webhook-Signature',
->                              idempotency_header:str='X-Idempotency-Key',
->                              event_type_field:str='type',
->                              secret:Optional[str]=None)
+``` python
+
+def handle_webhook_request(
+    request, # FastHTML request object
+    db:Database, # Tenant database instance
+    source:str, # Webhook source identifier
+    handler:Callable, # App-specific handler function
+    signature_header:str='X-Webhook-Signature', # Header containing signature
+    idempotency_header:str='X-Idempotency-Key', # Header containing idempotency key
+    event_type_field:str='type', # Field in payload containing event type
+    secret:Optional=None, # Optional webhook secret
+)->tuple: # Returns (response_dict, status_code)
+
+```
 
 *FastHTML route handler for webhook requests.*
 
@@ -4409,79 +4199,6 @@ stripe_webhook(request): return await handle_webhook_request(
 request=request, db=get_tenant_db(request), source=‘stripe’,
 handler=handle_stripe_event, signature_header=‘X-Stripe-Signature’,
 run_in_background=True )
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>request</td>
-<td></td>
-<td></td>
-<td>FastHTML request object</td>
-</tr>
-<tr>
-<td>db</td>
-<td>Database</td>
-<td></td>
-<td>Tenant database instance</td>
-</tr>
-<tr>
-<td>source</td>
-<td>str</td>
-<td></td>
-<td>Webhook source identifier</td>
-</tr>
-<tr>
-<td>handler</td>
-<td>Callable</td>
-<td></td>
-<td>App-specific handler function</td>
-</tr>
-<tr>
-<td>signature_header</td>
-<td>str</td>
-<td>X-Webhook-Signature</td>
-<td>Header containing signature</td>
-</tr>
-<tr>
-<td>idempotency_header</td>
-<td>str</td>
-<td>X-Idempotency-Key</td>
-<td>Header containing idempotency key</td>
-</tr>
-<tr>
-<td>event_type_field</td>
-<td>str</td>
-<td>type</td>
-<td>Field in payload containing event type</td>
-</tr>
-<tr>
-<td>secret</td>
-<td>Optional</td>
-<td>None</td>
-<td>Optional webhook secret</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>tuple</strong></td>
-<td></td>
-<td><strong>Returns (response_dict, status_code)</strong></td>
-</tr>
-</tbody>
-</table>
 
 
 ========================================
@@ -4685,7 +4402,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_db_type
 
->  get_db_type ()
+``` python
+
+def get_db_type(
+    
+):
+
+```
 
 *Get database type from environment variable*
 
@@ -4729,8 +4452,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### run_id
 
->  run_id (db:fastsql.core.Database, registry:Dict[str,str], query_id:str,
->              params:Optional[Dict[str,Any]]=None)
+``` python
+
+def run_id(
+    db:Database, registry:Dict, query_id:str, params:Optional=None
+)->Any:
+
+```
 
 *Execute a query by ID from a query registry.*
 
@@ -4742,7 +4470,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### validate_params
 
->  validate_params (sql:str, params:Dict[str,Any])
+``` python
+
+def validate_params(
+    sql:str, params:Dict
+)->None:
+
+```
 
 *Validate that all required parameters are provided*
 
@@ -4794,9 +4528,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bulk_insert_only
 
->  bulk_insert_only (db:fastsql.core.Database, table_name:str,
->                        records:List[Dict[str,Any]], conflict_cols:List[str],
->                        auto_commit:bool=True)
+``` python
+
+def bulk_insert_only(
+    db:Database, table_name:str, records:List, conflict_cols:List, auto_commit:bool=True
+)->None:
+
+```
 
 *Insert multiple records, skipping conflicts (optimized batch
 operation).*
@@ -4809,9 +4547,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### insert_only
 
->  insert_only (db:fastsql.core.Database, table_name:str,
->                   record:Dict[str,Any], conflict_cols:List[str],
->                   auto_commit:bool=True)
+``` python
+
+def insert_only(
+    db:Database, table_name:str, record:Dict, conflict_cols:List, auto_commit:bool=True
+)->None:
+
+```
 
 *Insert a single record only if it doesn’t exist (ignores conflicts).*
 
@@ -4862,9 +4604,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bulk_upsert
 
->  bulk_upsert (db:fastsql.core.Database, table_name:str,
->                   records:List[Dict[str,Any]], conflict_cols:List[str],
->                   update_cols:Optional[List[str]]=None, auto_commit:bool=True)
+``` python
+
+def bulk_upsert(
+    db:Database, table_name:str, records:List, conflict_cols:List, update_cols:Optional=None, auto_commit:bool=True
+)->None:
+
+```
 
 *Insert or update multiple records (optimized batch operation).*
 
@@ -4876,9 +4622,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### upsert
 
->  upsert (db:fastsql.core.Database, table_name:str, record:Dict[str,Any],
->              conflict_cols:List[str], update_cols:Optional[List[str]]=None,
->              auto_commit:bool=True)
+``` python
+
+def upsert(
+    db:Database, table_name:str, record:Dict, conflict_cols:List, update_cols:Optional=None, auto_commit:bool=True
+)->None:
+
+```
 
 *Insert a record or update if it exists (upsert).*
 
@@ -4937,8 +4687,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bulk_delete
 
->  bulk_delete (db:fastsql.core.Database, table_name:str, id_list:List[Any],
->                   id_col:str='id', auto_commit:bool=True)
+``` python
+
+def bulk_delete(
+    db:Database, table_name:str, id_list:List, id_col:str='id', auto_commit:bool=True
+)->None:
+
+```
 
 *Delete multiple records by ID list.*
 
@@ -4950,8 +4705,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### delete_record
 
->  delete_record (db:fastsql.core.Database, table_name:str, id_value:Any,
->                     id_col:str='id', auto_commit:bool=True)
+``` python
+
+def delete_record(
+    db:Database, table_name:str, id_value:Any, id_col:str='id', auto_commit:bool=True
+)->None:
+
+```
 
 *Delete a single record by ID.*
 
@@ -4963,8 +4723,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### update_record
 
->  update_record (db:fastsql.core.Database, table_name:str, id_value:Any,
->                     id_col:str='id', auto_commit:bool=True, **updates)
+``` python
+
+def update_record(
+    db:Database, table_name:str, id_value:Any, id_col:str='id', auto_commit:bool=True, updates:VAR_KEYWORD
+)->None:
+
+```
 
 *Update a single record by ID.*
 
@@ -4976,8 +4741,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_by_id
 
->  get_by_id (db:fastsql.core.Database, table_name:str, id_value:Any,
->                 id_col:str='id')
+``` python
+
+def get_by_id(
+    db:Database, table_name:str, id_value:Any, id_col:str='id'
+)->Any:
+
+```
 
 *Get a single record by ID.*
 
@@ -5025,8 +4795,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### batch_execute
 
->  batch_execute (db:fastsql.core.Database, operation_func, items:List[Any],
->                     batch_size:int=100)
+``` python
+
+def batch_execute(
+    db:Database, operation_func, items:List, batch_size:int=100
+)->None:
+
+```
 
 *Execute an operation on items in batches with commits after each
 batch.*
@@ -5039,7 +4814,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### paginate_sql
 
->  paginate_sql (sql:str, page:int, page_size:int)
+``` python
+
+def paginate_sql(
+    sql:str, page:int, page_size:int
+)->str:
+
+```
 
 *Add LIMIT/OFFSET pagination to a SQL query.*
 
@@ -5051,7 +4832,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### with_transaction
 
->  with_transaction (db:fastsql.core.Database)
+``` python
+
+def with_transaction(
+    db:Database
+):
+
+```
 
 *Context manager for safe transaction handling with auto-rollback on
 error.*
@@ -5102,7 +4889,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### to_cents
 
->  to_cents (dollars:str|float|None)
+``` python
+
+def to_cents(
+    dollars:str | float | None
+)->int | None:
+
+```
 
 *Convert dollar amount to integer cents for database storage.*
 
@@ -5114,7 +4907,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### from_cents
 
->  from_cents (cents:int|None)
+``` python
+
+def from_cents(
+    cents:int | None
+)->str:
+
+```
 
 *Convert integer cents to formatted dollar string for display.*
 
@@ -5272,7 +5071,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantJob
 
->  TenantJob ()
+``` python
+
+def TenantJob(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
 
 *Tenant-level background job with retry support.*
 
@@ -5316,7 +5121,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### BackgroundTaskManager
 
->  BackgroundTaskManager (db:fastsql.core.Database)
+``` python
+
+def BackgroundTaskManager(
+    db:Database
+):
+
+```
 
 *Lightweight background task manager for tenant-level operations.*
 
@@ -5328,9 +5139,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### BackgroundTaskManager.list_jobs
 
->  BackgroundTaskManager.list_jobs (job_type:Optional[str]=None,
->                                       status:Optional[str]=None,
->                                       limit:int=100)
+``` python
+
+def list_jobs(
+    job_type:Optional=None, status:Optional=None, limit:int=100
+)->list:
+
+```
 
 *List jobs with optional filtering.*
 
@@ -5342,7 +5157,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### BackgroundTaskManager.get_job
 
->  BackgroundTaskManager.get_job (job_id:str)
+``` python
+
+def get_job(
+    job_id:str
+)->TenantJob:
+
+```
 
 *Get job status and details.*
 
@@ -5354,8 +5175,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### BackgroundTaskManager.submit
 
->  BackgroundTaskManager.submit (job_type:str, task_func:Callable,
->                                    max_retries:int=3, **task_kwargs)
+``` python
+
+def submit(
+    job_type:str, task_func:Callable, max_retries:int=3, task_kwargs:VAR_KEYWORD
+)->tuple:
+
+```
 
 *Submit a new background task for execution.*
 
@@ -5514,9 +5340,19 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### map_and_upsert
 
->  map_and_upsert (df:polars.dataframe.frame.DataFrame, table_name:str,
->                      key_col:str, db_uri:str, column_map:dict=None,
->                      unnest_cols:list[str]=None, type_map:dict=None)
+``` python
+
+def map_and_upsert(
+    df:pl.DataFrame, # The raw Polars DataFrame from JSON
+    table_name:str, # Target database table name
+    key_col:str, # Primary key column for conflict resolution
+    db_uri:str, # SQLAlchemy connection string (e.g., 'sqlite:///db.db' or 'postgresql://...')
+    column_map:dict=None, # Optional rename map {json_key: db_col}
+    unnest_cols:list[str]=None, # List of Struct columns to flatten
+    type_map:dict=None, # Optional type casting map {col_name: pl.DataType}
+)->int:
+
+```
 
 *Map JSON data to database columns and upsert using staging table
 pattern.*
@@ -5527,74 +5363,6 @@ pattern.*
 incorrect types (e.g., String instead of Int64). This causes PostgreSQL
 type mismatch errors. Use `type_map` to explicitly cast columns before
 writing to the database.
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>df</td>
-<td>DataFrame</td>
-<td></td>
-<td>The raw Polars DataFrame from JSON</td>
-</tr>
-<tr>
-<td>table_name</td>
-<td>str</td>
-<td></td>
-<td>Target database table name</td>
-</tr>
-<tr>
-<td>key_col</td>
-<td>str</td>
-<td></td>
-<td>Primary key column for conflict resolution</td>
-</tr>
-<tr>
-<td>db_uri</td>
-<td>str</td>
-<td></td>
-<td>SQLAlchemy connection string (e.g., ‘sqlite:///db.db’ or
-‘postgresql://…’)</td>
-</tr>
-<tr>
-<td>column_map</td>
-<td>dict</td>
-<td>None</td>
-<td>Optional rename map {json_key: db_col}</td>
-</tr>
-<tr>
-<td>unnest_cols</td>
-<td>list</td>
-<td>None</td>
-<td>List of Struct columns to flatten</td>
-</tr>
-<tr>
-<td>type_map</td>
-<td>dict</td>
-<td>None</td>
-<td>Optional type casting map {col_name: pl.DataType}</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>int</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## 🔧 Schema Transformations
 
@@ -5670,42 +5438,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### apply_schema
 
->  apply_schema (df:polars.dataframe.frame.DataFrame, type_map:dict)
+``` python
+
+def apply_schema(
+    df:pl.DataFrame, # Input DataFrame
+    type_map:dict, # Column name -> Polars dtype (e.g., {'created_at': pl.Date, 'is_active': pl.Boolean})
+)->pl.DataFrame:
+
+```
 
 *Apply explicit type conversions to DataFrame columns.*
-
-<table>
-<colgroup>
-<col style="width: 9%" />
-<col style="width: 38%" />
-<col style="width: 52%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>df</td>
-<td>DataFrame</td>
-<td>Input DataFrame</td>
-</tr>
-<tr>
-<td>type_map</td>
-<td>dict</td>
-<td>Column name -&gt; Polars dtype (e.g., {‘created_at’: pl.Date,
-‘is_active’: pl.Boolean})</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>DataFrame</strong></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 
 ========================================
@@ -5885,14 +5627,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeConfig
 
->  StripeConfig (secret_key:str, webhook_secret:str=None,
->                    monthly_price_id:str=None, yearly_price_id:str=None,
->                    trial_days:int=30, grace_period_days:int=3,
->                    base_url:str='http://localhost:5001',
->                    success_path:str='/payment-success',
->                    cancel_path:str='/settings/payment',
->                    allow_promotions:bool=True, is_development:bool=False,
->                    feature_tiers:Dict[str,str]=<factory>)
+``` python
+
+def StripeConfig(
+    secret_key:str, webhook_secret:str=None, monthly_price_id:str=None, yearly_price_id:str=None, trial_days:int=30,
+    grace_period_days:int=3, base_url:str='http://localhost:5001', success_path:str='/payment-success',
+    cancel_path:str='/settings/payment', allow_promotions:bool=True, is_development:bool=False,
+    feature_tiers:Dict=<factory>
+)->None:
+
+```
 
 *Configuration for Stripe integration.*
 
@@ -5921,7 +5665,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeConfig.from_env
 
->  StripeConfig.from_env ()
+``` python
+
+def from_env(
+    
+)->StripeConfig:
+
+```
 
 *Create StripeConfig from environment variables.*
 
@@ -5950,8 +5700,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService
 
->  StripeService (config:__main__.StripeConfig,
->                     host_db:fh_saas.db_host.HostDatabase=None)
+``` python
+
+def StripeService(
+    config:StripeConfig, host_db:HostDatabase=None
+):
+
+```
 
 *Unified Stripe service for payments, subscriptions, and webhooks.*
 
@@ -5975,9 +5730,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService.create_subscription_checkout
 
->  StripeService.create_subscription_checkout (plan_type:str, tenant_id:str,
->                                                  user_email:str,
->                                                  metadata:Dict[str,Any]=None)
+``` python
+
+def create_subscription_checkout(
+    plan_type:str, tenant_id:str, user_email:str, metadata:Dict=None
+)->Any:
+
+```
 
 *Create a subscription checkout session with trial.*
 
@@ -6002,11 +5761,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService.create_one_time_checkout
 
->  StripeService.create_one_time_checkout (amount_cents:int,
->                                              product_name:str, tenant_id:str,
->                                              user_email:str,
->                                              currency:str='usd',
->                                              metadata:Dict[str,Any]=None)
+``` python
+
+def create_one_time_checkout(
+    amount_cents:int, product_name:str, tenant_id:str, user_email:str, currency:str='usd', metadata:Dict=None
+)->Any:
+
+```
 
 *Create a one-time payment checkout session.*
 
@@ -6030,8 +5791,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService.create_customer_portal_session
 
->  StripeService.create_customer_portal_session (customer_id:str,
->                                                    return_url:str=None)
+``` python
+
+def create_customer_portal_session(
+    customer_id:str, return_url:str=None
+)->Any:
+
+```
 
 *Create a Stripe Customer Portal session for self-service billing.*
 
@@ -6052,8 +5818,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService.cancel_subscription
 
->  StripeService.cancel_subscription (subscription_id:str,
->                                         at_period_end:bool=True)
+``` python
+
+def cancel_subscription(
+    subscription_id:str, at_period_end:bool=True
+)->Any:
+
+```
 
 *Cancel a subscription.*
 
@@ -6070,7 +5841,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService.handle_event
 
->  StripeService.handle_event (event:Dict[str,Any])
+``` python
+
+def handle_event(
+    event:Dict
+)->Dict:
+
+```
 
 *Route webhook event to appropriate handler.*
 
@@ -6097,8 +5874,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_pricing_plans
 
->  get_pricing_plans (host_db:fh_saas.db_host.HostDatabase=None,
->                         active_only:bool=True)
+``` python
+
+def get_pricing_plans(
+    host_db:HostDatabase=None, active_only:bool=True
+)->List:
+
+```
 
 *Get all pricing plans from the database.*
 
@@ -6187,7 +5969,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_pricing_plan
 
->  get_pricing_plan (plan_id:str, host_db:fh_saas.db_host.HostDatabase=None)
+``` python
+
+def get_pricing_plan(
+    plan_id:str, host_db:HostDatabase=None
+)->Optional:
+
+```
 
 *Get a specific pricing plan by ID.*
 
@@ -6215,9 +6003,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_active_subscription
 
->  get_active_subscription (tenant_id:str,
->                               host_db:fh_saas.db_host.HostDatabase=None,
->                               grace_period_days:int=3)
+``` python
+
+def get_active_subscription(
+    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3
+)->Optional:
+
+```
 
 *Get active subscription for a tenant with grace period support.*
 
@@ -6241,9 +6033,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### has_active_subscription
 
->  has_active_subscription (tenant_id:str,
->                               host_db:fh_saas.db_host.HostDatabase=None,
->                               grace_period_days:int=3)
+``` python
+
+def has_active_subscription(
+    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3
+)->bool:
+
+```
 
 *Check if tenant has an active subscription.*
 
@@ -6263,10 +6059,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_active_subscription
 
->  require_active_subscription (tenant_id:str,
->                                   host_db:fh_saas.db_host.HostDatabase=None,
->                                   grace_period_days:int=3,
->                                   redirect_url:str=None)
+``` python
+
+def require_active_subscription(
+    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3, redirect_url:str=None
+)->Optional:
+
+```
 
 *Require active subscription, returning 402 if not found.*
 
@@ -6292,9 +6091,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_subscription_status
 
->  get_subscription_status (tenant_id:str,
->                               host_db:fh_saas.db_host.HostDatabase=None,
->                               grace_period_days:int=3)
+``` python
+
+def get_subscription_status(
+    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3
+)->Dict:
+
+```
 
 *Get detailed subscription status for UI display.*
 
@@ -6324,10 +6127,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### check_feature_access
 
->  check_feature_access (tenant_id:str, feature:str,
->                            feature_tiers:Dict[str,str]=None,
->                            host_db:fh_saas.db_host.HostDatabase=None,
->                            grace_period_days:int=3)
+``` python
+
+def check_feature_access(
+    tenant_id:str, feature:str, feature_tiers:Dict=None, host_db:HostDatabase=None, grace_period_days:int=3
+)->bool:
+
+```
 
 *Check if tenant’s plan tier allows access to a feature.*
 
@@ -6350,10 +6156,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_feature_access
 
->  require_feature_access (tenant_id:str, feature:str,
->                              feature_tiers:Dict[str,str]=None,
->                              host_db:fh_saas.db_host.HostDatabase=None,
->                              redirect_url:str=None)
+``` python
+
+def require_feature_access(
+    tenant_id:str, feature:str, feature_tiers:Dict=None, host_db:HostDatabase=None, redirect_url:str=None
+)->Optional:
+
+```
 
 *Require feature access, returning 403 if not allowed.*
 
@@ -6382,8 +6191,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_webhook_route
 
->  create_webhook_route (app, service:__main__.StripeService,
->                            path:str='/stripe/webhook')
+``` python
+
+def create_webhook_route(
+    app, service:StripeService, path:str='/stripe/webhook'
+):
+
+```
 
 *Create a POST route handler for Stripe webhooks.*
 
@@ -6406,8 +6220,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_subscription_checkout_route
 
->  create_subscription_checkout_route (app, service:__main__.StripeService,
->                                          path:str='/checkout/{plan_type}')
+``` python
+
+def create_subscription_checkout_route(
+    app, service:StripeService, path:str='/checkout/{plan_type}'
+):
+
+```
 
 *Create a GET route for subscription checkout redirect.*
 
@@ -6430,9 +6249,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_one_time_checkout_route
 
->  create_one_time_checkout_route (app, service:__main__.StripeService,
->                                      products:Dict[str,Dict[str,Any]],
->                                      path:str='/buy/{product_id}')
+``` python
+
+def create_one_time_checkout_route(
+    app, service:StripeService, products:Dict, path:str='/buy/{product_id}'
+):
+
+```
 
 *Create a GET route for one-time payment checkout.*
 
@@ -6457,8 +6280,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_portal_route
 
->  create_portal_route (app, service:__main__.StripeService,
->                           path:str='/billing-portal')
+``` python
+
+def create_portal_route(
+    app, service:StripeService, path:str='/billing-portal'
+):
+
+```
 
 *Create a GET route for Stripe Customer Portal redirect.*
 
@@ -6484,7 +6312,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### reset_stripe_service
 
->  reset_stripe_service ()
+``` python
+
+def reset_stripe_service(
+    
+):
+
+```
 
 *Reset singleton instance (for testing only).*
 
@@ -6496,7 +6330,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_stripe_service
 
->  get_stripe_service (config:__main__.StripeConfig=None)
+``` python
+
+def get_stripe_service(
+    config:StripeConfig=None
+)->StripeService:
+
+```
 
 *Get or create singleton StripeService instance.*
 
@@ -6751,7 +6591,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_smtp_config
 
->  get_smtp_config ()
+``` python
+
+def get_smtp_config(
+    
+)->Dict[str, Any]:
+
+```
 
 *Load SMTP configuration from environment variables.*
 
@@ -6799,48 +6645,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### load_template
 
->  load_template (template_name:str,
->                     custom_template_path:Union[str,pathlib._local.Path,NoneTyp
->                     e]=None)
+``` python
+
+def load_template(
+    template_name:str, # Template basename (e.g., 'welcome')
+    custom_template_path:Optional[str | Path]=None, # Custom path overrides package templates
+)->str:
+
+```
 
 *Load markdown email template as string.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>template_name</td>
-<td>str</td>
-<td></td>
-<td>Template basename (e.g., ‘welcome’)</td>
-</tr>
-<tr>
-<td>custom_template_path</td>
-<td>Union</td>
-<td>None</td>
-<td>Custom path overrides package templates</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>str</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -6850,48 +6664,16 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_template_path
 
->  get_template_path (template_name:str,
->                         custom_template_path:Union[str,pathlib._local.Path,Non
->                         eType]=None)
+``` python
+
+def get_template_path(
+    template_name:str, # Template basename (e.g., 'welcome', 'invitation')
+    custom_template_path:Optional[str | Path]=None, # Custom path overrides package templates
+)->Path:
+
+```
 
 *Get absolute path to email template file.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>template_name</td>
-<td>str</td>
-<td></td>
-<td>Template basename (e.g., ‘welcome’, ‘invitation’)</td>
-</tr>
-<tr>
-<td>custom_template_path</td>
-<td>Union</td>
-<td>None</td>
-<td>Custom path overrides package templates</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Path</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## ✉️ Email Sending
 
@@ -6928,85 +6710,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_email
 
->  send_email (to_email:str, to_name:str, subject:str, template_name:str,
->                  template_vars:Dict[str,str], test:bool=False,
->                  smtp_config:Optional[Dict[str,Any]]=None, custom_template_pat
->                  h:Union[str,pathlib._local.Path,NoneType]=None)
+``` python
+
+def send_email(
+    to_email:str, # Recipient email address
+    to_name:str, # Recipient display name
+    subject:str, # Email subject line
+    template_name:str, # Template name: 'welcome', 'invitation', 'password_reset'
+    template_vars:Dict[str, str], # Variables to substitute in template
+    test:bool=False, # If True, prints email instead of sending
+    smtp_config:Optional[Dict[str, Any]]=None, # Custom SMTP config (defaults to env vars)
+    custom_template_path:Optional[str | Path]=None, # Custom template path
+)->Dict[str, Any]:
+
+```
 
 *Send single email using markdown template with variable substitution.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>to_email</td>
-<td>str</td>
-<td></td>
-<td>Recipient email address</td>
-</tr>
-<tr>
-<td>to_name</td>
-<td>str</td>
-<td></td>
-<td>Recipient display name</td>
-</tr>
-<tr>
-<td>subject</td>
-<td>str</td>
-<td></td>
-<td>Email subject line</td>
-</tr>
-<tr>
-<td>template_name</td>
-<td>str</td>
-<td></td>
-<td>Template name: ‘welcome’, ‘invitation’, ‘password_reset’</td>
-</tr>
-<tr>
-<td>template_vars</td>
-<td>Dict</td>
-<td></td>
-<td>Variables to substitute in template</td>
-</tr>
-<tr>
-<td>test</td>
-<td>bool</td>
-<td>False</td>
-<td>If True, prints email instead of sending</td>
-</tr>
-<tr>
-<td>smtp_config</td>
-<td>Optional</td>
-<td>None</td>
-<td>Custom SMTP config (defaults to env vars)</td>
-</tr>
-<tr>
-<td>custom_template_path</td>
-<td>Union</td>
-<td>None</td>
-<td>Custom template path</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## 📦 Batch Sending
 
@@ -7038,87 +6757,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_batch_emails
 
->  send_batch_emails (recipients:List[Dict[str,str]], subject:str,
->                         template_name:str,
->                         template_vars_list:List[Dict[str,str]],
->                         test:bool=False, pause:float=0.2,
->                         smtp_config:Optional[Dict[str,Any]]=None, custom_templ
->                         ate_path:Union[str,pathlib._local.Path,NoneType]=None)
+``` python
+
+def send_batch_emails(
+    recipients:List[Dict[str, str]], # List of dicts with 'email' and 'name' keys
+    subject:str, # Email subject line
+    template_name:str, # Template name: 'welcome', 'invitation', 'password_reset'
+    template_vars_list:List[Dict[str, str]], # List of variable dicts, one per recipient
+    test:bool=False, # If True, prints emails instead of sending
+    pause:float=0.2, # Seconds between emails (rate limiting)
+    smtp_config:Optional[Dict[str, Any]]=None, # Custom SMTP config
+    custom_template_path:Optional[str | Path]=None, # Custom template path
+)->List[Dict[str, Any]]:
+
+```
 
 *Send personalized emails to multiple recipients.*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>recipients</td>
-<td>List</td>
-<td></td>
-<td>List of dicts with ‘email’ and ‘name’ keys</td>
-</tr>
-<tr>
-<td>subject</td>
-<td>str</td>
-<td></td>
-<td>Email subject line</td>
-</tr>
-<tr>
-<td>template_name</td>
-<td>str</td>
-<td></td>
-<td>Template name: ‘welcome’, ‘invitation’, ‘password_reset’</td>
-</tr>
-<tr>
-<td>template_vars_list</td>
-<td>List</td>
-<td></td>
-<td>List of variable dicts, one per recipient</td>
-</tr>
-<tr>
-<td>test</td>
-<td>bool</td>
-<td>False</td>
-<td>If True, prints emails instead of sending</td>
-</tr>
-<tr>
-<td>pause</td>
-<td>float</td>
-<td>0.2</td>
-<td>Seconds between emails (rate limiting)</td>
-</tr>
-<tr>
-<td>smtp_config</td>
-<td>Optional</td>
-<td>None</td>
-<td>Custom SMTP config</td>
-</tr>
-<tr>
-<td>custom_template_path</td>
-<td>Union</td>
-<td>None</td>
-<td>Custom template path</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>List</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## 🎁 Convenience Functions
 
@@ -7168,80 +6822,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_welcome_email
 
->  send_welcome_email (to_email:str, to_name:str, user_name:str,
->                          tenant_name:str, dashboard_url:str, test:bool=False, 
->                          custom_template_path:Union[str,pathlib._local.Path,No
->                          neType]=None)
+``` python
+
+def send_welcome_email(
+    to_email:str, # Recipient email address
+    to_name:str, # Recipient display name
+    user_name:str, # User's name for personalization
+    tenant_name:str, # Tenant/organization name
+    dashboard_url:str, # URL to user's dashboard
+    test:bool=False, # If True, prints email instead of sending
+    custom_template_path:Optional[str | Path]=None, # Custom welcome.md template path
+)->Dict[str, Any]:
+
+```
 
 *Send welcome email to new user. Template vars: {user_name},
 {tenant_name}, {dashboard_url}, {to_email}*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>to_email</td>
-<td>str</td>
-<td></td>
-<td>Recipient email address</td>
-</tr>
-<tr>
-<td>to_name</td>
-<td>str</td>
-<td></td>
-<td>Recipient display name</td>
-</tr>
-<tr>
-<td>user_name</td>
-<td>str</td>
-<td></td>
-<td>User’s name for personalization</td>
-</tr>
-<tr>
-<td>tenant_name</td>
-<td>str</td>
-<td></td>
-<td>Tenant/organization name</td>
-</tr>
-<tr>
-<td>dashboard_url</td>
-<td>str</td>
-<td></td>
-<td>URL to user’s dashboard</td>
-</tr>
-<tr>
-<td>test</td>
-<td>bool</td>
-<td>False</td>
-<td>If True, prints email instead of sending</td>
-</tr>
-<tr>
-<td>custom_template_path</td>
-<td>Union</td>
-<td>None</td>
-<td>Custom welcome.md template path</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -7251,80 +6847,22 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_invitation_email
 
->  send_invitation_email (to_email:str, to_name:str, inviter_name:str,
->                             tenant_name:str, invitation_url:str,
->                             test:bool=False, custom_template_path:Union[str,pa
->                             thlib._local.Path,NoneType]=None)
+``` python
+
+def send_invitation_email(
+    to_email:str, # Recipient email address
+    to_name:str, # Recipient display name
+    inviter_name:str, # Name of person sending invitation
+    tenant_name:str, # Tenant/organization name
+    invitation_url:str, # URL to accept invitation
+    test:bool=False, # If True, prints email instead of sending
+    custom_template_path:Optional[str | Path]=None, # Custom invitation.md template path
+)->Dict[str, Any]:
+
+```
 
 *Send invitation email. Template vars: {inviter_name}, {tenant_name},
 {invitation_url}, {to_email}*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>to_email</td>
-<td>str</td>
-<td></td>
-<td>Recipient email address</td>
-</tr>
-<tr>
-<td>to_name</td>
-<td>str</td>
-<td></td>
-<td>Recipient display name</td>
-</tr>
-<tr>
-<td>inviter_name</td>
-<td>str</td>
-<td></td>
-<td>Name of person sending invitation</td>
-</tr>
-<tr>
-<td>tenant_name</td>
-<td>str</td>
-<td></td>
-<td>Tenant/organization name</td>
-</tr>
-<tr>
-<td>invitation_url</td>
-<td>str</td>
-<td></td>
-<td>URL to accept invitation</td>
-</tr>
-<tr>
-<td>test</td>
-<td>bool</td>
-<td>False</td>
-<td>If True, prints email instead of sending</td>
-</tr>
-<tr>
-<td>custom_template_path</td>
-<td>Union</td>
-<td>None</td>
-<td>Custom invitation.md template path</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -7334,74 +6872,21 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_password_reset_email
 
->  send_password_reset_email (to_email:str, to_name:str, user_name:str,
->                                 reset_url:str, test:bool=False, custom_templat
->                                 e_path:Union[str,pathlib._local.Path,NoneType]
->                                 =None)
+``` python
+
+def send_password_reset_email(
+    to_email:str, # Recipient email address
+    to_name:str, # Recipient display name
+    user_name:str, # User's name for personalization
+    reset_url:str, # Secure password reset URL
+    test:bool=False, # If True, prints email instead of sending
+    custom_template_path:Optional[str | Path]=None, # Custom password_reset.md template path
+)->Dict[str, Any]:
+
+```
 
 *Send password reset email. Template vars: {user_name}, {reset_url},
 {to_email}*
-
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 25%" />
-<col style="width: 34%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>to_email</td>
-<td>str</td>
-<td></td>
-<td>Recipient email address</td>
-</tr>
-<tr>
-<td>to_name</td>
-<td>str</td>
-<td></td>
-<td>Recipient display name</td>
-</tr>
-<tr>
-<td>user_name</td>
-<td>str</td>
-<td></td>
-<td>User’s name for personalization</td>
-</tr>
-<tr>
-<td>reset_url</td>
-<td>str</td>
-<td></td>
-<td>Secure password reset URL</td>
-</tr>
-<tr>
-<td>test</td>
-<td>bool</td>
-<td>False</td>
-<td>If True, prints email instead of sending</td>
-</tr>
-<tr>
-<td>custom_template_path</td>
-<td>Union</td>
-<td>None</td>
-<td>Custom password_reset.md template path</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Dict</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## 📝 Template Customization
 
@@ -7515,26 +7000,15 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### PostLoader
 
->  PostLoader (posts_dir:str)
+``` python
+
+def PostLoader(
+    posts_dir:str, # Directory containing .md files
+):
+
+```
 
 *Load and parse markdown blog posts from filesystem*
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>posts_dir</td>
-<td>str</td>
-<td>Directory containing .md files</td>
-</tr>
-</tbody>
-</table>
 
 ------------------------------------------------------------------------
 
@@ -7544,7 +7018,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### PostLoader.load_posts
 
->  PostLoader.load_posts ()
+``` python
+
+def load_posts(
+    
+)->List[Dict]:
+
+```
 
 *Load all markdown posts from directory.*
 
@@ -7566,34 +7046,18 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### PostLoader.get_post
 
->  PostLoader.get_post (slug:str)
+``` python
+
+def get_post(
+    slug:str
+)->Optional[Dict]: # URL slug (e.g., 'my-post')
+
+```
 
 *Get single post by slug.*
 
 Example:
 `python     post = loader.get_post('bg0010')     if post:         print(post['title'])`
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>slug</td>
-<td>str</td>
-<td></td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>Optional</strong></td>
-<td><strong>URL slug (e.g., ‘my-post’)</strong></td>
-</tr>
-</tbody>
-</table>
 
 ## 🎨 MarkdownEngine
 
@@ -7620,7 +7084,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MarkdownEngine
 
->  MarkdownEngine ()
+``` python
+
+def MarkdownEngine(
+    
+):
+
+```
 
 *Render markdown to HTML with SEO extensions*
 
@@ -7632,7 +7102,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MarkdownEngine.render
 
->  MarkdownEngine.render (content:str)
+``` python
+
+def render(
+    content:str
+)->str: # Markdown content
+
+```
 
 *Convert markdown to HTML.*
 
@@ -7656,28 +7132,6 @@ This is <strong>bold</strong>.
 
             ```
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>content</td>
-<td>str</td>
-<td></td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>str</strong></td>
-<td><strong>Markdown content</strong></td>
-</tr>
-</tbody>
-</table>
-
 ------------------------------------------------------------------------
 
 <a
@@ -7686,7 +7140,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MarkdownEngine.get_toc
 
->  MarkdownEngine.get_toc ()
+``` python
+
+def get_toc(
+    
+)->str:
+
+```
 
 *Get table of contents HTML from last render.*
 
@@ -7816,11 +7276,19 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_head_tags
 
->  generate_head_tags (title:str, description:str, url:str,
->                          image_url:Optional[str]=None,
->                          article_published:Optional[datetime.datetime]=None,
->                          article_modified:Optional[datetime.datetime]=None,
->                          author:Optional[str]=None)
+``` python
+
+def generate_head_tags(
+    title:str, # Page title
+    description:str, # Page description (150-160 chars optimal)
+    url:str, # Canonical URL
+    image_url:Optional[str]=None, # OpenGraph image URL
+    article_published:Optional[datetime]=None, # Publication date
+    article_modified:Optional[datetime]=None, # Last modified date
+    author:Optional[str]=None, # Author name
+)->List[tuple]:
+
+```
 
 *Generate meta tags for SEO.*
 
@@ -7847,67 +7315,6 @@ Example: \`\`\`python from fasthtml.common import \*
             Body('...')
         )
     ```
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>title</td>
-<td>str</td>
-<td></td>
-<td>Page title</td>
-</tr>
-<tr>
-<td>description</td>
-<td>str</td>
-<td></td>
-<td>Page description (150-160 chars optimal)</td>
-</tr>
-<tr>
-<td>url</td>
-<td>str</td>
-<td></td>
-<td>Canonical URL</td>
-</tr>
-<tr>
-<td>image_url</td>
-<td>Optional</td>
-<td>None</td>
-<td>OpenGraph image URL</td>
-</tr>
-<tr>
-<td>article_published</td>
-<td>Optional</td>
-<td>None</td>
-<td>Publication date</td>
-</tr>
-<tr>
-<td>article_modified</td>
-<td>Optional</td>
-<td>None</td>
-<td>Last modified date</td>
-</tr>
-<tr>
-<td>author</td>
-<td>Optional</td>
-<td>None</td>
-<td>Author name</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>List</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## 🗺️ Sitemap
 
@@ -7939,8 +7346,15 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_sitemap_xml
 
->  generate_sitemap_xml (posts:List[Dict], base_url:str,
->                            blog_path:str='/blog')
+``` python
+
+def generate_sitemap_xml(
+    posts:List[Dict], # List of posts from PostLoader
+    base_url:str, # Base URL (e.g., 'https://example.com')
+    blog_path:str='/blog', # Blog path prefix
+)->str:
+
+```
 
 *Generate XML sitemap for blog posts.*
 
@@ -7963,43 +7377,6 @@ fh_saas.utils_blog import PostLoader
         return Response(xml, media_type='application/xml')
     ```
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>posts</td>
-<td>List</td>
-<td></td>
-<td>List of posts from PostLoader</td>
-</tr>
-<tr>
-<td>base_url</td>
-<td>str</td>
-<td></td>
-<td>Base URL (e.g., ‘https://example.com’)</td>
-</tr>
-<tr>
-<td>blog_path</td>
-<td>str</td>
-<td>/blog</td>
-<td>Blog path prefix</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>str</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
 ## rss feed generator
 
 Generate RSS 2.0 feed for blog subscribers.
@@ -8012,8 +7389,17 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_rss_xml
 
->  generate_rss_xml (posts:List[Dict], blog_title:str, blog_description:str,
->                        base_url:str, blog_path:str='/blog')
+``` python
+
+def generate_rss_xml(
+    posts:List[Dict], # List of posts from PostLoader
+    blog_title:str, # Blog title
+    blog_description:str, # Blog description
+    base_url:str, # Base URL
+    blog_path:str='/blog', # Blog path prefix
+)->str:
+
+```
 
 *Generate RSS 2.0 feed for blog posts.*
 
@@ -8036,55 +7422,6 @@ fh_saas.utils_blog import PostLoader
         )
         return Response(xml, media_type='application/xml')
     ```
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Type</strong></th>
-<th><strong>Default</strong></th>
-<th><strong>Details</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>posts</td>
-<td>List</td>
-<td></td>
-<td>List of posts from PostLoader</td>
-</tr>
-<tr>
-<td>blog_title</td>
-<td>str</td>
-<td></td>
-<td>Blog title</td>
-</tr>
-<tr>
-<td>blog_description</td>
-<td>str</td>
-<td></td>
-<td>Blog description</td>
-</tr>
-<tr>
-<td>base_url</td>
-<td>str</td>
-<td></td>
-<td>Base URL</td>
-</tr>
-<tr>
-<td>blog_path</td>
-<td>str</td>
-<td>/blog</td>
-<td>Blog path prefix</td>
-</tr>
-<tr>
-<td><strong>Returns</strong></td>
-<td><strong>str</strong></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 
 ## FastHTML Integration Example
 
@@ -8212,7 +7549,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Workflow
 
->  Workflow (steps:List[Callable])
+``` python
+
+def Workflow(
+    steps:List
+):
+
+```
 
 *Execute a list of callables sequentially. Minimal wrapper for code
 readability.*
@@ -8225,7 +7568,13 @@ target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Workflow.execute
 
->  Workflow.execute ()
+``` python
+
+def execute(
+    
+):
+
+```
 
 *Execute all steps in order*
 
