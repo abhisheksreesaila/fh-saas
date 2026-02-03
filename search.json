@@ -1,0 +1,1329 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "🚀 fh-saas",
+    "section": "",
+    "text": "pip install fh-saas\n\n\n\n# .env file\nDB_TYPE=POSTGRESQL\nDB_USER=postgres\nDB_PASS=your_password\nDB_HOST=localhost\nDB_NAME=app_host\n\n# Optional integrations\nSTRIPE_SECRET_KEY=sk_...\nRESEND_API_KEY=re_...\nGOOGLE_CLIENT_ID=...\nGOOGLE_CLIENT_SECRET=...\n\n\n\nfrom fh_saas.db_host import HostDatabase, GlobalUser, TenantCatalog, Membership, gen_id, timestamp\nfrom fh_saas.db_tenant import get_or_create_tenant_db\nfrom fh_saas.utils_db import register_tables, create_indexes\nfrom fh_saas.utils_log import configure_logging\n\n# Configure logging (once at startup)\nconfigure_logging()\n\n# Connect to host database\nhost_db = HostDatabase.from_env()\n\n# Create a new user\nuser = GlobalUser(\n    id=gen_id(),\n    email=\"founder@startup.com\",\n    oauth_id=\"google_abc123\",\n    created_at=timestamp()\n)\nhost_db.global_users.insert(user)\n\n# Create a tenant for their organization\ntenant = TenantCatalog(\n    id=gen_id(),\n    name=\"Acme Corp\",\n    db_url=\"postgresql://...\",\n    created_at=timestamp()\n)\nhost_db.tenant_catalogs.insert(tenant)\n\n# Link user to tenant as owner\nmembership = Membership(\n    id=gen_id(),\n    user_id=user.id,\n    tenant_id=tenant.id,\n    profile_id=gen_id(),\n    role=\"owner\",\n    created_at=timestamp()\n)\nhost_db.memberships.insert(membership)\nhost_db.commit()\n\n\n\n# Get tenant's isolated database\ntenant_db = get_or_create_tenant_db(tenant.id, tenant.name)\n\n# Define your app's data models\nclass Project:\n    id: str\n    name: str\n    status: str = \"active\"\n    created_at: str\n\nclass Task:\n    id: str\n    project_id: str\n    title: str\n    completed: bool = False\n\n# Register tables (creates if not exist)\ntables = register_tables(tenant_db, [\n    (Project, \"projects\", \"id\"),\n    (Task, \"tasks\", \"id\"),\n])\n\n# Add indexes for performance\ncreate_indexes(tenant_db, [\n    (\"tasks\", [\"project_id\"], False, None),\n    (\"tasks\", [\"completed\"], False, None),\n])\n\n# Use the tables\nprojects = tables[\"projects\"]\nprojects.insert(Project(id=gen_id(), name=\"Launch MVP\", created_at=timestamp()))\ntenant_db.conn.commit()",
+    "crumbs": [
+      "🚀 fh-saas"
+    ]
+  },
+  {
+    "objectID": "index.html#quick-start",
+    "href": "index.html#quick-start",
+    "title": "🚀 fh-saas",
+    "section": "",
+    "text": "pip install fh-saas\n\n\n\n# .env file\nDB_TYPE=POSTGRESQL\nDB_USER=postgres\nDB_PASS=your_password\nDB_HOST=localhost\nDB_NAME=app_host\n\n# Optional integrations\nSTRIPE_SECRET_KEY=sk_...\nRESEND_API_KEY=re_...\nGOOGLE_CLIENT_ID=...\nGOOGLE_CLIENT_SECRET=...\n\n\n\nfrom fh_saas.db_host import HostDatabase, GlobalUser, TenantCatalog, Membership, gen_id, timestamp\nfrom fh_saas.db_tenant import get_or_create_tenant_db\nfrom fh_saas.utils_db import register_tables, create_indexes\nfrom fh_saas.utils_log import configure_logging\n\n# Configure logging (once at startup)\nconfigure_logging()\n\n# Connect to host database\nhost_db = HostDatabase.from_env()\n\n# Create a new user\nuser = GlobalUser(\n    id=gen_id(),\n    email=\"founder@startup.com\",\n    oauth_id=\"google_abc123\",\n    created_at=timestamp()\n)\nhost_db.global_users.insert(user)\n\n# Create a tenant for their organization\ntenant = TenantCatalog(\n    id=gen_id(),\n    name=\"Acme Corp\",\n    db_url=\"postgresql://...\",\n    created_at=timestamp()\n)\nhost_db.tenant_catalogs.insert(tenant)\n\n# Link user to tenant as owner\nmembership = Membership(\n    id=gen_id(),\n    user_id=user.id,\n    tenant_id=tenant.id,\n    profile_id=gen_id(),\n    role=\"owner\",\n    created_at=timestamp()\n)\nhost_db.memberships.insert(membership)\nhost_db.commit()\n\n\n\n# Get tenant's isolated database\ntenant_db = get_or_create_tenant_db(tenant.id, tenant.name)\n\n# Define your app's data models\nclass Project:\n    id: str\n    name: str\n    status: str = \"active\"\n    created_at: str\n\nclass Task:\n    id: str\n    project_id: str\n    title: str\n    completed: bool = False\n\n# Register tables (creates if not exist)\ntables = register_tables(tenant_db, [\n    (Project, \"projects\", \"id\"),\n    (Task, \"tasks\", \"id\"),\n])\n\n# Add indexes for performance\ncreate_indexes(tenant_db, [\n    (\"tasks\", [\"project_id\"], False, None),\n    (\"tasks\", [\"completed\"], False, None),\n])\n\n# Use the tables\nprojects = tables[\"projects\"]\nprojects.insert(Project(id=gen_id(), name=\"Launch MVP\", created_at=timestamp()))\ntenant_db.conn.commit()",
+    "crumbs": [
+      "🚀 fh-saas"
+    ]
+  },
+  {
+    "objectID": "index.html#documentation-guide",
+    "href": "index.html#documentation-guide",
+    "title": "🚀 fh-saas",
+    "section": "📚 Documentation Guide",
+    "text": "📚 Documentation Guide\n\n\n\nSection\nWhat You'll Learn\n\n\n📦 Core\n\n\nMulti-Tenant Setup\nHost database, user management, tenant registry\n\n\nTenant Databases\nIsolated databases per tenant, connection pooling\n\n\nTable Management\nCreate tables & indexes from dataclasses\n\n\n🔌 Integrations\n\n\nHTTP Client\nREST APIs with retries, rate limiting, auth\n\n\nGraphQL Client\nStreaming pagination for large datasets\n\n\nWebhooks\nReceive & verify external webhooks\n\n\n💳 Payments & Migrations\n\n\nStripe Payments\nSubscriptions, trials, access control\n\n\nDB Migrations\nVersion tracking, rollback support\n\n\n⚙️ Data Pipeline\n\n\nBackground Tasks\nAsync job execution\n\n\nData Transforms\nJSON → Polars → Database pipeline\n\n\n🛠️ Utilities\n\n\nSQL Helpers\nDatabase type detection, query builders\n\n\nLogging\nConfigurable logging for all modules\n\n\nAuthentication\nOAuth flows (Google, GitHub)\n\n\nEmail Sending\nTransactional emails via Resend\n\n\n📣 Content\n\n\nBlog Publishing\nMarkdown blog with frontmatter\n\n\nSEO & Sitemaps\nSitemap generation, meta tags\n\n\nWorkflow Engine\nMulti-step automation",
+    "crumbs": [
+      "🚀 fh-saas"
+    ]
+  },
+  {
+    "objectID": "index.html#developer-guide",
+    "href": "index.html#developer-guide",
+    "title": "🚀 fh-saas",
+    "section": "🛠️ Developer Guide",
+    "text": "🛠️ Developer Guide\nThis project uses nbdev for literate programming. The source of truth is in the nbs/ notebooks.\n\nDevelopment Setup\n# Clone and install in dev mode\ngit clone https://github.com/abhisheksreesaila/fh-saas.git\ncd fh-saas\npip install -e .\n\n# Make changes in nbs/ directory, then compile\nnbdev_prepare",
+    "crumbs": [
+      "🚀 fh-saas"
+    ]
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "🚀 fh-saas",
+    "section": "📦 Installation",
+    "text": "📦 Installation\n# From PyPI (recommended)\npip install fh-saas\n\n# From GitHub (latest)\npip install git+https://github.com/abhisheksreesaila/fh-saas.git\nGitHub · PyPI · Documentation\n🤖 For AI Assistants: Download llms-ctx.txt — Complete API documentation for LLMs",
+    "crumbs": [
+      "🚀 fh-saas"
+    ]
+  },
+  {
+    "objectID": "index.html#ai-assistant-context",
+    "href": "index.html#ai-assistant-context",
+    "title": "🚀 fh-saas",
+    "section": "🤖 AI Assistant Context",
+    "text": "🤖 AI Assistant Context\nFor AI coding assistants (GitHub Copilot, Claude, ChatGPT, Cursor, etc.), download the complete API documentation:\n📥 Download llms-ctx.txt — Complete fh-saas documentation in LLM-friendly format\n\nHow to use:\n\nDownload the context file\nAdd to your AI assistant’s instructions/knowledge base\n\nGet accurate code suggestions for fh-saas APIs\n\nThis file contains all module documentation, examples, and API signatures formatted for optimal LLM understanding.",
+    "crumbs": [
+      "🚀 fh-saas"
+    ]
+  },
+  {
+    "objectID": "index.html#contributing",
+    "href": "index.html#contributing",
+    "title": "🚀 fh-saas",
+    "section": "🤝 Contributing",
+    "text": "🤝 Contributing\nContributions are welcome! Please check the GitHub repository for issues and discussions.",
+    "crumbs": [
+      "🚀 fh-saas"
+    ]
+  },
+  {
+    "objectID": "utils_stripe.html",
+    "href": "utils_stripe.html",
+    "title": "💳 Stripe Utilities",
+    "section": "",
+    "text": "Category\nFunctions\nPurpose\n\n\n\n\n⚙️ Configuration\nStripeConfig, StripeConfig.from_env()\nConfigure Stripe with env vars or explicit values\n\n\n💳 Service\nStripeService\nUnified API for checkouts, subscriptions, webhooks\n\n\n🛒 Checkout\ncreate_subscription_checkout, create_one_time_checkout\nGenerate Stripe checkout sessions\n\n\n🔄 Subscriptions\nget_subscription, cancel_subscription, change_plan\nManage active subscriptions\n\n\n🪝 Webhooks\nverify_signature, handle_event\nProcess Stripe webhook events\n\n\n🔐 Access Control\nget_active_subscription, has_active_subscription, require_active_subscription\nGate features by payment status\n\n\n📊 Feature Gating\ncheck_feature_access\nControl features by plan tier\n\n\n🛤️ Route Helpers\ncreate_webhook_route, create_checkout_route, create_portal_route\nFastHTML route factories"
+  },
+  {
+    "objectID": "utils_stripe.html#overview",
+    "href": "utils_stripe.html#overview",
+    "title": "💳 Stripe Utilities",
+    "section": "",
+    "text": "Category\nFunctions\nPurpose\n\n\n\n\n⚙️ Configuration\nStripeConfig, StripeConfig.from_env()\nConfigure Stripe with env vars or explicit values\n\n\n💳 Service\nStripeService\nUnified API for checkouts, subscriptions, webhooks\n\n\n🛒 Checkout\ncreate_subscription_checkout, create_one_time_checkout\nGenerate Stripe checkout sessions\n\n\n🔄 Subscriptions\nget_subscription, cancel_subscription, change_plan\nManage active subscriptions\n\n\n🪝 Webhooks\nverify_signature, handle_event\nProcess Stripe webhook events\n\n\n🔐 Access Control\nget_active_subscription, has_active_subscription, require_active_subscription\nGate features by payment status\n\n\n📊 Feature Gating\ncheck_feature_access\nControl features by plan tier\n\n\n🛤️ Route Helpers\ncreate_webhook_route, create_checkout_route, create_portal_route\nFastHTML route factories"
+  },
+  {
+    "objectID": "utils_stripe.html#architecture",
+    "href": "utils_stripe.html#architecture",
+    "title": "💳 Stripe Utilities",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    Payment Flow                                  │\n├─────────────────────────────────────────────────────────────────┤\n│  1. User clicks \"Subscribe\" or \"Buy\"                           │\n│  2. StripeService.create_*_checkout() → Stripe Session          │\n│  3. User completes payment on Stripe                            │\n│  4. Stripe sends webhook → handle_event()                       │\n│  5. Subscription saved to core_subscriptions                    │\n│  6. Access control checks subscription status                   │\n└─────────────────────────────────────────────────────────────────┘\n                              │\n                              ▼\n┌─────────────────────────────────────────────────────────────────┐\n│                    Access Control                               │\n├─────────────────────────────────────────────────────────────────┤\n│  require_active_subscription(tenant_id)                         │\n│    ├─ status = 'active' → ✅ Access granted                    │\n│    ├─ status = 'trialing' → ✅ Access granted                  │\n│    ├─ status = 'past_due' + within grace → ⚠️ Access granted   │\n│    └─ Otherwise → 🚫 402 Payment Required                       │\n└─────────────────────────────────────────────────────────────────┘"
+  },
+  {
+    "objectID": "utils_stripe.html#environment-variables",
+    "href": "utils_stripe.html#environment-variables",
+    "title": "💳 Stripe Utilities",
+    "section": "🌍 Environment Variables",
+    "text": "🌍 Environment Variables\n\n\n\n\n\n\n\n\nVariable\nRequired\nDescription\n\n\n\n\nCONFIG_STRIPE_SECRETKEY\n✅\nStripe secret API key (sk_live_* or sk_test_*)\n\n\nCONFIG_STRIPE_WEBHOOKSECRET\n✅\nWebhook endpoint signing secret (whsec_*)\n\n\nCONFIG_STRIPE_MONTHLY_PRICE_ID\n⚠️\nPre-created monthly price ID (price_*)\n\n\nCONFIG_STRIPE_YEARLY_PRICE_ID\n⚠️\nPre-created yearly price ID (price_*)\n\n\nCONFIG_STRIPE_BASE_URL\n⚠️\nApplication base URL for callbacks\n\n\n\n\n⚠️ Price IDs are required for subscription checkouts. Create them in Stripe Dashboard first.\n\n\n\nfrom nbdev.showdoc import show_doc"
+  },
+  {
+    "objectID": "utils_stripe.html#configuration",
+    "href": "utils_stripe.html#configuration",
+    "title": "💳 Stripe Utilities",
+    "section": "⚙️ Configuration",
+    "text": "⚙️ Configuration\nConfigure Stripe integration with sensible defaults and environment variable support.\n\nsource\n\nStripeConfig\n\ndef StripeConfig(\n    secret_key:str, webhook_secret:str=None, monthly_price_id:str=None, yearly_price_id:str=None, trial_days:int=30,\n    grace_period_days:int=3, base_url:str='http://localhost:5001', success_path:str='/payment-success',\n    cancel_path:str='/settings/payment', allow_promotions:bool=True, is_development:bool=False,\n    feature_tiers:Dict=&lt;factory&gt;\n)-&gt;None:\n\nConfiguration for Stripe integration.\nSupports both subscription and one-time payment modes with configurable trial periods, grace periods, and callback URLs.\nAttributes: secret_key: Stripe secret API key webhook_secret: Webhook signing secret for signature verification monthly_price_id: Pre-created Stripe price ID for monthly subscriptions yearly_price_id: Pre-created Stripe price ID for yearly subscriptions trial_days: Number of days for free trial (default: 30) grace_period_days: Days to allow access after payment failure (default: 3) base_url: Application base URL for redirect callbacks success_path: Path for successful payment redirect cancel_path: Path for canceled payment redirect allow_promotions: Enable Stripe promotion codes in checkout is_development: Enable development mode (skip signature verification)\nExample: &gt;&gt;&gt; config = StripeConfig.from_env() &gt;&gt;&gt; service = StripeService(config)\n\nsource\n\n\nStripeConfig.from_env\n\ndef from_env(\n    \n)-&gt;StripeConfig:\n\nCreate StripeConfig from environment variables.\nReads CONFIG_STRIPE_* environment variables with sensible defaults.\nReturns: Configured StripeConfig instance\nRaises: ValueError: If CONFIG_STRIPE_SECRETKEY is not set\nExample: &gt;&gt;&gt; # Set environment variables first &gt;&gt;&gt; os.environ[‘CONFIG_STRIPE_SECRETKEY’] = ‘sk_test_…’ &gt;&gt;&gt; config = StripeConfig.from_env()"
+  },
+  {
+    "objectID": "utils_stripe.html#stripe-service",
+    "href": "utils_stripe.html#stripe-service",
+    "title": "💳 Stripe Utilities",
+    "section": "💳 Stripe Service",
+    "text": "💳 Stripe Service\nUnified service class for all Stripe operations: checkouts, subscriptions, and webhooks.\n\nsource\n\nStripeService\n\ndef StripeService(\n    config:StripeConfig, host_db:HostDatabase=None\n):\n\nUnified Stripe service for payments, subscriptions, and webhooks.\nConsolidates checkout creation, subscription management, and webhook handling into a single service with consistent patterns.\nAttributes: config: StripeConfig instance api: FastStripe API wrapper host_db: HostDatabase for subscription persistence\nExample: &gt;&gt;&gt; config = StripeConfig.from_env() &gt;&gt;&gt; service = StripeService(config) &gt;&gt;&gt; checkout = service.create_subscription_checkout( … plan_type=‘monthly’, … tenant_id=‘tnt_123’, … user_email=‘user@example.com’ … ) &gt;&gt;&gt; print(checkout.url) # Redirect user here\n\nsource\n\n\nStripeService.create_subscription_checkout\n\ndef create_subscription_checkout(\n    plan_type:str, tenant_id:str, user_email:str, metadata:Dict=None\n)-&gt;Any:\n\nCreate a subscription checkout session with trial.\nArgs: plan_type: ‘monthly’ or ‘yearly’ tenant_id: Tenant ID to associate subscription with user_email: Customer email for Stripe metadata: Additional metadata to store with subscription\nReturns: Stripe Checkout Session with ‘url’ and ‘id’ attributes\nRaises: ValueError: If plan_type is invalid or price ID not configured\nExample: &gt;&gt;&gt; checkout = service.create_subscription_checkout( … plan_type=‘monthly’, … tenant_id=‘tnt_abc123’, … user_email=‘user@example.com’ … ) &gt;&gt;&gt; return RedirectResponse(checkout.url)\n\nsource\n\n\nStripeService.create_one_time_checkout\n\ndef create_one_time_checkout(\n    amount_cents:int, product_name:str, tenant_id:str, user_email:str, currency:str='usd', metadata:Dict=None\n)-&gt;Any:\n\nCreate a one-time payment checkout session.\nArgs: amount_cents: Payment amount in cents (e.g., 1999 for $19.99) product_name: Name displayed on checkout tenant_id: Tenant ID for record keeping user_email: Customer email for Stripe currency: ISO currency code (default: ‘usd’) metadata: Additional metadata to store\nReturns: Stripe Checkout Session with ‘url’ and ‘id’ attributes\nExample: &gt;&gt;&gt; checkout = service.create_one_time_checkout( … amount_cents=4999, … product_name=‘Premium Report’, … tenant_id=‘tnt_abc123’, … user_email=‘user@example.com’ … ) &gt;&gt;&gt; return RedirectResponse(checkout.url)\n\nsource\n\n\nStripeService.create_customer_portal_session\n\ndef create_customer_portal_session(\n    customer_id:str, return_url:str=None\n)-&gt;Any:\n\nCreate a Stripe Customer Portal session for self-service billing.\nArgs: customer_id: Stripe customer ID (cus_*) return_url: URL to redirect after portal session (default: base_url)\nReturns: Portal session with ‘url’ attribute\nExample: &gt;&gt;&gt; portal = service.create_customer_portal_session(‘cus_123’) &gt;&gt;&gt; return RedirectResponse(portal.url)\n\nsource\n\n\nStripeService.cancel_subscription\n\ndef cancel_subscription(\n    subscription_id:str, at_period_end:bool=True\n)-&gt;Any:\n\nCancel a subscription.\nArgs: subscription_id: Stripe subscription ID at_period_end: If True, cancel at end of billing period (default) If False, cancel immediately\nReturns: Updated Stripe Subscription object\n\nsource\n\n\nStripeService.handle_event\n\ndef handle_event(\n    event:Dict\n)-&gt;Dict:\n\nRoute webhook event to appropriate handler.\nHandles both subscription and one-time payment events.\nArgs: event: Parsed Stripe event dict\nReturns: Dict with ‘status’ (‘success’, ‘warning’, ‘error’, ‘ignored’) and ‘message’ describing the result"
+  },
+  {
+    "objectID": "utils_stripe.html#pricing-plans",
+    "href": "utils_stripe.html#pricing-plans",
+    "title": "💳 Stripe Utilities",
+    "section": "💰 Pricing Plans",
+    "text": "💰 Pricing Plans\nDatabase-backed pricing tiers for multi-tier subscription management. Store your Stripe price IDs in the database for admin-configurable pricing without code changes.\n\nsource\n\nget_pricing_plans\n\ndef get_pricing_plans(\n    host_db:HostDatabase=None, active_only:bool=True\n)-&gt;List:\n\nGet all pricing plans from the database.\nRetrieves pricing plan configurations stored in the core_pricing_plans table. Plans define available subscription tiers with their Stripe price IDs, amounts, features, and display settings.\nArgs: host_db: Optional HostDatabase instance. Uses from_env() if not provided. active_only: If True (default), only returns plans where is_active=True. Set to False to include inactive/archived plans.\nReturns: List of PricingPlan objects sorted by sort_order, then by tier_level. Empty list if no plans are configured.\nExample: &gt;&gt;&gt; # Get all active plans for pricing page &gt;&gt;&gt; plans = get_pricing_plans() &gt;&gt;&gt; for plan in plans: … print(f”{plan.name}: ${plan.amount_monthly/100}/mo”) Basic Plan: $7.99/mo Pro Plan: $19.99/mo Enterprise Plan: $49.99/mo\n&gt;&gt;&gt; # Get specific plan for checkout\n&gt;&gt;&gt; plans = get_pricing_plans()\n&gt;&gt;&gt; pro_plan = next((p for p in plans if p.id == 'pro'), None)\n&gt;&gt;&gt; if pro_plan:\n...     price_id = pro_plan.stripe_price_monthly\n\n&gt;&gt;&gt; # Setting up plans (typically in admin or migration)\n&gt;&gt;&gt; from fh_saas.db_host import HostDatabase, PricingPlan, gen_id, timestamp\n&gt;&gt;&gt; host_db = HostDatabase.from_env()\n&gt;&gt;&gt; \n&gt;&gt;&gt; plans_data = [\n...     {\n...         'id': 'basic',\n...         'name': 'Basic Plan',\n...         'description': 'Essential features for individuals',\n...         'stripe_price_monthly': 'price_basic_monthly_xxx',\n...         'stripe_price_yearly': 'price_basic_yearly_xxx',\n...         'amount_monthly': 799,   # $7.99\n...         'amount_yearly': 7990,   # $79.90 (save ~17%)\n...         'tier_level': 1,\n...         'features': '[\"basic_reports\", \"email_support\"]',\n...         'sort_order': 1,\n...     },\n...     {\n...         'id': 'pro',\n...         'name': 'Pro Plan', \n...         'description': 'Advanced features for teams',\n...         'stripe_price_monthly': 'price_pro_monthly_xxx',\n...         'stripe_price_yearly': 'price_pro_yearly_xxx',\n...         'amount_monthly': 1999,  # $19.99\n...         'amount_yearly': 19990,  # $199.90\n...         'tier_level': 2,\n...         'features': '[\"basic_reports\", \"advanced_analytics\", \"api_access\", \"priority_support\"]',\n...         'sort_order': 2,\n...     },\n...     {\n...         'id': 'enterprise',\n...         'name': 'Enterprise Plan',\n...         'description': 'Full platform access with custom solutions',\n...         'stripe_price_monthly': 'price_ent_monthly_xxx',\n...         'stripe_price_yearly': 'price_ent_yearly_xxx',\n...         'amount_monthly': 4999,  # $49.99\n...         'amount_yearly': 49990,  # $499.90\n...         'tier_level': 3,\n...         'features': '[\"all_features\", \"dedicated_support\", \"custom_integrations\", \"sla\"]',\n...         'sort_order': 3,\n...     },\n... ]\n&gt;&gt;&gt; \n&gt;&gt;&gt; for plan_data in plans_data:\n...     plan = PricingPlan(**plan_data, created_at=timestamp())\n...     host_db.pricing_plans.insert(plan)\n&gt;&gt;&gt; host_db.commit()\nNote: - Create your Stripe Products and Prices in the Stripe Dashboard first - Copy the price IDs (price_xxx) into your database records - The tier_level field is used by check_feature_access() for feature gating - The features field should be a JSON array of feature keys\n\nsource\n\n\nget_pricing_plan\n\ndef get_pricing_plan(\n    plan_id:str, host_db:HostDatabase=None\n)-&gt;Optional:\n\nGet a specific pricing plan by ID.\nArgs: plan_id: The plan identifier (e.g., ‘basic’, ‘pro’, ‘enterprise’) host_db: Optional HostDatabase instance\nReturns: PricingPlan object if found, None otherwise\nExample: &gt;&gt;&gt; plan = get_pricing_plan(‘pro’) &gt;&gt;&gt; if plan: … checkout = service.create_subscription_checkout( … price_id=plan.stripe_price_monthly, … … … )"
+  },
+  {
+    "objectID": "utils_stripe.html#access-control",
+    "href": "utils_stripe.html#access-control",
+    "title": "💳 Stripe Utilities",
+    "section": "🔐 Access Control",
+    "text": "🔐 Access Control\nFunctions to gate features based on subscription status with grace period support.\n\nsource\n\nget_active_subscription\n\ndef get_active_subscription(\n    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3\n)-&gt;Optional:\n\nGet active subscription for a tenant with grace period support.\nReturns subscription if: - Status is ‘active’ or ‘trialing’ - Status is ‘past_due’ but within grace period from current_period_end\nArgs: tenant_id: Tenant ID to check host_db: Optional HostDatabase, uses from_env() if not provided grace_period_days: Days to allow access after payment failure (default: 3)\nReturns: Active Subscription object, or None if no valid subscription\nExample: &gt;&gt;&gt; sub = get_active_subscription(‘tnt_123’) &gt;&gt;&gt; if sub: … print(f”Active until {sub.current_period_end}“)\n\nsource\n\n\nhas_active_subscription\n\ndef has_active_subscription(\n    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3\n)-&gt;bool:\n\nCheck if tenant has an active subscription.\nArgs: tenant_id: Tenant ID to check host_db: Optional HostDatabase grace_period_days: Days to allow access after payment failure\nReturns: True if tenant has valid subscription, False otherwise\nExample: &gt;&gt;&gt; if has_active_subscription(‘tnt_123’): … show_premium_features()\n\nsource\n\n\nrequire_active_subscription\n\ndef require_active_subscription(\n    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3, redirect_url:str=None\n)-&gt;Optional:\n\nRequire active subscription, returning 402 if not found.\nUse in route handlers to gate premium features.\nArgs: tenant_id: Tenant ID to check host_db: Optional HostDatabase grace_period_days: Days to allow access after payment failure redirect_url: Optional URL to redirect instead of 402\nReturns: None if subscription is valid (allow access) Response(402) or RedirectResponse if subscription required\nExample: &gt;&gt;&gt; @app.get(‘/premium-feature’) &gt;&gt;&gt; def premium_feature(request): … error = require_active_subscription(request.state.tenant_id) … if error: … return error … return render_premium_content()\n\nsource\n\n\nget_subscription_status\n\ndef get_subscription_status(\n    tenant_id:str, host_db:HostDatabase=None, grace_period_days:int=3\n)-&gt;Dict:\n\nGet detailed subscription status for UI display.\nArgs: tenant_id: Tenant ID to check host_db: Optional HostDatabase grace_period_days: Days for grace period calculation\nReturns: Dict with subscription details for UI: - has_subscription: bool - status: str (‘active’, ‘trialing’, ‘past_due’, ‘canceled’, ‘none’) - plan_tier: str or None - is_trial: bool - trial_ends_at: str (ISO) or None - current_period_end: str (ISO) or None - days_remaining: int or None - in_grace_period: bool - cancel_at_period_end: bool\nExample: &gt;&gt;&gt; status = get_subscription_status(‘tnt_123’) &gt;&gt;&gt; if status[‘is_trial’]: … show_trial_banner(status[‘days_remaining’])"
+  },
+  {
+    "objectID": "utils_stripe.html#feature-gating",
+    "href": "utils_stripe.html#feature-gating",
+    "title": "💳 Stripe Utilities",
+    "section": "📊 Feature Gating",
+    "text": "📊 Feature Gating\nControl access to features based on subscription plan tier.\n\nsource\n\ncheck_feature_access\n\ndef check_feature_access(\n    tenant_id:str, feature:str, feature_tiers:Dict=None, host_db:HostDatabase=None, grace_period_days:int=3\n)-&gt;bool:\n\nCheck if tenant’s plan tier allows access to a feature.\nArgs: tenant_id: Tenant ID to check feature: Feature name to check access for feature_tiers: Optional mapping of feature -&gt; required tier. Defaults to {‘advanced_analytics’: ‘yearly’, …} host_db: Optional HostDatabase grace_period_days: Days for grace period\nReturns: True if tenant’s plan allows the feature, False otherwise\nExample: &gt;&gt;&gt; if check_feature_access(‘tnt_123’, ‘advanced_analytics’): … return render_analytics() &gt;&gt;&gt; else: … return render_upgrade_prompt()\n\nsource\n\n\nrequire_feature_access\n\ndef require_feature_access(\n    tenant_id:str, feature:str, feature_tiers:Dict=None, host_db:HostDatabase=None, redirect_url:str=None\n)-&gt;Optional:\n\nRequire feature access, returning 403 if not allowed.\nArgs: tenant_id: Tenant ID to check feature: Feature name to check feature_tiers: Optional feature -&gt; tier mapping host_db: Optional HostDatabase redirect_url: Optional URL to redirect instead of 403\nReturns: None if access allowed, Response(403) or redirect otherwise\nExample: &gt;&gt;&gt; @app.get(‘/analytics’) &gt;&gt;&gt; def analytics(request): … error = require_feature_access( … request.state.tenant_id, … ‘advanced_analytics’, … redirect_url=‘/upgrade’ … ) … if error: … return error … return render_analytics()"
+  },
+  {
+    "objectID": "utils_stripe.html#route-helpers",
+    "href": "utils_stripe.html#route-helpers",
+    "title": "💳 Stripe Utilities",
+    "section": "🛤️ Route Helpers",
+    "text": "🛤️ Route Helpers\nReady-to-use FastHTML route factories for Stripe integration.\n\nsource\n\ncreate_webhook_route\n\ndef create_webhook_route(\n    app, service:StripeService, path:str='/stripe/webhook'\n):\n\nCreate a POST route handler for Stripe webhooks.\nArgs: app: FastHTML application instance service: Configured StripeService instance path: URL path for webhook endpoint\nReturns: The registered route handler\nExample: &gt;&gt;&gt; from fh_saas.utils_stripe import StripeService, StripeConfig, create_webhook_route &gt;&gt;&gt; config = StripeConfig.from_env() &gt;&gt;&gt; service = StripeService(config) &gt;&gt;&gt; create_webhook_route(app, service) &gt;&gt;&gt; # Webhook now available at POST /stripe/webhook\n\nsource\n\n\ncreate_subscription_checkout_route\n\ndef create_subscription_checkout_route(\n    app, service:StripeService, path:str='/checkout/{plan_type}'\n):\n\nCreate a GET route for subscription checkout redirect.\nExpects authenticated user with tenant_id in request.state.\nArgs: app: FastHTML application instance service: Configured StripeService instance path: URL path pattern with {plan_type} placeholder\nReturns: The registered route handler\nExample: &gt;&gt;&gt; create_subscription_checkout_route(app, service) &gt;&gt;&gt; # Checkout available at GET /checkout/monthly or /checkout/yearly\n\nsource\n\n\ncreate_one_time_checkout_route\n\ndef create_one_time_checkout_route(\n    app, service:StripeService, products:Dict, path:str='/buy/{product_id}'\n):\n\nCreate a GET route for one-time payment checkout.\nArgs: app: FastHTML application instance service: Configured StripeService instance products: Dict mapping product_id to {‘name’: str, ‘amount_cents’: int} path: URL path pattern with {product_id} placeholder\nReturns: The registered route handler\nExample: &gt;&gt;&gt; products = { … ‘report’: {‘name’: ‘Premium Report’, ‘amount_cents’: 4999}, … ‘credits’: {‘name’: ‘100 Credits’, ‘amount_cents’: 1999}, … } &gt;&gt;&gt; create_one_time_checkout_route(app, service, products) &gt;&gt;&gt; # Checkout available at GET /buy/report or /buy/credits\n\nsource\n\n\ncreate_portal_route\n\ndef create_portal_route(\n    app, service:StripeService, path:str='/billing-portal'\n):\n\nCreate a GET route for Stripe Customer Portal redirect.\nArgs: app: FastHTML application instance service: Configured StripeService instance path: URL path for portal endpoint\nReturns: The registered route handler\nExample: &gt;&gt;&gt; create_portal_route(app, service) &gt;&gt;&gt; # Portal available at GET /billing-portal"
+  },
+  {
+    "objectID": "utils_stripe.html#service-factory",
+    "href": "utils_stripe.html#service-factory",
+    "title": "💳 Stripe Utilities",
+    "section": "🏭 Service Factory",
+    "text": "🏭 Service Factory\nSingleton pattern for easy service access across the application.\n\nsource\n\nreset_stripe_service\n\ndef reset_stripe_service(\n    \n):\n\nReset singleton instance (for testing only).\n\nsource\n\n\nget_stripe_service\n\ndef get_stripe_service(\n    config:StripeConfig=None\n)-&gt;StripeService:\n\nGet or create singleton StripeService instance.\nArgs: config: Optional StripeConfig. Uses from_env() on first call if not provided.\nReturns: StripeService singleton instance\nExample: &gt;&gt;&gt; service = get_stripe_service() &gt;&gt;&gt; checkout = service.create_subscription_checkout(…)"
+  },
+  {
+    "objectID": "utils_stripe.html#quick-start",
+    "href": "utils_stripe.html#quick-start",
+    "title": "💳 Stripe Utilities",
+    "section": "🚀 Quick Start",
+    "text": "🚀 Quick Start\n\n1. Set Environment Variables\n# Required\nexport CONFIG_STRIPE_SECRETKEY=\"sk_test_...\"\nexport CONFIG_STRIPE_WEBHOOKSECRET=\"whsec_...\"\n\n# Create prices in Stripe Dashboard, then set IDs\nexport CONFIG_STRIPE_MONTHLY_PRICE_ID=\"price_...\"\nexport CONFIG_STRIPE_YEARLY_PRICE_ID=\"price_...\"\n\n# Application URL\nexport CONFIG_STRIPE_BASE_URL=\"https://yourapp.com\"\n\n\n2. Initialize Service & Routes\nfrom fasthtml.common import FastHTML\nfrom fh_saas.utils_stripe import (\n    get_stripe_service,\n    create_webhook_route,\n    create_subscription_checkout_route,\n    create_portal_route,\n)\n\napp = FastHTML()\nservice = get_stripe_service()\n\n# Register routes\ncreate_webhook_route(app, service)\ncreate_subscription_checkout_route(app, service)\ncreate_portal_route(app, service)\n\n# Now available:\n# POST /stripe/webhook       - Stripe webhook handler\n# GET  /checkout/monthly     - Monthly subscription checkout\n# GET  /checkout/yearly      - Yearly subscription checkout\n# GET  /billing-portal       - Customer self-service portal\n\n\n3. Gate Premium Features\nfrom fh_saas.utils_stripe import require_active_subscription\n\n@app.get('/premium')\ndef premium_feature(request):\n    error = require_active_subscription(request.state.tenant_id)\n    if error:\n        return error  # 402 Payment Required\n    return render_premium_content()\n\n\n4. Integrate with Auth Beforeware\nfrom fh_saas.utils_auth import create_auth_beforeware\n\n# Optional: Add require_subscription=True to beforeware\n# See utils_auth for integration examples"
+  },
+  {
+    "objectID": "utils_webhook.html",
+    "href": "utils_webhook.html",
+    "title": "🪝 Webhooks",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nverify_webhook_signature\nHMAC-SHA256 signature verification\n\n\ncheck_idempotency\nPrevent duplicate processing\n\n\nlog_webhook_event\nPersist event to database\n\n\nprocess_webhook\nMain orchestration function\n\n\nhandle_webhook_request\nFastHTML route handler",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_webhook.html#overview",
+    "href": "utils_webhook.html#overview",
+    "title": "🪝 Webhooks",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nverify_webhook_signature\nHMAC-SHA256 signature verification\n\n\ncheck_idempotency\nPrevent duplicate processing\n\n\nlog_webhook_event\nPersist event to database\n\n\nprocess_webhook\nMain orchestration function\n\n\nhandle_webhook_request\nFastHTML route handler",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_webhook.html#architecture",
+    "href": "utils_webhook.html#architecture",
+    "title": "🪝 Webhooks",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    Webhook Processing Flow                      │\n├─────────────────────────────────────────────────────────────────┤\n│  Request → Verify Signature → Check Idempotency → Log Event    │\n│     ↓           ✅              ✅ (not duplicate)              │\n│  Execute Handler → Update Status → Return Response              │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_webhook.html#signature-verification",
+    "href": "utils_webhook.html#signature-verification",
+    "title": "🪝 Webhooks",
+    "section": "🔐 Signature Verification",
+    "text": "🔐 Signature Verification\n\n\n\nFunction\nPurpose\n\n\n\n\nverify_webhook_signature\nHMAC-SHA256 with timing-safe comparison\n\n\n\n\nfrom nbdev.showdoc import *\n\n\nsource\n\nverify_webhook_signature\n\ndef verify_webhook_signature(\n    payload:str, # Raw request body as string\n    signature:str, # Signature from header (format: \"sha256=&lt;hex&gt;\")\n    secret:Optional=None, # Secret key, defaults to WEBHOOK_SECRET env var\n)-&gt;bool:\n\nVerify HMAC-SHA256 signature for webhook payload. Returns True if valid.",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_webhook.html#idempotency",
+    "href": "utils_webhook.html#idempotency",
+    "title": "🪝 Webhooks",
+    "section": "🔄 Idempotency",
+    "text": "🔄 Idempotency\n\n\n\nFunction\nPurpose\n\n\n\n\ncheck_idempotency\nCheck if event already processed\n\n\n\n\nsource\n\ncheck_idempotency\n\ndef check_idempotency(\n    db:Database, # Tenant database connection\n    idempotency_key:str, # Unique key for this webhook event\n)-&gt;bool:\n\nCheck if webhook event already processed. Returns True if duplicate.",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_webhook.html#event-logging",
+    "href": "utils_webhook.html#event-logging",
+    "title": "🪝 Webhooks",
+    "section": "📝 Event Logging",
+    "text": "📝 Event Logging\n\n\n\nFunction\nPurpose\n\n\n\n\nlog_webhook_event\nPersist event to database\n\n\nupdate_webhook_status\nUpdate status after processing\n\n\n\n\nsource\n\nlog_webhook_event\n\ndef log_webhook_event(\n    db:Database, # Tenant database connection\n    webhook_id:str, # Unique webhook ID\n    source:str, # Source system (e.g., \"stripe\", \"github\")\n    event_type:str, # Event type (e.g., \"payment.success\")\n    payload:Dict, # Full webhook payload\n    signature:str, # Request signature\n    idempotency_key:str, # Idempotency key\n    status:str='pending', # Status: pending, processing, completed, failed\n):\n\nLog webhook event to database",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_webhook.html#update-webhook-status",
+    "href": "utils_webhook.html#update-webhook-status",
+    "title": "🪝 Webhooks",
+    "section": "Update Webhook Status",
+    "text": "Update Webhook Status\n\nsource\n\nupdate_webhook_status\n\ndef update_webhook_status(\n    db:Database, # Tenant database connection\n    webhook_id:str, # Webhook ID to update\n    status:str, # New status\n    error_message:Optional=None, # Optional error message\n):\n\nUpdate webhook event status and processed timestamp",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_webhook.html#process-webhook",
+    "href": "utils_webhook.html#process-webhook",
+    "title": "🪝 Webhooks",
+    "section": "⚡ Process Webhook",
+    "text": "⚡ Process Webhook\n\n\n\nFunction\nPurpose\n\n\n\n\nprocess_webhook\nMain orchestration function\n\n\nhandle_webhook_request\nFastHTML route handler\n\n\n\n\nsource\n\nprocess_webhook\n\ndef process_webhook(\n    db:Database, # Tenant database connection\n    webhook_id:str, # Unique webhook ID\n    source:str, # Source system\n    event_type:str, # Event type\n    payload:Dict, # Webhook payload\n    signature:str, # Request signature\n    idempotency_key:str, # Idempotency key\n    raw_body:str, # Raw request body for signature verification\n    handler:Callable, # App-specific webhook handler function\n    secret:Optional=None, # Optional webhook secret\n)-&gt;Dict:\n\nProcess webhook with verification, idempotency, and custom handler execution\n\nfrom nbdev.showdoc import show_doc\n\n\nsource\n\n\nverify_webhook_signature\n\ndef verify_webhook_signature(\n    payload:str, # Raw request body as string\n    signature:str, # Signature from header (format: \"sha256=&lt;hex&gt;\")\n    secret:Optional=None, # Secret key, defaults to WEBHOOK_SECRET env var\n)-&gt;bool:\n\nVerify HMAC-SHA256 signature for webhook payload. Returns True if valid.\n\nsource\n\n\ncheck_idempotency\n\ndef check_idempotency(\n    db:Database, # Tenant database connection\n    idempotency_key:str, # Unique key for this webhook event\n)-&gt;bool:\n\nCheck if webhook event already processed. Returns True if duplicate.\n\nsource\n\n\nlog_webhook_event\n\ndef log_webhook_event(\n    db:Database, # Tenant database connection\n    webhook_id:str, # Unique webhook ID\n    source:str, # Source system (e.g., \"stripe\", \"github\")\n    event_type:str, # Event type (e.g., \"payment.success\")\n    payload:Dict, # Full webhook payload\n    signature:str, # Request signature\n    idempotency_key:str, # Idempotency key\n    status:str='pending', # Status: pending, processing, completed, failed\n):\n\nLog webhook event to database\n\nsource\n\n\nupdate_webhook_status\n\ndef update_webhook_status(\n    db:Database, # Tenant database connection\n    webhook_id:str, # Webhook ID to update\n    status:str, # New status\n    error_message:Optional=None, # Optional error message\n):\n\nUpdate webhook event status and processed timestamp\n\nsource\n\n\nprocess_webhook\n\ndef process_webhook(\n    db:Database, # Tenant database connection\n    webhook_id:str, # Unique webhook ID\n    source:str, # Source system\n    event_type:str, # Event type\n    payload:Dict, # Webhook payload\n    signature:str, # Request signature\n    idempotency_key:str, # Idempotency key\n    raw_body:str, # Raw request body for signature verification\n    handler:Callable, # App-specific webhook handler function\n    secret:Optional=None, # Optional webhook secret\n)-&gt;Dict:\n\nProcess webhook with verification, idempotency, and custom handler execution\n\nsource\n\n\nhandle_webhook_request\n\ndef handle_webhook_request(\n    request, # FastHTML request object\n    db:Database, # Tenant database instance\n    source:str, # Webhook source identifier\n    handler:Callable, # App-specific handler function\n    signature_header:str='X-Webhook-Signature', # Header containing signature\n    idempotency_header:str='X-Idempotency-Key', # Header containing idempotency key\n    event_type_field:str='type', # Field in payload containing event type\n    secret:Optional=None, # Optional webhook secret\n)-&gt;tuple: # Returns (response_dict, status_code)\n\nFastHTML route handler for webhook requests.\nExample: @app.post(‘/webhooks/stripe’) async def stripe_webhook(request): return await handle_webhook_request( request=request, db=get_tenant_db(request), source=‘stripe’, handler=handle_stripe_event, signature_header=‘X-Stripe-Signature’, run_in_background=True )",
+    "crumbs": [
+      "🔌 Integrations",
+      "🪝 Webhooks"
+    ]
+  },
+  {
+    "objectID": "utils_seo.html",
+    "href": "utils_seo.html",
+    "title": "🔍 SEO & Sitemaps",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\ngenerate_head_tags\nMeta tags for social sharing\n\n\ngenerate_sitemap_xml\nXML sitemap for crawlers\n\n\ngenerate_json_ld\nStructured data (Article schema)",
+    "crumbs": [
+      "📣 Content",
+      "🔍 SEO & Sitemaps"
+    ]
+  },
+  {
+    "objectID": "utils_seo.html#overview",
+    "href": "utils_seo.html#overview",
+    "title": "🔍 SEO & Sitemaps",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\ngenerate_head_tags\nMeta tags for social sharing\n\n\ngenerate_sitemap_xml\nXML sitemap for crawlers\n\n\ngenerate_json_ld\nStructured data (Article schema)",
+    "crumbs": [
+      "📣 Content",
+      "🔍 SEO & Sitemaps"
+    ]
+  },
+  {
+    "objectID": "utils_seo.html#meta-tags",
+    "href": "utils_seo.html#meta-tags",
+    "title": "🔍 SEO & Sitemaps",
+    "section": "🏷️ Meta Tags",
+    "text": "🏷️ Meta Tags\n\n\n\nFunction\nPurpose\n\n\n\n\ngenerate_head_tags\nOpenGraph, Twitter Card, canonical\n\n\n\n\nsource\n\ngenerate_head_tags\n\ndef generate_head_tags(\n    title:str, # Page title\n    description:str, # Page description (150-160 chars optimal)\n    url:str, # Canonical URL\n    image_url:Optional[str]=None, # OpenGraph image URL\n    article_published:Optional[datetime]=None, # Publication date\n    article_modified:Optional[datetime]=None, # Last modified date\n    author:Optional[str]=None, # Author name\n)-&gt;List[tuple]:\n\nGenerate meta tags for SEO.\nReturns list of (tag_name, attributes_dict) tuples for FastHTML components. Includes standard, OpenGraph, and Twitter Card tags.\nExample: ```python from fasthtml.common import *\ntags = generate_head_tags(\n    title='My Blog Post',\n    description='Learn about Python',\n    url='https://example.com/blog/my-post',\n    image_url='https://example.com/image.jpg'\n)\n\n# Use in FastHTML app\n@app.get('/blog/my-post')\ndef post():\n    return Html(\n        Head(\n            *[Meta(**attrs) if tag == 'meta' else Link(**attrs) \n              for tag, attrs in tags]\n        ),\n        Body('...')\n    )\n```",
+    "crumbs": [
+      "📣 Content",
+      "🔍 SEO & Sitemaps"
+    ]
+  },
+  {
+    "objectID": "utils_seo.html#sitemap",
+    "href": "utils_seo.html#sitemap",
+    "title": "🔍 SEO & Sitemaps",
+    "section": "🗺️ Sitemap",
+    "text": "🗺️ Sitemap\n\n\n\nFunction\nPurpose\n\n\n\n\ngenerate_sitemap_xml\nXML sitemap for search crawlers\n\n\n\n\nsource\n\ngenerate_sitemap_xml\n\ndef generate_sitemap_xml(\n    posts:List[Dict], # List of posts from PostLoader\n    base_url:str, # Base URL (e.g., 'https://example.com')\n    blog_path:str='/blog', # Blog path prefix\n)-&gt;str:\n\nGenerate XML sitemap for blog posts.\nReturns sitemap XML string with proper structure and lastmod dates.\nExample: ```python from fasthtml.common import * from fh_saas.utils_blog import PostLoader\napp = FastHTML()\nloader = PostLoader('blog/posts')\n\n@app.get('/sitemap.xml')\ndef sitemap():\n    posts = loader.load_posts()\n    xml = generate_sitemap_xml(\n        posts=posts,\n        base_url='https://example.com',\n        blog_path='/blog'\n    )\n    return Response(xml, media_type='application/xml')\n```",
+    "crumbs": [
+      "📣 Content",
+      "🔍 SEO & Sitemaps"
+    ]
+  },
+  {
+    "objectID": "utils_seo.html#rss-feed-generator",
+    "href": "utils_seo.html#rss-feed-generator",
+    "title": "🔍 SEO & Sitemaps",
+    "section": "rss feed generator",
+    "text": "rss feed generator\nGenerate RSS 2.0 feed for blog subscribers.\n\nsource\n\ngenerate_rss_xml\n\ndef generate_rss_xml(\n    posts:List[Dict], # List of posts from PostLoader\n    blog_title:str, # Blog title\n    blog_description:str, # Blog description\n    base_url:str, # Base URL\n    blog_path:str='/blog', # Blog path prefix\n)-&gt;str:\n\nGenerate RSS 2.0 feed for blog posts.\nReturns RSS XML string for feed readers (Feedly, etc.).\nExample: ```python from fasthtml.common import * from fh_saas.utils_blog import PostLoader\napp = FastHTML()\nloader = PostLoader('blog/posts')\n\n@app.get('/rss.xml')\ndef rss():\n    posts = loader.load_posts()[:20]  # Latest 20 posts\n    xml = generate_rss_xml(\n        posts=posts,\n        blog_title='My Blog',\n        blog_description='Tech tutorials and insights',\n        base_url='https://example.com'\n    )\n    return Response(xml, media_type='application/xml')\n```",
+    "crumbs": [
+      "📣 Content",
+      "🔍 SEO & Sitemaps"
+    ]
+  },
+  {
+    "objectID": "utils_seo.html#fasthtml-integration-example",
+    "href": "utils_seo.html#fasthtml-integration-example",
+    "title": "🔍 SEO & Sitemaps",
+    "section": "FastHTML Integration Example",
+    "text": "FastHTML Integration Example\nComplete SEO setup with FastHTML:\nfrom fasthtml.common import *\nfrom fh_saas.utils_blog import PostLoader, MarkdownEngine\nfrom fh_saas.utils_seo import generate_head_tags, generate_sitemap_xml, generate_rss_xml\n\napp = FastHTML()\nloader = PostLoader('blog/posts')\nengine = MarkdownEngine()\n\n@app.get('/blog/{slug}')\ndef blog_post(slug: str):\n    post = loader.get_post(slug)\n    if not post:\n        return 'Post not found', 404\n    \n    # Generate SEO tags\n    tags = generate_head_tags(\n        title=post['title'],\n        description=post['description'] or post['body'][:160],\n        url=f\"https://example.com/blog/{slug}\",\n        image_url=post.get('image'),\n        article_published=post['date'],\n        author=post.get('author')\n    )\n    \n    # Render markdown\n    html_content = engine.render(post['body'])\n    \n    return Html(\n        Head(\n            Title(post['title']),\n            *[Meta(**attrs) if tag == 'meta' else Link(**attrs) \n              for tag, attrs in tags]\n        ),\n        Body(\n            Article(NotStr(html_content))\n        )\n    )\n\n@app.get('/sitemap.xml')\ndef sitemap():\n    posts = loader.load_posts()\n    xml = generate_sitemap_xml(posts, 'https://example.com')\n    return Response(xml, media_type='application/xml')\n\n@app.get('/rss.xml')\ndef rss():\n    posts = loader.load_posts()[:20]\n    xml = generate_rss_xml(\n        posts=posts,\n        blog_title='My Blog',\n        blog_description='Tech tutorials',\n        base_url='https://example.com'\n    )\n    return Response(xml, media_type='application/xml')",
+    "crumbs": [
+      "📣 Content",
+      "🔍 SEO & Sitemaps"
+    ]
+  },
+  {
+    "objectID": "utils_polars_mapper.html",
+    "href": "utils_polars_mapper.html",
+    "title": "🐻‍❄️ Data Transforms",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nmap_and_upsert\nBulk JSON→DB upsert via staging table\n\n\napply_schema\nType conversions (dates, booleans, numbers)",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "🐻‍❄️ Data Transforms"
+    ]
+  },
+  {
+    "objectID": "utils_polars_mapper.html#overview",
+    "href": "utils_polars_mapper.html#overview",
+    "title": "🐻‍❄️ Data Transforms",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nmap_and_upsert\nBulk JSON→DB upsert via staging table\n\n\napply_schema\nType conversions (dates, booleans, numbers)",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "🐻‍❄️ Data Transforms"
+    ]
+  },
+  {
+    "objectID": "utils_polars_mapper.html#architecture",
+    "href": "utils_polars_mapper.html#architecture",
+    "title": "🐻‍❄️ Data Transforms",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    Staging Table Pattern                        │\n├─────────────────────────────────────────────────────────────────┤\n│  1. df.write_database(staging_table) → fast bulk INSERT        │\n│  2. INSERT ... ON CONFLICT SELECT FROM staging → vectorized    │\n│  3. DROP TABLE staging → cleanup                                │\n│                                                                 │\n│  ⚡ 10-100x faster than row-by-row upserts                     │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "🐻‍❄️ Data Transforms"
+    ]
+  },
+  {
+    "objectID": "utils_polars_mapper.html#map-upsert",
+    "href": "utils_polars_mapper.html#map-upsert",
+    "title": "🐻‍❄️ Data Transforms",
+    "section": "📥 Map & Upsert",
+    "text": "📥 Map & Upsert\n\n\n\nParameter\nDescription\n\n\n\n\ndf\nPolars DataFrame from JSON\n\n\ntable_name\nTarget database table (must exist)\n\n\nkey_col\nPrimary key for ON CONFLICT resolution\n\n\ndb_uri\nDatabase connection string\n\n\ncolumn_map\nOptional rename map {json_col: db_col}\n\n\nunnest_cols\nOptional list of nested columns to flatten\n\n\ntype_map\nOptional type casting map {col: pl.DataType}\n\n\n\nReturns: int - Number of rows affected by the upsert operation\nStaging Table Pattern (10-100x faster than row-by-row): 1. Write to temporary staging table (fast bulk insert) 2. Execute INSERT ... ON CONFLICT (database-native, vectorized) 3. Drop staging table (cleanup)\nType Casting with type_map:\nWhen API data contains None values, Polars may infer incorrect types (e.g., String instead of Int64). This causes PostgreSQL type mismatch errors like:\ncolumn \"balance\" is of type integer but expression is of type text\nUse type_map to explicitly cast columns before writing:\nrows = map_and_upsert(\n    df=df,\n    table_name='accounts',\n    key_col='id',\n    db_uri=db_uri,\n    type_map={\n        'balance_current': pl.Int64,\n        'balance_available': pl.Int64,\n        'balance_limit': pl.Int64\n    }\n)\nprint(f\"Upserted {rows} rows\")\nBasic Example:\nimport polars as pl\n\n# JSON from API\njson_data = [\n    {'user_id_val': 1, 'ABC_1': 'Alice', 'extra': 'ignore'},\n    {'user_id_val': 2, 'ABC_1': 'Bob', 'extra': 'ignore'}\n]\n\ndf = pl.DataFrame(json_data)\n\nrows_affected = map_and_upsert(\n    df=df,\n    table_name='users',\n    key_col='user_id',\n    db_uri='sqlite:///app.db',\n    column_map={'user_id_val': 'user_id', 'ABC_1': 'name'}\n)\nprint(f\"Upserted {rows_affected} users\")\n\nsource\n\nmap_and_upsert\n\ndef map_and_upsert(\n    df:pl.DataFrame, # The raw Polars DataFrame from JSON\n    table_name:str, # Target database table name\n    key_col:str, # Primary key column for conflict resolution\n    db_uri:str, # SQLAlchemy connection string (e.g., 'sqlite:///db.db' or 'postgresql://...')\n    column_map:dict=None, # Optional rename map {json_key: db_col}\n    unnest_cols:list[str]=None, # List of Struct columns to flatten\n    type_map:dict=None, # Optional type casting map {col_name: pl.DataType}\n)-&gt;int:\n\nMap JSON data to database columns and upsert using staging table pattern.\nReturns: Number of rows affected by the upsert operation\nType Casting: When columns have None values, Polars may infer incorrect types (e.g., String instead of Int64). This causes PostgreSQL type mismatch errors. Use type_map to explicitly cast columns before writing to the database.",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "🐻‍❄️ Data Transforms"
+    ]
+  },
+  {
+    "objectID": "utils_polars_mapper.html#schema-transformations",
+    "href": "utils_polars_mapper.html#schema-transformations",
+    "title": "🐻‍❄️ Data Transforms",
+    "section": "🔧 Schema Transformations",
+    "text": "🔧 Schema Transformations\n\n\n\nParameter\nDescription\n\n\n\n\ndf\nPolars DataFrame\n\n\ntype_map\nDict mapping column names to Polars dtypes\n\n\n\nSupported conversions:\n\n\n\nType\nHandling\n\n\n\n\npl.Date\nParses YYYY-MM-DD strings\n\n\npl.Datetime\nParses datetime strings\n\n\npl.Boolean\nConverts \"true\"/\"false\" strings\n\n\nOther\nUses cast() (works for numeric types)\n\n\n\nExample:\ndf = pl.DataFrame({\n    'created_at': ['2024-01-15', '2024-01-16'],\n    'is_active': ['true', 'false'],\n    'amount': ['123.45', '678.90']\n})\n\ndf = apply_schema(df, {\n    'created_at': pl.Date,\n    'is_active': pl.Boolean,\n    'amount': pl.Float64\n})\n\nsource\n\napply_schema\n\ndef apply_schema(\n    df:pl.DataFrame, # Input DataFrame\n    type_map:dict, # Column name -&gt; Polars dtype (e.g., {'created_at': pl.Date, 'is_active': pl.Boolean})\n)-&gt;pl.DataFrame:\n\nApply explicit type conversions to DataFrame columns.",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "🐻‍❄️ Data Transforms"
+    ]
+  },
+  {
+    "objectID": "utils_api.html",
+    "href": "utils_api.html",
+    "title": "🌐 HTTP Client",
+    "section": "",
+    "text": "Category\nFunctions\nPurpose\n\n\n\n\n🔄 Client\nAsyncAPIClient\nAsync HTTP with retry\n\n\n🔑 Auth\nbearer_token_auth, api_key_auth, oauth_token_auth\nAuth header generators",
+    "crumbs": [
+      "🔌 Integrations",
+      "🌐 HTTP Client"
+    ]
+  },
+  {
+    "objectID": "utils_api.html#overview",
+    "href": "utils_api.html#overview",
+    "title": "🌐 HTTP Client",
+    "section": "",
+    "text": "Category\nFunctions\nPurpose\n\n\n\n\n🔄 Client\nAsyncAPIClient\nAsync HTTP with retry\n\n\n🔑 Auth\nbearer_token_auth, api_key_auth, oauth_token_auth\nAuth header generators",
+    "crumbs": [
+      "🔌 Integrations",
+      "🌐 HTTP Client"
+    ]
+  },
+  {
+    "objectID": "utils_api.html#architecture",
+    "href": "utils_api.html#architecture",
+    "title": "🌐 HTTP Client",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    Retry Logic Flow                             │\n├─────────────────────────────────────────────────────────────────┤\n│  Request → Response                                             │\n│     ↓                                                           │\n│  Status 429 or 500+ → Retry (exponential: 2s, 4s, 8s)          │\n│     ↓                                                           │\n│  Status 400-499 (except 429) → Fail immediately                │\n│     ↓                                                           │\n│  Network error → Retry                                          │\n│     ↓                                                           │\n│  Max 3 attempts → Raise exception                               │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "🔌 Integrations",
+      "🌐 HTTP Client"
+    ]
+  },
+  {
+    "objectID": "utils_api.html#asyncapiclient",
+    "href": "utils_api.html#asyncapiclient",
+    "title": "🌐 HTTP Client",
+    "section": "🔄 AsyncAPIClient",
+    "text": "🔄 AsyncAPIClient\n\n\n\nMethod\nPurpose\n\n\n\n\nAsyncAPIClient\nAsync HTTP client with retry\n\n\n.request()\nExecute HTTP request with retry\n\n\n.get_json()\nGET request returning JSON\n\n\n\n\nsource\n\nAsyncAPIClient\n\ndef AsyncAPIClient(\n    base_url:str, auth_headers:dict=None, timeout:int=30\n):\n\nAsync HTTP client with retry logic for external API integrations.\n\nsource\n\n\nAsyncAPIClient.__init__\n\ndef __init__(\n    base_url:str, auth_headers:dict=None, timeout:int=30\n):\n\nInitialize client with base URL, optional auth headers, and timeout.\n\nsource\n\n\nAsyncAPIClient.request\n\ndef request(\n    method:str, endpoint:str, params:dict=None, json:dict=None, headers:dict=None\n)-&gt;httpx.Response:\n\nExecute HTTP request with automatic retry on 429/500+ errors.\n\nsource\n\n\nAsyncAPIClient.get_json\n\ndef get_json(\n    endpoint:str, params:dict=None\n)-&gt;Dict[str, Any]:\n\nConvenience GET that returns parsed JSON.",
+    "crumbs": [
+      "🔌 Integrations",
+      "🌐 HTTP Client"
+    ]
+  },
+  {
+    "objectID": "utils_api.html#auth-helpers",
+    "href": "utils_api.html#auth-helpers",
+    "title": "🌐 HTTP Client",
+    "section": "🔑 Auth Helpers",
+    "text": "🔑 Auth Helpers\n\n\n\nFunction\nPurpose\n\n\n\n\nbearer_token_auth\nBearer token header\n\n\napi_key_auth\nAPI key header (customizable)\n\n\noauth_token_auth\nOAuth 2.0 access token\n\n\n\n\nsource\n\nbearer_token_auth\n\ndef bearer_token_auth(\n    token:str\n)-&gt;dict:\n\nGenerate Bearer token authentication header.\n\nsource\n\n\napi_key_auth\n\ndef api_key_auth(\n    api_key:str, header_name:str='X-API-Key'\n)-&gt;dict:\n\nGenerate API key header with customizable header name.\n\nsource\n\n\noauth_token_auth\n\ndef oauth_token_auth(\n    access_token:str\n)-&gt;dict:\n\nGenerate OAuth 2.0 access token header (alias for bearer_token_auth).",
+    "crumbs": [
+      "🔌 Integrations",
+      "🌐 HTTP Client"
+    ]
+  },
+  {
+    "objectID": "utils_email.html",
+    "href": "utils_email.html",
+    "title": "📧 Email Sending",
+    "section": "",
+    "text": "Category\nFunctions\nPurpose\n\n\n\n\n⚙️ Config\nget_smtp_config\nLoad SMTP settings from env\n\n\n📁 Templates\nget_template_path, load_template\nManage markdown templates\n\n\n✉️ Sending\nsend_email, send_batch_emails\nCore send functions\n\n\n🎁 Convenience\nsend_welcome_email, send_invitation_email, send_password_reset_email\nPre-built templates",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#overview",
+    "href": "utils_email.html#overview",
+    "title": "📧 Email Sending",
+    "section": "",
+    "text": "Category\nFunctions\nPurpose\n\n\n\n\n⚙️ Config\nget_smtp_config\nLoad SMTP settings from env\n\n\n📁 Templates\nget_template_path, load_template\nManage markdown templates\n\n\n✉️ Sending\nsend_email, send_batch_emails\nCore send functions\n\n\n🎁 Convenience\nsend_welcome_email, send_invitation_email, send_password_reset_email\nPre-built templates",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#architecture",
+    "href": "utils_email.html#architecture",
+    "title": "📧 Email Sending",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    Email Sending Flow                           │\n├─────────────────────────────────────────────────────────────────┤\n│  1. Load SMTP config from environment variables                 │\n│  2. Load markdown template from templates/ directory            │\n│  3. Substitute template variables (user_name, etc.)             │\n│  4. Convert markdown to HTML via markdown_merge                 │\n│  5. Send via SMTP (Azure, SendGrid, AWS SES, etc.)             │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#environment-variables",
+    "href": "utils_email.html#environment-variables",
+    "title": "📧 Email Sending",
+    "section": "📋 Environment Variables",
+    "text": "📋 Environment Variables\n\n\n\nVariable\nRequired\nDefault\nDescription\n\n\n\n\nSMTP_HOST\n✅\n-\nSMTP server hostname\n\n\nSMTP_PORT\n❌\n587\nSMTP server port\n\n\nSMTP_USER\n✅\n-\nAuth username\n\n\nSMTP_PASSWORD\n✅\n-\nAuth password\n\n\nSMTP_MAIL_FROM\n✅\n-\nSender email\n\n\nSMTP_STARTTLS\n❌\nTrue\nUse STARTTLS\n\n\nSMTP_SSL\n❌\nFalse\nUse SSL (disables TLS)",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#smtp-configuration",
+    "href": "utils_email.html#smtp-configuration",
+    "title": "📧 Email Sending",
+    "section": "⚙️ SMTP Configuration",
+    "text": "⚙️ SMTP Configuration\n\n\n\nFunction\nPurpose\n\n\n\n\nget_smtp_config\nLoad SMTP config from environment vars\n\n\n\n\nsource\n\nget_smtp_config\n\ndef get_smtp_config(\n    \n)-&gt;Dict[str, Any]:\n\nLoad SMTP configuration from environment variables.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#template-management",
+    "href": "utils_email.html#template-management",
+    "title": "📧 Email Sending",
+    "section": "📁 Template Management",
+    "text": "📁 Template Management\nBuilt-in Templates:\nWe ship 3 production-ready markdown templates: - welcome.md - New user onboarding - invitation.md - Invite users to tenant\n- password_reset.md - Password recovery\nCustom Templates:\nYou can provide your own templates by passing custom_template_path to any email function.\n\n\n\nFunction\nPurpose\n\n\n\n\nget_template_path\nResolve path to template file (built-in or custom)\n\n\nload_template\nRead template content as string\n\n\n\n\nsource\n\nload_template\n\ndef load_template(\n    template_name:str, # Template basename (e.g., 'welcome')\n    custom_template_path:Optional[str | Path]=None, # Custom path overrides package templates\n)-&gt;str:\n\nLoad markdown email template as string.\n\nsource\n\n\nget_template_path\n\ndef get_template_path(\n    template_name:str, # Template basename (e.g., 'welcome', 'invitation')\n    custom_template_path:Optional[str | Path]=None, # Custom path overrides package templates\n)-&gt;Path:\n\nGet absolute path to email template file.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#email-sending",
+    "href": "utils_email.html#email-sending",
+    "title": "📧 Email Sending",
+    "section": "✉️ Email Sending",
+    "text": "✉️ Email Sending\n\n\n\nFunction\nPurpose\n\n\n\n\nsend_email\nSend single email with template\n\n\nsend_batch_emails\nSend to multiple recipients\n\n\n\n\nsource\n\nsend_email\n\ndef send_email(\n    to_email:str, # Recipient email address\n    to_name:str, # Recipient display name\n    subject:str, # Email subject line\n    template_name:str, # Template name: 'welcome', 'invitation', 'password_reset'\n    template_vars:Dict[str, str], # Variables to substitute in template\n    test:bool=False, # If True, prints email instead of sending\n    smtp_config:Optional[Dict[str, Any]]=None, # Custom SMTP config (defaults to env vars)\n    custom_template_path:Optional[str | Path]=None, # Custom template path\n)-&gt;Dict[str, Any]:\n\nSend single email using markdown template with variable substitution.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#batch-sending",
+    "href": "utils_email.html#batch-sending",
+    "title": "📧 Email Sending",
+    "section": "📦 Batch Sending",
+    "text": "📦 Batch Sending\n\n\n\nFunction\nPurpose\n\n\n\n\nsend_batch_emails\nSend personalized emails to multiple recipients\n\n\n\n\nsource\n\nsend_batch_emails\n\ndef send_batch_emails(\n    recipients:List[Dict[str, str]], # List of dicts with 'email' and 'name' keys\n    subject:str, # Email subject line\n    template_name:str, # Template name: 'welcome', 'invitation', 'password_reset'\n    template_vars_list:List[Dict[str, str]], # List of variable dicts, one per recipient\n    test:bool=False, # If True, prints emails instead of sending\n    pause:float=0.2, # Seconds between emails (rate limiting)\n    smtp_config:Optional[Dict[str, Any]]=None, # Custom SMTP config\n    custom_template_path:Optional[str | Path]=None, # Custom template path\n)-&gt;List[Dict[str, Any]]:\n\nSend personalized emails to multiple recipients.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#convenience-functions",
+    "href": "utils_email.html#convenience-functions",
+    "title": "📧 Email Sending",
+    "section": "🎁 Convenience Functions",
+    "text": "🎁 Convenience Functions\nPre-built functions for common email types. All support custom_template_path for using your own templates.\n\n\n\nFunction\nTemplate\nPurpose\n\n\n\n\nsend_welcome_email\nwelcome.md\nNew user onboarding\n\n\nsend_invitation_email\ninvitation.md\nInvite to tenant\n\n\nsend_password_reset_email\npassword_reset.md\nPassword recovery\n\n\n\n\nsource\n\nsend_welcome_email\n\ndef send_welcome_email(\n    to_email:str, # Recipient email address\n    to_name:str, # Recipient display name\n    user_name:str, # User's name for personalization\n    tenant_name:str, # Tenant/organization name\n    dashboard_url:str, # URL to user's dashboard\n    test:bool=False, # If True, prints email instead of sending\n    custom_template_path:Optional[str | Path]=None, # Custom welcome.md template path\n)-&gt;Dict[str, Any]:\n\nSend welcome email to new user. Template vars: {user_name}, {tenant_name}, {dashboard_url}, {to_email}\n\nsource\n\n\nsend_invitation_email\n\ndef send_invitation_email(\n    to_email:str, # Recipient email address\n    to_name:str, # Recipient display name\n    inviter_name:str, # Name of person sending invitation\n    tenant_name:str, # Tenant/organization name\n    invitation_url:str, # URL to accept invitation\n    test:bool=False, # If True, prints email instead of sending\n    custom_template_path:Optional[str | Path]=None, # Custom invitation.md template path\n)-&gt;Dict[str, Any]:\n\nSend invitation email. Template vars: {inviter_name}, {tenant_name}, {invitation_url}, {to_email}\n\nsource\n\n\nsend_password_reset_email\n\ndef send_password_reset_email(\n    to_email:str, # Recipient email address\n    to_name:str, # Recipient display name\n    user_name:str, # User's name for personalization\n    reset_url:str, # Secure password reset URL\n    test:bool=False, # If True, prints email instead of sending\n    custom_template_path:Optional[str | Path]=None, # Custom password_reset.md template path\n)-&gt;Dict[str, Any]:\n\nSend password reset email. Template vars: {user_name}, {reset_url}, {to_email}",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_email.html#template-customization",
+    "href": "utils_email.html#template-customization",
+    "title": "📧 Email Sending",
+    "section": "📝 Template Customization",
+    "text": "📝 Template Customization\n\nBuilt-in Templates\nThe package ships with 3 production-ready templates in fh_saas/templates/:\n\n\n\n\n\n\n\nTemplate\nVariables\n\n\n\n\nwelcome.md\n{user_name}, {tenant_name}, {dashboard_url}, {to_email}\n\n\ninvitation.md\n{inviter_name}, {tenant_name}, {invitation_url}, {to_email}\n\n\npassword_reset.md\n{user_name}, {reset_url}, {to_email}\n\n\n\n\n\nCreating Custom Templates\n\nCopy a built-in template as a starting point\nModify the markdown and keep variable names in {brackets}\nPass custom_template_path='/path/to/template.md' to any function\n\nTemplates use markdown_merge format - standard markdown with {variable} placeholders.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📧 Email Sending"
+    ]
+  },
+  {
+    "objectID": "utils_bgtsk.html",
+    "href": "utils_bgtsk.html",
+    "title": "⚡ Background Tasks",
+    "section": "",
+    "text": "Category\nComponents\nPurpose\n\n\n\n\n📦 Model\nTenantJob\nTenant-level job record with retry support\n\n\n⚡ Manager\nBackgroundTaskManager\nSubmit, execute, and track background tasks",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "⚡ Background Tasks"
+    ]
+  },
+  {
+    "objectID": "utils_bgtsk.html#overview",
+    "href": "utils_bgtsk.html#overview",
+    "title": "⚡ Background Tasks",
+    "section": "",
+    "text": "Category\nComponents\nPurpose\n\n\n\n\n📦 Model\nTenantJob\nTenant-level job record with retry support\n\n\n⚡ Manager\nBackgroundTaskManager\nSubmit, execute, and track background tasks",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "⚡ Background Tasks"
+    ]
+  },
+  {
+    "objectID": "utils_bgtsk.html#architecture",
+    "href": "utils_bgtsk.html#architecture",
+    "title": "⚡ Background Tasks",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    FastHTML Route                               │\n│  return response, bg_task  ←─────────────────────┐              │\n└─────────────────────────────────────────────────────────────────┘\n                              │                    │\n                              ▼                    │\n┌─────────────────────────────────────────────────────────────────┐\n│                 BackgroundTaskManager                           │\n├─────────────────────────────────────────────────────────────────┤\n│  submit()           → Create job + return BackgroundTask        │\n│  _execute_with_retry() → Run with auto-retry on failure         │\n│  get_job()          → Check job status                          │\n│  list_jobs()        → Query jobs by type/status                 │\n├─────────────────────────────────────────────────────────────────┤\n│  Retry Logic: 2^n seconds backoff (2s, 4s, 8s)                  │\n└─────────────────────────────────────────────────────────────────┘\n                              │\n                              ▼\n┌─────────────────────────────────────────────────────────────────┐\n│                    Tenant Database                              │\n│                    └── tenant_jobs table                        │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "⚡ Background Tasks"
+    ]
+  },
+  {
+    "objectID": "utils_bgtsk.html#quick-reference",
+    "href": "utils_bgtsk.html#quick-reference",
+    "title": "⚡ Background Tasks",
+    "section": "📚 Quick Reference",
+    "text": "📚 Quick Reference\n\nJob Status Flow\npending → running → completed\n    ↑        │\n    └────────┴──→ failed (after max retries)\n\n\nUsage Pattern\n# In your FastHTML route\nmanager = BackgroundTaskManager(tenant_db)\njob_id, bg_task = manager.submit(\"sync_data\", my_sync_func, user_id=\"123\")\nreturn response, bg_task  # Starlette runs bg_task after response",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "⚡ Background Tasks"
+    ]
+  },
+  {
+    "objectID": "utils_bgtsk.html#tenantjob-model",
+    "href": "utils_bgtsk.html#tenantjob-model",
+    "title": "⚡ Background Tasks",
+    "section": "📦 TenantJob Model",
+    "text": "📦 TenantJob Model\nTracks background jobs at the tenant level with retry support.\n\n\n\nField\nType\nDescription\n\n\n\n\nid\nstr\nUnique job identifier\n\n\njob_type\nstr\nJob category (e.g., “sync”, “email”)\n\n\nstatus\nstr\npending / running / completed / failed\n\n\npayload\nstr\nJSON kwargs passed to task function\n\n\nresult\nstr\nJSON result on completion\n\n\nerror_log\nstr\nStack trace on failure\n\n\nretry_count\nint\nCurrent retry attempt\n\n\nmax_retries\nint\nMax attempts before marking failed\n\n\n\n\nsource\n\nTenantJob\n\ndef TenantJob(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nTenant-level background job with retry support.",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "⚡ Background Tasks"
+    ]
+  },
+  {
+    "objectID": "utils_bgtsk.html#backgroundtaskmanager",
+    "href": "utils_bgtsk.html#backgroundtaskmanager",
+    "title": "⚡ Background Tasks",
+    "section": "⚡ BackgroundTaskManager",
+    "text": "⚡ BackgroundTaskManager\nSubmit and track background tasks with automatic retry logic.\n\n\n\nMethod\nPurpose\n\n\n\n\nsubmit\nCreate job and return BackgroundTask for Starlette\n\n\nget_job\nGet job status and details by ID\n\n\nlist_jobs\nQuery jobs with optional type/status filters\n\n\n\n\n💡 Use case: Long-running operations like syncing data, sending emails, or processing uploads\n\n\nsource\n\nBackgroundTaskManager\n\ndef BackgroundTaskManager(\n    db:Database\n):\n\nLightweight background task manager for tenant-level operations.\n\nsource\n\n\nBackgroundTaskManager.list_jobs\n\ndef list_jobs(\n    job_type:Optional=None, status:Optional=None, limit:int=100\n)-&gt;list:\n\nList jobs with optional filtering.\n\nsource\n\n\nBackgroundTaskManager.get_job\n\ndef get_job(\n    job_id:str\n)-&gt;TenantJob:\n\nGet job status and details.\n\nsource\n\n\nBackgroundTaskManager.submit\n\ndef submit(\n    job_type:str, task_func:Callable, max_retries:int=3, task_kwargs:VAR_KEYWORD\n)-&gt;tuple:\n\nSubmit a new background task for execution.",
+    "crumbs": [
+      "⚙️ Data Pipeline",
+      "⚡ Background Tasks"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html",
+    "href": "db_tenant.html",
+    "title": "🗄️ Tenant Databases",
+    "section": "",
+    "text": "Each tenant gets their own isolated database containing:\n\n\n\nModel\nPurpose\n\n\n\n\n👤 TenantUser\nLocal user profiles linked to global identity\n\n\n🔐 TenantPermission\nFine-grained resource permissions\n\n\n⚙️ TenantSettings\nTenant-wide configuration",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html#overview",
+    "href": "db_tenant.html#overview",
+    "title": "🗄️ Tenant Databases",
+    "section": "",
+    "text": "Each tenant gets their own isolated database containing:\n\n\n\nModel\nPurpose\n\n\n\n\n👤 TenantUser\nLocal user profiles linked to global identity\n\n\n🔐 TenantPermission\nFine-grained resource permissions\n\n\n⚙️ TenantSettings\nTenant-wide configuration",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html#architecture",
+    "href": "db_tenant.html#architecture",
+    "title": "🗄️ Tenant Databases",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                      🏠 HOST DATABASE                           │\n│  ┌─────────────┐                                                │\n│  │ TenantCatalog │ ──► Maps tenant_id → database URL           │\n│  └──────┬──────┘                                                │\n└─────────┼───────────────────────────────────────────────────────┘\n          │\n          │  get_or_create_tenant_db(tenant_id)\n          ▼\n┌─────────────────────────────────────────────────────────────────┐\n│                    🗄️ TENANT DATABASE                           │\n│                    (Isolated per tenant)                        │\n├─────────────────────────────────────────────────────────────────┤\n│  👤 TenantUser      → Local profile (links to GlobalUser.id)   │\n│  🔐 TenantPermission → Resource-level access control           │\n│  ⚙️ TenantSettings   → Timezone, currency, feature flags       │\n│  🪝 WebhookEvent     → Idempotent webhook processing           │\n│  🔑 WebhookSecret    → HMAC secrets per webhook source         │\n├─────────────────────────────────────────────────────────────────┤\n│  📊 [Your App Tables] → Transactions, budgets, etc.            │\n└─────────────────────────────────────────────────────────────────┘\nKey Principle: Tenant data is completely isolated → No cross-tenant data leakage possible",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html#tenant-connection",
+    "href": "db_tenant.html#tenant-connection",
+    "title": "🗄️ Tenant Databases",
+    "section": "🔌 Tenant Connection",
+    "text": "🔌 Tenant Connection\n\n⚠️ Naming Convention: Use underscores (not hyphens) in tenant_id values.\nDatabase names are derived from tenant_id (e.g., tenant_acme_001 → t_tenant_acme_001_db). PostgreSQL and SQLite identifiers work best with alphanumeric characters and underscores.\n✅ Good: tenant_acme_001, tenant_finxplorer_prod ❌ Avoid: tenant-acme-001, tenant.finxplorer.prod\n\n\nfrom nbdev.showdoc import show_doc\n\nget_or_create_tenant_db() handles the full lifecycle:\n\n🔍 Check if tenant exists in host database\n🗄️ Create physical database if new (PostgreSQL)\n📝 Register tenant in TenantCatalog\n🔌 Return connection to tenant database\n\n\n\n\nParameter\nDescription\n\n\n\n\ntenant_id\nUnique tenant identifier (from Membership)\n\n\ntenant_name\nOptional display name (defaults to tenant_id)\n\n\n\nReturns: Database connection to the tenant’s isolated database\n\nsource\n\nget_or_create_tenant_db\n\ndef get_or_create_tenant_db(\n    tenant_id:str, tenant_name:str=None\n):\n\nGet or create a tenant database connection by tenant ID.\n⚠️ IMPORTANT: Caller is responsible for closing the returned Database connection by calling db.conn.close() and db.engine.dispose() when done.",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html#core-tenant-models",
+    "href": "db_tenant.html#core-tenant-models",
+    "title": "🗄️ Tenant Databases",
+    "section": "📦 Core Tenant Models",
+    "text": "📦 Core Tenant Models\nThese models provide the infrastructure every tenant needs. Your app-specific models (transactions, budgets, etc.) build on top of these.\n\nsource\n\nTenantSettings\n\ndef TenantSettings(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nTenant-wide configuration and feature flags.\n\nsource\n\n\nTenantPermission\n\ndef TenantPermission(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nFine-grained resource permission for a tenant user.\n\nsource\n\n\nTenantUser\n\ndef TenantUser(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nLocal user profile linked to GlobalUser in host database.\n\n\n📝 Model Details\n\n\n\nModel\nTable Name\nPrimary Key\nDescription\n\n\n\n\nTenantUser\ncore_tenant_users\nid\nLinks to GlobalUser.id, stores local role & preferences\n\n\nTenantPermission\ncore_permissions\nid\nResource + action permissions (RBAC)\n\n\nTenantSettings\ncore_settings\nid\nTimezone, currency, feature flags",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html#schema-initialization",
+    "href": "db_tenant.html#schema-initialization",
+    "title": "🗄️ Tenant Databases",
+    "section": "🔧 Schema Initialization",
+    "text": "🔧 Schema Initialization\ninit_tenant_core_schema() creates all infrastructure tables in a tenant database:\ntenant_db = get_or_create_tenant_db(\"tenant_abc\")\ntables = init_tenant_core_schema(tenant_db)\n\n# Access tables via returned dict\ntables['tenant_users'].insert(user)\ntables['settings'].insert(settings)\nReturns: Dictionary of table accessors for all core models\n\nsource\n\ninit_tenant_core_schema\n\ndef init_tenant_core_schema(\n    tenant_db:Database\n):\n\nCreate all core tenant tables and return table accessors.",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html#quick-start",
+    "href": "db_tenant.html#quick-start",
+    "title": "🗄️ Tenant Databases",
+    "section": "🚀 Quick Start",
+    "text": "🚀 Quick Start\nfrom fh_saas.db_tenant import get_or_create_tenant_db, init_tenant_core_schema, TenantUser\nfrom fh_saas.db_host import gen_id, timestamp\n\n# Get or create tenant database\ntenant_db = get_or_create_tenant_db(\"tenant_abc123\", \"Acme Corp\")\n\n# Initialize core schema\ntables = init_tenant_core_schema(tenant_db)\n\n# Add a tenant user (linked to GlobalUser.id)\nuser = TenantUser(\n    id=\"global_user_xyz\",  # Must match GlobalUser.id\n    display_name=\"John Doe\",\n    local_role=\"admin\",\n    created_at=timestamp()\n)\ntables['tenant_users'].insert(user)\ntenant_db.conn.commit()\n💡 Tip: The id field in TenantUser must match the GlobalUser.id from the host database to maintain identity linking.",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_tenant.html#role-based-access-control-rbac",
+    "href": "db_tenant.html#role-based-access-control-rbac",
+    "title": "🗄️ Tenant Databases",
+    "section": "🔐 Role-Based Access Control (RBAC)",
+    "text": "🔐 Role-Based Access Control (RBAC)\nEvery tenant has a three-tier role system for controlling access:\n\nRole Hierarchy\n\n\n\nRole\nLevel\nDescription\n\n\n\n\nadmin\n3\nFull access to all resources and settings\n\n\neditor\n2\nCan view and modify data, but not settings\n\n\nviewer\n1\nRead-only access to data\n\n\n\n\n\nRole Assignment Rules\n\nTenant owner (from host Membership.role='owner') → automatically gets admin role\nOther users → assigned explicitly by admin via TenantUser.local_role\nNo defaults → admins must explicitly assign roles when inviting users\n\n\n\nTenantUser.local_role\nThe local_role field in TenantUser stores the user’s role within the tenant:\n# Example: Admin adds a new user as editor\nnew_user = TenantUser(\n    id=global_user_id,      # Must match GlobalUser.id\n    display_name=\"Jane Doe\",\n    local_role=\"editor\",    # Assigned by admin\n    created_at=timestamp()\n)\ntables['tenant_users'].insert(new_user)\n\n\nFine-Grained Permissions (Optional)\nFor advanced use cases, the core_permissions table allows resource-level control:\n# Example: Grant user edit access to transactions only\npermission = TenantPermission(\n    id=gen_id(),\n    user_id=tenant_user.id,\n    resource=\"transactions\",\n    action=\"edit\",\n    granted=True,\n    created_at=timestamp()\n)\ntables['permissions'].insert(permission)\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\nresource\nWhat the permission applies to (e.g., “transactions”, “budgets”)\n\n\naction\nWhat action is allowed (e.g., “view”, “edit”, “delete”)\n\n\ngranted\nTrue = allowed, False = explicitly denied\n\n\n\n\n💡 Tip: Most apps only need the local_role field. Use core_permissions when you need per-resource control (e.g., “User X can view transactions but not budgets”).",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Tenant Databases"
+    ]
+  },
+  {
+    "objectID": "db_host.html",
+    "href": "db_host.html",
+    "title": "🏠 Multi-Tenant Setup",
+    "section": "",
+    "text": "The Host Database is the backbone of a multi-tenant architecture. It answers the critical questions:\n\n\n\nQuestion\nModel\nPurpose\n\n\n\n\n👤 Who is this person?\nGlobalUser\nIdentity & authentication\n\n\n🏢 Where is their data?\nTenantCatalog\nDatabase routing\n\n\n🔑 What can they access?\nMembership\nAccess control\n\n\n💳 Are they paying?\nSubscription\nBilling status\n\n\n📋 What happened?\nHostAuditLog\nSecurity audit trail\n\n\n⚙️ Background work?\nSystemJob\nAsync operations",
+    "crumbs": [
+      "📦 Core",
+      "🏠 Multi-Tenant Setup"
+    ]
+  },
+  {
+    "objectID": "db_host.html#overview",
+    "href": "db_host.html#overview",
+    "title": "🏠 Multi-Tenant Setup",
+    "section": "",
+    "text": "The Host Database is the backbone of a multi-tenant architecture. It answers the critical questions:\n\n\n\nQuestion\nModel\nPurpose\n\n\n\n\n👤 Who is this person?\nGlobalUser\nIdentity & authentication\n\n\n🏢 Where is their data?\nTenantCatalog\nDatabase routing\n\n\n🔑 What can they access?\nMembership\nAccess control\n\n\n💳 Are they paying?\nSubscription\nBilling status\n\n\n📋 What happened?\nHostAuditLog\nSecurity audit trail\n\n\n⚙️ Background work?\nSystemJob\nAsync operations",
+    "crumbs": [
+      "📦 Core",
+      "🏠 Multi-Tenant Setup"
+    ]
+  },
+  {
+    "objectID": "db_host.html#architecture",
+    "href": "db_host.html#architecture",
+    "title": "🏠 Multi-Tenant Setup",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n                    ┌─────────────────────────────────────┐\n                    │         🏠 HOST DATABASE            │\n                    │  (Single source of truth)           │\n                    ├─────────────────────────────────────┤\n                    │  👤 GlobalUser    → Identity        │\n                    │  🏢 TenantCatalog → DB Routing      │\n                    │  🔑 Membership    → Access Control  │\n                    │  💳 Subscription  → Billing         │\n                    └───────────┬─────────────────────────┘\n                                │\n            ┌───────────────────┼───────────────────┐\n            ▼                   ▼                   ▼\n    ┌───────────────┐   ┌───────────────┐   ┌───────────────┐\n    │ 🗄️ Tenant A   │   │ 🗄️ Tenant B   │   │ 🗄️ Tenant C   │\n    │   Database    │   │   Database    │   │   Database    │\n    │  (isolated)   │   │  (isolated)   │   │  (isolated)   │\n    └───────────────┘   └───────────────┘   └───────────────┘\nKey Principle: User authenticates once → Host routes to correct tenant → Tenant data is isolated",
+    "crumbs": [
+      "📦 Core",
+      "🏠 Multi-Tenant Setup"
+    ]
+  },
+  {
+    "objectID": "db_host.html#utilities",
+    "href": "db_host.html#utilities",
+    "title": "🏠 Multi-Tenant Setup",
+    "section": "🛠️ Utilities",
+    "text": "🛠️ Utilities\nHelper functions used throughout the host database operations.\n\nsource\n\ngen_id\n\ndef gen_id(\n    \n):\n\n\nsource\n\n\ntimestamp\n\ndef timestamp(\n    \n):\n\n\nsource\n\n\nget_db_uri\n\ndef get_db_uri(\n    db\n)-&gt;str:\n\nExtract SQLAlchemy connection URI from a Database object.\nSafely renders the URL with the actual password (required for utilities like map_and_upsert that create new connections).\nWhy this is needed: - str(db.conn.engine.url) masks the password as *** - This causes “password authentication failed” errors - render_as_string(hide_password=False) reveals the actual password\n\n\n\nParameter\nDescription\n\n\n\n\ndb\nfastsql/minidataapi Database object or HostDatabase instance\n\n\n\nReturns: Full connection URI string with password\nExample:\nfrom fh_saas.db_host import get_db_uri, HostDatabase\nfrom fh_saas.utils_polars_mapper import map_and_upsert\n\nhost_db = HostDatabase.from_env()\ndb_uri = get_db_uri(host_db.db)\n\n# Now safe to use with map_and_upsert\nmap_and_upsert(df, 'my_table', 'id', db_uri)\n\n\n\nFunction\nDescription\n\n\n\n\ntimestamp()\n🕐 Returns current UTC time in ISO format\n\n\ngen_id()\n🆔 Generates a unique 32-character hex ID\n\n\nget_db_uri(db)\n🔗 Extract full connection URI with password from Database object",
+    "crumbs": [
+      "📦 Core",
+      "🏠 Multi-Tenant Setup"
+    ]
+  },
+  {
+    "objectID": "db_host.html#core-models",
+    "href": "db_host.html#core-models",
+    "title": "🏠 Multi-Tenant Setup",
+    "section": "📦 Core Models",
+    "text": "📦 Core Models\nThese dataclasses define the host database schema. Each model maps to a table with the core_ or sys_ prefix.\n\nsource\n\nPricingPlan\n\ndef PricingPlan(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nPricing: Available subscription tiers with Stripe price IDs.\nStores pricing configuration in database for admin-configurable tiers. Each plan can have monthly and/or yearly billing intervals.\nAttributes: id: Unique plan identifier (e.g., ‘basic’, ‘pro’, ‘enterprise’) name: Display name for UI (e.g., ‘Basic Plan’) description: Plan description for pricing page stripe_price_monthly: Stripe Price ID for monthly billing (price_xxx) stripe_price_yearly: Stripe Price ID for yearly billing (price_xxx) amount_monthly: Monthly price in cents (for display, e.g., 799 = $7.99) amount_yearly: Yearly price in cents (for display, e.g., 7900 = $79.00) currency: ISO currency code (default: ‘usd’) trial_days: Free trial period in days (default: 30) features: JSON array of feature keys enabled for this plan tier_level: Numeric level for feature gating (higher = more access) is_active: Whether plan is available for new subscriptions sort_order: Display order on pricing page created_at: Record creation timestamp\nExample: &gt;&gt;&gt; plan = PricingPlan( … id=‘pro’, … name=‘Pro Plan’, … stripe_price_monthly=‘price_1234’, … stripe_price_yearly=‘price_5678’, … amount_monthly=1999, … amount_yearly=19900, … tier_level=2, … features=‘[“api_access”, “exports”, “priority_support”]’, … )\n\nsource\n\n\nSystemJob\n\ndef SystemJob(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nMaintenance: Provisioning & Cleanups\n\nsource\n\n\nHostAuditLog\n\ndef HostAuditLog(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nSecurity: Who changed the system?\n\nsource\n\n\nSubscription\n\ndef Subscription(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nBilling: Are they allowed to use the app?\n\nsource\n\n\nMembership\n\ndef Membership(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nRouter: Which tenants can they access?\n\nsource\n\n\nTenantCatalog\n\ndef TenantCatalog(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nRegistry: Where is the database?\n\nsource\n\n\nGlobalUser\n\ndef GlobalUser(\n    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD\n):\n\nIdentity: Who is this person?\n\n\n📝 Model Details\n\n\n\nModel\nTable Name\nPrimary Key\nDescription\n\n\n\n\nGlobalUser\ncore_users\nid\nOAuth identity, email, optional password hash, Stripe customer ID\n\n\nTenantCatalog\ncore_tenants\nid\nMaps tenant ID to database URL, tracks plan tier and status\n\n\nMembership\ncore_memberships\nid\nLinks users to tenants with roles (owner, admin, member)\n\n\nSubscription\ncore_subscriptions\nid\nStripe subscription state for billing enforcement\n\n\nPricingPlan\ncore_pricing_plans\nid\nAvailable subscription tiers with Stripe price IDs\n\n\nHostAuditLog\nsys_audit_logs\nid\nImmutable security log for compliance\n\n\nSystemJob\nsys_jobs\nid\nBackground task queue for provisioning, cleanup",
+    "crumbs": [
+      "📦 Core",
+      "🏠 Multi-Tenant Setup"
+    ]
+  },
+  {
+    "objectID": "db_host.html#hostdatabase-singleton",
+    "href": "db_host.html#hostdatabase-singleton",
+    "title": "🏠 Multi-Tenant Setup",
+    "section": "🔌 HostDatabase Singleton",
+    "text": "🔌 HostDatabase Singleton\nThe HostDatabase class provides a singleton connection manager for the host database.\n✅ Why Singleton? - Single connection pool shared across the application - Consistent transaction management - Easy dependency injection for testing\n┌─────────────────────────────────────────────────────┐\n│                  Application Start                   │\n└─────────────────────┬───────────────────────────────┘\n                      ▼\n         ┌────────────────────────┐\n         │  HostDatabase.from_env() │  ← Reads DB_* env vars\n         └────────────┬───────────┘\n                      ▼\n         ┌────────────────────────┐\n         │   Creates tables if    │\n         │   they don't exist     │\n         └────────────┬───────────┘\n                      ▼\n         ┌────────────────────────┐\n         │  Returns singleton     │  ← Same instance everywhere\n         │  instance              │\n         └────────────────────────┘\n\nsource\n\nHostDatabase\n\ndef HostDatabase(\n    db_url:str=None\n):\n\nSingleton connection manager for the host database.\n\n\n🔧 Methods\n\n\n\n\n\n\n\nMethod\nDescription\n\n\n\n\nfrom_env()\n🏭 Factory method - creates instance from environment variables\n\n\ncommit()\n✅ Commit the current database transaction\n\n\nrollback()\n↩︎️ Rollback the current transaction on error\n\n\nreset_instance()\n🧪 Reset singleton (testing only)\n\n\n\n\n🌍 Environment Variables for from_env()\n\n\n\nVariable\nDefault\nDescription\n\n\n\n\nDB_TYPE\nPOSTGRESQL\nDatabase type (POSTGRESQL or SQLITE)\n\n\nDB_USER\npostgres\nDatabase username\n\n\nDB_PASS\n(required)\nDatabase password\n\n\nDB_HOST\nlocalhost\nDatabase host\n\n\nDB_PORT\n5432\nDatabase port\n\n\nDB_NAME\napp_host\nDatabase name\n\n\n\n\nsource\n\n\n\nHostDatabase.from_env\n\ndef from_env(\n    \n):\n\nCreate HostDatabase from DB_ environment variables.*\n\nsource\n\n\nHostDatabase.commit\n\ndef commit(\n    \n):\n\nCommit current transaction.\n\nsource\n\n\nHostDatabase.rollback\n\ndef rollback(\n    \n):\n\nRollback current transaction.\n\nsource\n\n\nHostDatabase.reset_instance\n\ndef reset_instance(\n    \n):\n\nReset singleton instance (testing only).\n⚠️ Call close() first to release database connections!",
+    "crumbs": [
+      "📦 Core",
+      "🏠 Multi-Tenant Setup"
+    ]
+  },
+  {
+    "objectID": "db_host.html#quick-start",
+    "href": "db_host.html#quick-start",
+    "title": "🏠 Multi-Tenant Setup",
+    "section": "🚀 Quick Start",
+    "text": "🚀 Quick Start\nfrom fh_saas.db_host import HostDatabase, GlobalUser, gen_id, timestamp\n\n# Initialize singleton from environment\nhost_db = HostDatabase.from_env()\n\n# Create a user\nuser = GlobalUser(\n    id=gen_id(),\n    email=\"user@example.com\",\n    oauth_id=\"google_123\",\n    created_at=timestamp()\n)\nhost_db.global_users.insert(user)\nhost_db.commit()\n\n# Query users\nall_users = host_db.global_users()\n💡 Tip: The singleton ensures you always get the same connection, so you can call HostDatabase.from_env() anywhere in your app.",
+    "crumbs": [
+      "📦 Core",
+      "🏠 Multi-Tenant Setup"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html",
+    "href": "utils_sql.html",
+    "title": "🗃️ SQL Helpers",
+    "section": "",
+    "text": "This module provides a batteries-included SQL toolkit for building database-heavy applications:\n\n\n\nCategory\nFunctions\nPurpose\n\n\n\n\n🔍 Query Registry\nrun_id, validate_params\nExecute queries by ID from centralized registries\n\n\n➕ Insert-Only\ninsert_only, bulk_insert_only\nInsert new records, skip conflicts\n\n\n🔄 Upsert\nupsert, bulk_upsert\nInsert or update existing records\n\n\n📝 CRUD\nget_by_id, update_record, delete_record, bulk_delete\nStandard database operations\n\n\n🔧 Utilities\nwith_transaction, paginate_sql, batch_execute\nTransaction management & helpers\n\n\n💰 Money\nto_cents, from_cents\nCurrency conversion for int-only storage",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#overview",
+    "href": "utils_sql.html#overview",
+    "title": "🗃️ SQL Helpers",
+    "section": "",
+    "text": "This module provides a batteries-included SQL toolkit for building database-heavy applications:\n\n\n\nCategory\nFunctions\nPurpose\n\n\n\n\n🔍 Query Registry\nrun_id, validate_params\nExecute queries by ID from centralized registries\n\n\n➕ Insert-Only\ninsert_only, bulk_insert_only\nInsert new records, skip conflicts\n\n\n🔄 Upsert\nupsert, bulk_upsert\nInsert or update existing records\n\n\n📝 CRUD\nget_by_id, update_record, delete_record, bulk_delete\nStandard database operations\n\n\n🔧 Utilities\nwith_transaction, paginate_sql, batch_execute\nTransaction management & helpers\n\n\n💰 Money\nto_cents, from_cents\nCurrency conversion for int-only storage",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#architecture",
+    "href": "utils_sql.html#architecture",
+    "title": "🗃️ SQL Helpers",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                     SQL Utilities Layer                         │\n├─────────────────────────────────────────────────────────────────┤\n│  🔍 Query Registry        │  Execute queries by ID              │\n│  ➕ Insert Operations     │  insert_only, bulk_insert_only      │\n│  🔄 Upsert Operations     │  upsert, bulk_upsert                │\n│  📝 CRUD Operations       │  get, update, delete (single/bulk)  │\n│  🔧 Utilities             │  transactions, pagination, batching │\n│  💰 Money Helpers         │  cents ↔ dollars conversion         │\n├─────────────────────────────────────────────────────────────────┤\n│  DB_TYPE Detection: PostgreSQL / SQLite (auto-switch syntax)    │\n└─────────────────────────────────────────────────────────────────┘\n                              │\n                              ▼\n┌─────────────────────────────────────────────────────────────────┐\n│              fastsql Database Connection                        │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#quick-reference",
+    "href": "utils_sql.html#quick-reference",
+    "title": "🗃️ SQL Helpers",
+    "section": "📚 Quick Reference",
+    "text": "📚 Quick Reference\n\nConflict Handling\n\n\n\nOperation\nOn Conflict\nUse Case\n\n\n\n\ninsert_only\nSkip (DO NOTHING)\nAppend-only logs, idempotent imports\n\n\nupsert\nUpdate existing\nSync external data, refresh caches\n\n\n\n\n\nPerformance Tips\n\n\n\nScenario\nRecommended\nWhy\n\n\n\n\nSingle record\ninsert_only, upsert\nSimple, immediate\n\n\n10+ records\nbulk_* variants\n10-100x faster\n\n\n100+ records\nbatch_execute\nCommits per batch, memory-safe\n\n\nMulti-table changes\nwith_transaction\nAll-or-nothing commits",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#database-type-detection",
+    "href": "utils_sql.html#database-type-detection",
+    "title": "🗃️ SQL Helpers",
+    "section": "🔍 Database Type Detection",
+    "text": "🔍 Database Type Detection\nAutomatically detects PostgreSQL vs SQLite from DB_TYPE environment variable to generate appropriate SQL syntax.\n\nsource\n\nget_db_type\n\ndef get_db_type(\n    \n):\n\nGet database type from environment variable",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#query-registry",
+    "href": "utils_sql.html#query-registry",
+    "title": "🗃️ SQL Helpers",
+    "section": "🎯 Query Registry",
+    "text": "🎯 Query Registry\nExecute queries by ID from a centralized registry with automatic parameter validation.\n\n\n\nFunction\nPurpose\n\n\n\n\nrun_id\nExecute a registered query by its ID\n\n\nvalidate_params\nEnsure all :param placeholders have values\n\n\n\n\nsource\n\nrun_id\n\ndef run_id(\n    db:Database, registry:Dict, query_id:str, params:Optional=None\n)-&gt;Any:\n\nExecute a query by ID from a query registry.\n\nsource\n\n\nvalidate_params\n\ndef validate_params(\n    sql:str, params:Dict\n)-&gt;None:\n\nValidate that all required parameters are provided",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#insert-only",
+    "href": "utils_sql.html#insert-only",
+    "title": "🗃️ SQL Helpers",
+    "section": "➕ Insert-Only",
+    "text": "➕ Insert-Only\nInsert new records only if they don’t exist — conflicts are silently skipped.\n\n\n\nFunction\nRecords\nSQL Generated\n\n\n\n\ninsert_only\nSingle\nON CONFLICT DO NOTHING (PG) / INSERT OR IGNORE (SQLite)\n\n\nbulk_insert_only\nMultiple\nSame, with batch execution\n\n\n\n\n💡 Use case: Idempotent imports, append-only audit logs, webhook deduplication\n\n\nsource\n\nbulk_insert_only\n\ndef bulk_insert_only(\n    db:Database, table_name:str, records:List, conflict_cols:List, auto_commit:bool=True\n)-&gt;None:\n\nInsert multiple records, skipping conflicts (optimized batch operation).\n\nsource\n\n\ninsert_only\n\ndef insert_only(\n    db:Database, table_name:str, record:Dict, conflict_cols:List, auto_commit:bool=True\n)-&gt;None:\n\nInsert a single record only if it doesn’t exist (ignores conflicts).",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#upsert",
+    "href": "utils_sql.html#upsert",
+    "title": "🗃️ SQL Helpers",
+    "section": "🔄 Upsert",
+    "text": "🔄 Upsert\nInsert new records or update existing ones on conflict.\n\n\n\nFunction\nRecords\nSQL Generated\n\n\n\n\nupsert\nSingle\nON CONFLICT DO UPDATE (PG) / INSERT OR REPLACE (SQLite)\n\n\nbulk_upsert\nMultiple\nSame, with batch execution\n\n\n\n\n💡 Use case: Syncing external API data, refreshing caches, user settings\n\n\nsource\n\nbulk_upsert\n\ndef bulk_upsert(\n    db:Database, table_name:str, records:List, conflict_cols:List, update_cols:Optional=None, auto_commit:bool=True\n)-&gt;None:\n\nInsert or update multiple records (optimized batch operation).\n\nsource\n\n\nupsert\n\ndef upsert(\n    db:Database, table_name:str, record:Dict, conflict_cols:List, update_cols:Optional=None, auto_commit:bool=True\n)-&gt;None:\n\nInsert a record or update if it exists (upsert).",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#crud",
+    "href": "utils_sql.html#crud",
+    "title": "🗃️ SQL Helpers",
+    "section": "📝 CRUD",
+    "text": "📝 CRUD\nStandard Create, Read, Update, Delete operations.\n\n\n\nFunction\nOperation\nDescription\n\n\n\n\nget_by_id\nRead\nFetch single record by primary key\n\n\nupdate_record\nUpdate\nModify record fields by ID\n\n\ndelete_record\nDelete\nRemove single record by ID\n\n\nbulk_delete\nDelete\nRemove multiple records by ID list\n\n\n\n\nsource\n\nbulk_delete\n\ndef bulk_delete(\n    db:Database, table_name:str, id_list:List, id_col:str='id', auto_commit:bool=True\n)-&gt;None:\n\nDelete multiple records by ID list.\n\nsource\n\n\ndelete_record\n\ndef delete_record(\n    db:Database, table_name:str, id_value:Any, id_col:str='id', auto_commit:bool=True\n)-&gt;None:\n\nDelete a single record by ID.\n\nsource\n\n\nupdate_record\n\ndef update_record(\n    db:Database, table_name:str, id_value:Any, id_col:str='id', auto_commit:bool=True, updates:VAR_KEYWORD\n)-&gt;None:\n\nUpdate a single record by ID.\n\nsource\n\n\nget_by_id\n\ndef get_by_id(\n    db:Database, table_name:str, id_value:Any, id_col:str='id'\n)-&gt;Any:\n\nGet a single record by ID.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#utilities",
+    "href": "utils_sql.html#utilities",
+    "title": "🗃️ SQL Helpers",
+    "section": "🔧 Utilities",
+    "text": "🔧 Utilities\nTransaction management, pagination, and batch processing.\n\n\n\nFunction\nPurpose\n\n\n\n\nwith_transaction\nContext manager for atomic operations\n\n\npaginate_sql\nAdd LIMIT/OFFSET to queries\n\n\nbatch_execute\nProcess large lists in memory-safe chunks\n\n\n\n\nsource\n\nbatch_execute\n\ndef batch_execute(\n    db:Database, operation_func, items:List, batch_size:int=100\n)-&gt;None:\n\nExecute an operation on items in batches with commits after each batch.\n\nsource\n\n\npaginate_sql\n\ndef paginate_sql(\n    sql:str, page:int, page_size:int\n)-&gt;str:\n\nAdd LIMIT/OFFSET pagination to a SQL query.\n\nsource\n\n\nwith_transaction\n\ndef with_transaction(\n    db:Database\n):\n\nContext manager for safe transaction handling with auto-rollback on error.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_sql.html#money-helpers",
+    "href": "utils_sql.html#money-helpers",
+    "title": "🗃️ SQL Helpers",
+    "section": "💰 Money Helpers",
+    "text": "💰 Money Helpers\nConvert between dollar amounts and integer cents for database storage.\n\n⚠️ Why cents? fastsql only supports int and str types — storing money as cents avoids floating-point precision issues.\n\n\n\n\nFunction\nDirection\nExample\n\n\n\n\nto_cents\n\"$150.00\" → 15000\nStore in DB\n\n\nfrom_cents\n15000 → \"$150.00\"\nDisplay to user\n\n\n\n\nsource\n\nto_cents\n\ndef to_cents(\n    dollars:str | float | None\n)-&gt;int | None:\n\nConvert dollar amount to integer cents for database storage.\n\nsource\n\n\nfrom_cents\n\ndef from_cents(\n    cents:int | None\n)-&gt;str:\n\nConvert integer cents to formatted dollar string for display.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🗃️ SQL Helpers"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#sliding-session-configuration",
+    "href": "utils_auth.html#sliding-session-configuration",
+    "title": "🔐 Authentication",
+    "section": "⏰ Sliding Session Configuration",
+    "text": "⏰ Sliding Session Configuration\nConfigure session timeout behavior with sliding expiry.\n\n\n\n\n\n\n\n\nParameter\nDefault\nDescription\n\n\n\n\nmax_age\n3600\nSession expires after this many seconds of inactivity\n\n\nsliding\nTrue\nRefresh session on each request\n\n\nabsolute_max\nNone\nOptional hard limit regardless of activity (e.g., 86400 for 24h)\n\n\nsecure\nTrue\nHTTPS-only cookies in production\n\n\nsame_site\n\"lax\"\nSameSite cookie policy for CSRF protection\n\n\n\n\nHow Sliding Sessions Work\nCurrent (Fixed Timeout):\n  Login at 10:00 → Expires at 11:00 (regardless of activity)\n  User active at 10:55 → STILL logged out at 11:00 ❌\n\nSliding Timeout:\n  Login at 10:00 → Expires at 11:00\n  User active at 10:55 → Expires at 11:55 ✓\n  User active at 11:50 → Expires at 12:50 ✓\n  User idle for 1 hour → Logged out ✓",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#sliding-session-middleware",
+    "href": "utils_auth.html#sliding-session-middleware",
+    "title": "🔐 Authentication",
+    "section": "🔄 Sliding Session Middleware",
+    "text": "🔄 Sliding Session Middleware\nCustom middleware that extends Starlette’s SessionMiddleware to refresh cookie max_age on each authenticated request.\n\nsource\n\nSessionConfig\n\ndef SessionConfig(\n    max_age:int=3600, sliding:bool=True, absolute_max:int=None, secure:bool=True, same_site:str='lax',\n    http_only:bool=True\n)-&gt;None:\n\nConfiguration for sliding session behavior.\nAttributes: max_age: Session expires after this many seconds of inactivity. Default: 3600 (1 hour) sliding: If True, refresh session expiry on each request. Default: True absolute_max: Optional hard limit in seconds regardless of activity. Default: None secure: If True, cookie only sent over HTTPS. Default: True same_site: SameSite cookie policy (‘lax’, ‘strict’, ‘none’). Default: ‘lax’ http_only: If True, cookie not accessible via JavaScript. Default: True\nExample: &gt;&gt;&gt; config = SessionConfig() # 1 hour inactivity timeout, sliding enabled &gt;&gt;&gt; config = SessionConfig(max_age=1800) # 30 min inactivity timeout &gt;&gt;&gt; config = SessionConfig(max_age=3600, absolute_max=86400) # 1h sliding, 24h hard limit\n\nsource\n\n\nSlidingSessionMiddleware\n\ndef SlidingSessionMiddleware(\n    app, secret_key:str, session_config:SessionConfig=None, session_cookie:str='session', path:str='/'\n):\n\nSession middleware with sliding expiry.\nExtends Starlette’s SessionMiddleware to refresh the session cookie max_age on each request, implementing sliding session expiry.\nSessions expire after max_age seconds of INACTIVITY, not from login time.\nArgs: app: ASGI application secret_key: Secret key for signing cookies session_config: SessionConfig instance for timeout settings session_cookie: Cookie name. Default: ‘session’ path: Cookie path. Default: ‘/’\nExample: &gt;&gt;&gt; from starlette.applications import Starlette &gt;&gt;&gt; app = Starlette() &gt;&gt;&gt; config = SessionConfig(max_age=3600) # 1 hour inactivity &gt;&gt;&gt; app = SlidingSessionMiddleware(app, secret_key=‘…’, session_config=config)\n\nsource\n\n\ncreate_session_middleware\n\ndef create_session_middleware(\n    secret_key:str, session_config:SessionConfig=None, session_cookie:str='session'\n)-&gt;SlidingSessionMiddleware:\n\nFactory to create SlidingSessionMiddleware for FastHTML apps.\nArgs: secret_key: Secret key for signing session cookies (required) session_config: SessionConfig instance. Default: SessionConfig.default() session_cookie: Cookie name. Default: ‘session’\nReturns: Configured SlidingSessionMiddleware instance\nExample: &gt;&gt;&gt; from fasthtml.common import FastHTML &gt;&gt;&gt; &gt;&gt;&gt; # Create app WITHOUT default session middleware &gt;&gt;&gt; app = FastHTML(sess_cls=None) # Disable default sessions &gt;&gt;&gt; &gt;&gt;&gt; # Add sliding session middleware &gt;&gt;&gt; config = SessionConfig(max_age=3600) # 1 hour inactivity &gt;&gt;&gt; app = create_session_middleware(‘your-secret-key’, config)(app) &gt;&gt;&gt; &gt;&gt;&gt; # Or wrap during app creation (recommended) &gt;&gt;&gt; middleware = create_session_middleware(‘your-secret-key’, config) &gt;&gt;&gt; # Then configure FastHTML to use it\nNote: FastHTML’s default SessionMiddleware needs to be disabled first. See integration documentation for patterns.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#overview",
+    "href": "utils_auth.html#overview",
+    "title": "🔐 Authentication",
+    "section": "🎯 Overview",
+    "text": "🎯 Overview\n\n\n\nCategory\nFunctions\nPurpose\n\n\n\n\n⏰ Sliding Sessions\nSessionConfig, SlidingSessionMiddleware, create_session_middleware\nSliding session expiry (inactivity timeout)\n\n\n🛡️ Beforeware\ncreate_auth_beforeware\nProtect routes, auto-setup tenant DB\n\n\n🔑 OAuth Client\nget_google_oauth_client\nInitialize Google OAuth\n\n\n🔒 CSRF\ngenerate_oauth_state, verify_oauth_state\nPrevent session hijacking\n\n\n👤 Users\ncreate_or_get_global_user, get_user_membership, verify_membership\nUser & membership management\n\n\n🏗️ Provisioning\nprovision_new_user\nAuto-create tenant for new users\n\n\n📋 Session\ncreate_user_session, get_current_user, clear_session\nSession management\n\n\n🚦 Routing\nauth_redirect, route_user_after_login, require_tenant_access\nAuthorization & routing\n\n\n🌐 Handlers\nhandle_login_request, handle_oauth_callback, handle_logout\nRoute implementations",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#architecture",
+    "href": "utils_auth.html#architecture",
+    "title": "🔐 Authentication",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    OAuth Authentication Flow                     │\n├─────────────────────────────────────────────────────────────────┤\n│  1. User clicks \"Login with Google\"                             │\n│  2. Generate CSRF state token → store in session                │\n│  3. Redirect to Google OAuth                                    │\n│  4. Google authenticates → redirects with code + state          │\n│  5. Verify CSRF state matches session                           │\n│  6. Exchange code for user info                                 │\n│  7. Create/get GlobalUser in host DB                            │\n│  8. Check membership OR auto-provision new tenant               │\n│  9. Create session → redirect to dashboard                      │\n└─────────────────────────────────────────────────────────────────┘\n                              │\n                              ▼\n┌─────────────────────────────────────────────────────────────────┐\n│                       Tenant Model                              │\n├─────────────────────────────────────────────────────────────────┤\n│  Many Users → One Tenant (many-to-one)                          │\n│  Each user belongs to exactly ONE tenant                        │\n│  Each tenant can have MANY users                                │\n│  New users auto-create their own tenant                         │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#quick-reference",
+    "href": "utils_auth.html#quick-reference",
+    "title": "🔐 Authentication",
+    "section": "📚 Quick Reference",
+    "text": "📚 Quick Reference\n\nSecurity Features\n\n\n\nFeature\nProtection\n\n\n\n\nCSRF State Token\nPrevents session hijacking attacks\n\n\nMembership Validation\nEnsures cross-tenant isolation\n\n\nAudit Logging\nTracks all authentication events\n\n\n\n\n\nToken Expiry\n\n\n\nToken Type\nExpiry\nBehavior\n\n\n\n\nGoogle OAuth\n1 hour\nUser must re-login (refresh tokens: future)\n\n\nSession (sliding)\n1 hour inactivity\nRefreshes on each request via SlidingSessionMiddleware\n\n\n\n\n💡 Sliding Sessions: Use SlidingSessionMiddleware or create_session_middleware() to keep users logged in while active. Sessions only expire after configured inactivity period.\n\n\nfrom nbdev.showdoc import show_doc",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#role-based-access-control",
+    "href": "utils_auth.html#role-based-access-control",
+    "title": "🔐 Authentication",
+    "section": "🎭 Role-Based Access Control",
+    "text": "🎭 Role-Based Access Control\nControl access based on user roles within the tenant.\n\nRole Hierarchy\n\n\n\nRole\nLevel\nAutomatic For\n\n\n\n\nadmin\n3\nTenant owners\n\n\neditor\n2\n—\n\n\nviewer\n1\n—\n\n\n\n\n\nKey Functions\n\n\n\nFunction\nPurpose\n\n\n\n\nhas_min_role\nCheck if user meets minimum role requirement\n\n\nrequire_role\nRoute decorator for role-based protection\n\n\nget_user_role\nDerive effective role from session + tenant DB\n\n\n\n\nsource\n\n\nhas_min_role\n\ndef has_min_role(\n    user:dict, required_role:str\n)-&gt;bool:\n\nCheck if user meets the minimum role requirement.\nArgs: user: User dict with ‘role’ field (from request.state.user) required_role: Minimum role needed (‘admin’, ‘editor’, ‘viewer’)\nReturns: True if user’s role &gt;= required_role in hierarchy\nExample: &gt;&gt;&gt; user = {‘role’: ‘editor’} &gt;&gt;&gt; has_min_role(user, ‘viewer’) # True - editor &gt; viewer &gt;&gt;&gt; has_min_role(user, ‘admin’) # False - editor &lt; admin\n\nsource\n\n\nget_user_role\n\ndef get_user_role(\n    session:dict, tenant_db:Database=None\n)-&gt;str:\n\nDerive effective role from session and tenant database.\nRules: 1. Tenant owner (session[‘tenant_role’] == ‘owner’) → ‘admin’ 2. System admin → ‘admin’ 3. Otherwise → lookup TenantUser.local_role from tenant DB 4. Fallback → None (user must be explicitly assigned a role)\nArgs: session: User session dict tenant_db: Tenant database connection (optional)\nReturns: Effective role string: ‘admin’, ‘editor’, ‘viewer’, or None\n\nsource\n\n\nrequire_role\n\ndef require_role(\n    min_role:str\n):\n\nDecorator to protect routes with minimum role requirement.\nArgs: min_role: Minimum role required (‘admin’, ‘editor’, ‘viewer’)\nReturns: Decorator that checks request.state.user[‘role’] Returns 403 Forbidden if user lacks required role\nExample: &gt;&gt;&gt; @app.get(‘/admin/settings’) &gt;&gt;&gt; @require_role(‘admin’) &gt;&gt;&gt; def admin_settings(request): … return “Admin only content”\n&gt;&gt;&gt; @app.get('/reports')  \n&gt;&gt;&gt; @require_role('viewer')  # All authenticated users\n&gt;&gt;&gt; def view_reports(request):\n...     return \"Reports\"",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#session-caching",
+    "href": "utils_auth.html#session-caching",
+    "title": "🔐 Authentication",
+    "section": "⚡ Session Caching",
+    "text": "⚡ Session Caching\nFor HTMX-heavy apps with many partial requests, the beforeware can cache auth data in the session to avoid database queries on every request.\n\nConfiguration\n\n\n\nParameter\nDefault\nDescription\n\n\n\n\nsession_cache\nFalse\nEnable caching user dict in session\n\n\nsession_cache_ttl\n300\nCache TTL in seconds (5 minutes)\n\n\n\n\n\nHow It Works\nRequest arrives\n    │\n    ▼\nCheck session cache\n    │\n    ├── Cache valid? → Use cached user data (0 DB queries)\n    │\n    └── Cache miss/expired? → Query DB → Update cache\n\n\nCache Invalidation\n\n\n\nEvent\nAction\n\n\n\n\nLogout\nAutomatic (session cleared)\n\n\nRole change\nCall invalidate_auth_cache(session)\n\n\nTTL expiry\nAutomatic refresh on next request\n\n\n\n\nsource\n\n\ninvalidate_auth_cache\n\ndef invalidate_auth_cache(\n    session:dict\n):\n\nClear the auth cache from session.\nCall this when: - User role or permissions change - User is added/removed from tenant - Admin changes user’s local_role\nArgs: session: User session dict\nExample: &gt;&gt;&gt; # After admin changes user role &gt;&gt;&gt; tenant_user.local_role = ‘editor’ &gt;&gt;&gt; tables[‘tenant_users’].update(tenant_user) &gt;&gt;&gt; invalidate_auth_cache(session) # Force fresh lookup\n\n\nUsage Example\nfrom fh_saas.utils_auth import invalidate_auth_cache\n\n# Enable caching (recommended for HTMX apps)\napp = FastHTML(\n    before=create_auth_beforeware(\n        session_cache=True,\n        session_cache_ttl=300  # 5 minutes\n    )\n)\n\n# After changing user role, invalidate their cache\n@app.post('/admin/users/{user_id}/role')\ndef update_role(request, user_id: str, new_role: str):\n    tables = request.state.tables\n    user = tables['tenant_users'].get(user_id)\n    user.local_role = new_role\n    tables['tenant_users'].update(user)\n    \n    # If changing own role, invalidate cache\n    if user_id == request.state.user['user_id']:\n        invalidate_auth_cache(request.session)\n    \n    return \"Role updated\"\n\n\nUsage in Routes\nfrom fh_saas.utils_auth import require_role, has_min_role\n\n# Option 1: Decorator for route-level protection\n@app.get('/admin/users')\n@require_role('admin')\ndef manage_users(request):\n    return \"Admin-only user management\"\n\n@app.get('/dashboard')\n@require_role('viewer')  # All roles can access\ndef dashboard(request):\n    return \"Dashboard for all users\"\n\n# Option 2: Inline check for conditional logic\n@app.get('/data')\ndef view_data(request):\n    user = request.state.user\n    \n    if has_min_role(user, 'admin'):\n        return \"All data with admin controls\"\n    elif has_min_role(user, 'editor'):\n        return \"Data with edit buttons\"\n    else:\n        return \"Read-only data view\"\n\n\nRole Derivation Flow\n┌─────────────────────────────────────────────────────────────────┐\n│                    Role Derivation (in beforeware)              │\n├─────────────────────────────────────────────────────────────────┤\n│  1. Check session['tenant_role']                                │\n│     └── If 'owner' → effective role = 'admin'                  │\n│                                                                 │\n│  2. Check session['is_sys_admin']                               │\n│     └── If True → effective role = 'admin'                     │\n│                                                                 │\n│  3. Lookup TenantUser.local_role in tenant DB                   │\n│     └── Returns assigned role or None                          │\n│                                                                 │\n│  4. Attach to request.state.user['role']                        │\n│     └── Used by require_role() and has_min_role()              │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#auth-beforeware",
+    "href": "utils_auth.html#auth-beforeware",
+    "title": "🔐 Authentication",
+    "section": "🛡️ Auth Beforeware",
+    "text": "🛡️ Auth Beforeware\nProtect routes by checking for authenticated sessions with auto tenant DB setup.\n\n\n\nFunction\nPurpose\n\n\n\n\ncreate_auth_beforeware\nFactory to create route protection middleware\n\n\n\n\n💡 Use case: Pass to FastHTML’s before= parameter for app-wide authentication\n\n\nsource\n\ncreate_auth_beforeware\n\ndef create_auth_beforeware(\n    redirect_path:str='/login', session_key:str='user_id', skip:list=None, include_defaults:bool=True,\n    setup_tenant_db:bool=True, schema_init:Callable=None, session_cache:bool=False, session_cache_ttl:int=300,\n    require_subscription:bool=False, subscription_redirect:str=None, grace_period_days:int=3,\n    session_config:SessionConfig=None\n):\n\nCreate Beforeware that checks for authenticated session and sets up request.state.\nArgs: redirect_path: Where to redirect unauthenticated users session_key: Session key for user ID skip: List of regex patterns to skip auth include_defaults: Include default skip patterns setup_tenant_db: Auto-setup tenant database on request.state schema_init: Optional callback to initialize tables dict. Signature: (tenant_db: Database) -&gt; dict[str, Table] Result stored in request.state.tables session_cache: Enable caching user dict in session to reduce DB queries. Recommended for HTMX-heavy apps. Default: False session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes) require_subscription: If True, check for active subscription and return 402 if not found. Default: False subscription_redirect: Optional URL to redirect if subscription required. If None, returns 402 Payment Required response. grace_period_days: Days to allow access after payment failure (default: 3) session_config: Optional SessionConfig for absolute timeout enforcement. Note: Sliding expiry requires SlidingSessionMiddleware. This parameter only enforces absolute_max if configured.\nReturns: Beforeware instance for FastHTML apps\nSets on request.state: - user: dict with user_id, email, tenant_id, role, is_owner - tenant_id: str - tenant_db: Database connection - tables: dict of Table objects (if schema_init provided) - subscription: Subscription object (if require_subscription enabled)\nExample: &gt;&gt;&gt; # Basic usage &gt;&gt;&gt; beforeware = create_auth_beforeware()\n&gt;&gt;&gt; # With session caching for HTMX apps\n&gt;&gt;&gt; beforeware = create_auth_beforeware(\n...     session_cache=True,\n...     session_cache_ttl=300\n... )\n\n&gt;&gt;&gt; # With schema initialization\n&gt;&gt;&gt; def get_app_tables(db):\n...     return {'users': db.create(User, pk='id')}\n&gt;&gt;&gt; beforeware = create_auth_beforeware(schema_init=get_app_tables)\n\n&gt;&gt;&gt; # With subscription requirement\n&gt;&gt;&gt; beforeware = create_auth_beforeware(\n...     require_subscription=True,\n...     subscription_redirect='/pricing'\n... )",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#oauth-client",
+    "href": "utils_auth.html#oauth-client",
+    "title": "🔐 Authentication",
+    "section": "🔑 OAuth Client",
+    "text": "🔑 OAuth Client\n\n\n\nFunction\nPurpose\n\n\n\n\nget_google_oauth_client\nInitialize Google OAuth client from env vars\n\n\n\n\n⚠️ Required env vars: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET\n\n\nsource\n\nget_google_oauth_client\n\ndef get_google_oauth_client(\n    \n):\n\nInitialize Google OAuth client with credentials from environment.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#csrf-protection",
+    "href": "utils_auth.html#csrf-protection",
+    "title": "🔐 Authentication",
+    "section": "🔒 CSRF Protection",
+    "text": "🔒 CSRF Protection\nPrevent session hijacking via state token validation.\n\n\n\nFunction\nPurpose\n\n\n\n\ngenerate_oauth_state\nCreate random UUID for CSRF protection\n\n\nverify_oauth_state\nValidate callback state matches session\n\n\n\n\nAttack Without CSRF Protection\n1. Attacker initiates OAuth → gets auth code\n2. Attacker sends victim: yourapp.com/auth/callback?code=ATTACKER_CODE\n3. Victim clicks → session created for attacker's account\n4. Victim enters data → attacker sees it all\n\n🛡️ Solution: State token generated at login, verified at callback\n\n\nsource\n\n\nverify_oauth_state\n\ndef verify_oauth_state(\n    session:dict, callback_state:str\n):\n\nVerify OAuth callback state matches stored session state (CSRF protection).\n\nsource\n\n\ngenerate_oauth_state\n\ndef generate_oauth_state(\n    \n):\n\nGenerate cryptographically secure random state token for CSRF protection.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#user-management",
+    "href": "utils_auth.html#user-management",
+    "title": "🔐 Authentication",
+    "section": "👤 User Management",
+    "text": "👤 User Management\n\n\n\nFunction\nPurpose\n\n\n\n\ncreate_or_get_global_user\nCreate or retrieve user from host DB\n\n\nget_user_membership\nGet user’s active tenant membership\n\n\nverify_membership\nValidate user has access to tenant\n\n\n\n\nsource\n\nverify_membership\n\ndef verify_membership(\n    host_db:HostDatabase, user_id:str, tenant_id:str\n)-&gt;bool:\n\nVerify user has active membership for specific tenant.\n\nsource\n\n\nget_user_membership\n\ndef get_user_membership(\n    host_db:HostDatabase, user_id:str\n):\n\nGet single active membership for user.\n\nsource\n\n\ncreate_or_get_global_user\n\ndef create_or_get_global_user(\n    host_db:HostDatabase, oauth_id:str, email:str, oauth_info:dict=None\n):\n\nCreate or retrieve GlobalUser from host database.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#auto-provisioning",
+    "href": "utils_auth.html#auto-provisioning",
+    "title": "🔐 Authentication",
+    "section": "🏗️ Auto-Provisioning",
+    "text": "🏗️ Auto-Provisioning\nCreate tenant infrastructure for first-time users.\n\n\n\nFunction\nPurpose\n\n\n\n\nprovision_new_user\nCreate tenant DB, catalog entry, membership, and TenantUser\n\n\n\n\nProvisioning Steps\n1. Create physical tenant database (PostgreSQL/SQLite)\n2. Register tenant in host catalog\n3. Create membership (user → tenant, role='owner')\n4. Create TenantUser profile (local_role='admin')\n5. Initialize core tenant schema\n6. Log audit event\n\n💡 Future: Insert payment screen before step 1\n\n\nsource\n\n\nprovision_new_user\n\ndef provision_new_user(\n    host_db:HostDatabase, global_user:GlobalUser\n)-&gt;str:\n\nAuto-provision new tenant for first-time user.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#session-management",
+    "href": "utils_auth.html#session-management",
+    "title": "🔐 Authentication",
+    "section": "📋 Session Management",
+    "text": "📋 Session Management\n\n\n\nFunction\nPurpose\n\n\n\n\ncreate_user_session\nPopulate session after successful OAuth\n\n\nget_current_user\nExtract user info from session\n\n\nclear_session\nClear all session data (logout)\n\n\n\n\nsource\n\nclear_session\n\ndef clear_session(\n    session:dict\n):\n\nClear all session data (logout).\n\nsource\n\n\nget_current_user\n\ndef get_current_user(\n    session:dict\n)-&gt;dict | None:\n\nExtract current user info from session.\nReturns: dict with keys: user_id, email, tenant_id, tenant_role, is_sys_admin\nNote: The ‘role’ and ‘is_owner’ fields are added by create_auth_beforeware after deriving the effective role from TenantUser.local_role. Access via request.state.user[‘role’] in routes.\n\nsource\n\n\ncreate_user_session\n\ndef create_user_session(\n    session:dict, global_user:GlobalUser, membership:Membership\n):\n\nCreate authenticated session after successful OAuth login.\nSets session keys for user identity and tracking: - user_id, email, tenant_id, tenant_role, is_sys_admin: Identity - login_at: Timestamp when user logged in - session_started_at: Unix timestamp for absolute session timeout tracking",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#route-helpers",
+    "href": "utils_auth.html#route-helpers",
+    "title": "🔐 Authentication",
+    "section": "🚦 Route Helpers",
+    "text": "🚦 Route Helpers\n\n\n\nFunction\nPurpose\n\n\n\n\nauth_redirect\nHTMX-aware redirect to login page\n\n\nroute_user_after_login\nDetermine redirect URL based on user type\n\n\nrequire_tenant_access\nGet tenant DB with membership validation\n\n\n\n\nsource\n\nauth_redirect\n\ndef auth_redirect(\n    request, redirect_url:str='/login'\n):\n\nHTMX-aware redirect for authentication flows.\nWhen HTMX makes a partial request and receives a standard redirect (302/303), it follows the redirect and swaps the response into the target element. This causes the login page to appear inside the partial content area.\nThis function detects HTMX requests and uses the HX-Redirect header to trigger a full page navigation instead.\nArgs: request: Starlette request object redirect_url: URL to redirect to (default: ‘/login’)\nReturns: Response with appropriate redirect mechanism\nExample: python     @app.get('/dashboard')     def dashboard(request):         if not get_current_user(request.session):             return auth_redirect(request)         return render_dashboard()\n\nsource\n\n\nrequire_tenant_access\n\ndef require_tenant_access(\n    request_or_session\n):\n\nGet tenant database with membership validation.\n\nsource\n\n\nroute_user_after_login\n\ndef route_user_after_login(\n    global_user:GlobalUser, membership:Membership=None\n)-&gt;str:\n\nDetermine redirect URL based on user type and membership.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_auth.html#oauth-route-handlers",
+    "href": "utils_auth.html#oauth-route-handlers",
+    "title": "🔐 Authentication",
+    "section": "🌐 OAuth Route Handlers",
+    "text": "🌐 OAuth Route Handlers\nComplete OAuth 2.0 flow handlers:\n\n\n\nFunction\nPurpose\n\n\n\n\nhandle_login_request\nInitiate OAuth with CSRF protection\n\n\nhandle_oauth_callback\nProcess provider response\n\n\nhandle_logout\nClear session and redirect\n\n\n\n\nsource\n\nhandle_logout\n\ndef handle_logout(\n    session\n):\n\nClear session and redirect to login page.\n\nsource\n\n\nhandle_oauth_callback\n\ndef handle_oauth_callback(\n    code:str, state:str, request, session\n):\n\nComplete OAuth flow: CSRF verify → user info → provision → session → redirect.\n\nsource\n\n\nhandle_login_request\n\ndef handle_login_request(\n    request, session\n):\n\nGenerate Google OAuth URL with CSRF state protection.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "🔐 Authentication"
+    ]
+  },
+  {
+    "objectID": "utils_log.html",
+    "href": "utils_log.html",
+    "title": "📊 Logging",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nconfigure_logging\nOne-time setup at app startup",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📊 Logging"
+    ]
+  },
+  {
+    "objectID": "utils_log.html#overview",
+    "href": "utils_log.html#overview",
+    "title": "📊 Logging",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nconfigure_logging\nOne-time setup at app startup",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📊 Logging"
+    ]
+  },
+  {
+    "objectID": "utils_log.html#environment-variables",
+    "href": "utils_log.html#environment-variables",
+    "title": "📊 Logging",
+    "section": "📋 Environment Variables",
+    "text": "📋 Environment Variables\n\n\n\nVariable\nDefault\nDescription\n\n\n\n\nFH_SAAS_LOG_LEVEL\nWARNING\nDEBUG, INFO, WARNING, ERROR\n\n\nFH_SAAS_LOG_FILE\n(none)\nPath to log file (optional)",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📊 Logging"
+    ]
+  },
+  {
+    "objectID": "utils_log.html#configure_logging",
+    "href": "utils_log.html#configure_logging",
+    "title": "📊 Logging",
+    "section": "⚙️ configure_logging",
+    "text": "⚙️ configure_logging\n\nfrom nbdev.showdoc import show_doc\n\n\nsource\n\nconfigure_logging\n\ndef configure_logging(\n    log_file:str=None, level:str=None, max_bytes:int=10000000, backup_count:int=5\n):\n\nConfigure logging for all fh_saas modules - call once at app startup.",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📊 Logging"
+    ]
+  },
+  {
+    "objectID": "utils_log.html#usage-examples",
+    "href": "utils_log.html#usage-examples",
+    "title": "📊 Logging",
+    "section": "📖 Usage Examples",
+    "text": "📖 Usage Examples\n\n1. App Startup (call once in main.py)\nfrom fh_saas.utils_log import configure_logging\n\n# Option A: Use environment variables (recommended for production)\n# Set FH_SAAS_LOG_LEVEL=INFO and FH_SAAS_LOG_FILE=./logs/app.log in .env\nconfigure_logging()\n\n# Option B: Explicit - console only\nconfigure_logging(level='INFO')\n\n# Option C: Console + rotating file\nconfigure_logging(level='INFO', log_file='./logs/app.log')\n\n\n2. In Any fh_saas Module (already done)\nEvery module in fh_saas declares a logger at the top:\n# fh_saas/utils_oauth.py\nimport logging\nlogger = logging.getLogger(__name__)\n\ndef handle_login_request(request, session):\n    logger.debug('Login request initiated')\n    # ... do work ...\n    logger.info(f'OAuth complete, redirecting to {redirect_url}')\n\n\n3. Where Do Logs Go?\n\n\n\nConfiguration\nConsole\nFile\n\n\n\n\nconfigure_logging()\n✅\n❌\n\n\nconfigure_logging(log_file='app.log')\n✅\n✅\n\n\nNo configure_logging() call\n❌ silent\n❌\n\n\n\n\n\n4. Log Levels\n\n\n\n\n\n\n\n\nLevel\nWhen to Use\nExample\n\n\n\n\nDEBUG\nDetailed diagnostic\nlogger.debug('Checking user session')\n\n\nINFO\nNormal operations\nlogger.info('User logged in')\n\n\nWARNING\nUnexpected but not failing\nlogger.warning('Token expiring soon')\n\n\nERROR\nOperation failed\nlogger.error('Auth failed', exc_info=True)\n\n\n\n\n\n5. Real Example from fh_saas\n# In your FastHTML app\nfrom fasthtml.common import *\nfrom fh_saas.utils_log import configure_logging\nfrom fh_saas.utils_oauth import handle_login_request, handle_oauth_callback\n\n# Configure logging ONCE at startup\nconfigure_logging(level='INFO', log_file='./logs/app.log')\n\napp = FastHTML()\n\n@app.get('/login')\ndef login(request, session):\n    return handle_login_request(request, session)  # Logs automatically\n\n@app.get('/auth/callback') \ndef callback(code: str, state: str, request, session):\n    return handle_oauth_callback(code, state, request, session)  # Logs automatically\nOutput in console and file:\n2026-01-10 14:30:00 | fh_saas.utils_oauth | DEBUG | Login request initiated\n2026-01-10 14:30:05 | fh_saas.utils_oauth | DEBUG | OAuth callback received\n2026-01-10 14:30:05 | fh_saas.utils_oauth | INFO | OAuth complete, redirecting to /dashboard",
+    "crumbs": [
+      "🛠️ Utilities",
+      "📊 Logging"
+    ]
+  },
+  {
+    "objectID": "utils_graphql.html",
+    "href": "utils_graphql.html",
+    "title": "🔮 GraphQL Client",
+    "section": "",
+    "text": "Method\nPurpose\n\n\n\n\nGraphQLClient\nGraphQL client with async generator pagination\n\n\n.from_url()\n✨ NEW - Create client from URL with optional bearer token\n\n\n.execute()\n✨ NEW - Unified method for queries and mutations\n\n\n.execute_query()\nExecute single query (returns full response)\n\n\n.execute_mutation()\nExecute mutation (alias for execute_query)\n\n\n.fetch_pages_relay()\n✨ NEW - Fetch all pages from Relay-style pagination\n\n\n.fetch_pages_generator()\nStream paginated data (memory-efficient)\n\n\nexecute_graphql()\n✨ NEW - One-liner function for simple queries",
+    "crumbs": [
+      "🔌 Integrations",
+      "🔮 GraphQL Client"
+    ]
+  },
+  {
+    "objectID": "utils_graphql.html#overview",
+    "href": "utils_graphql.html#overview",
+    "title": "🔮 GraphQL Client",
+    "section": "",
+    "text": "Method\nPurpose\n\n\n\n\nGraphQLClient\nGraphQL client with async generator pagination\n\n\n.from_url()\n✨ NEW - Create client from URL with optional bearer token\n\n\n.execute()\n✨ NEW - Unified method for queries and mutations\n\n\n.execute_query()\nExecute single query (returns full response)\n\n\n.execute_mutation()\nExecute mutation (alias for execute_query)\n\n\n.fetch_pages_relay()\n✨ NEW - Fetch all pages from Relay-style pagination\n\n\n.fetch_pages_generator()\nStream paginated data (memory-efficient)\n\n\nexecute_graphql()\n✨ NEW - One-liner function for simple queries",
+    "crumbs": [
+      "🔌 Integrations",
+      "🔮 GraphQL Client"
+    ]
+  },
+  {
+    "objectID": "utils_graphql.html#architecture",
+    "href": "utils_graphql.html#architecture",
+    "title": "🔮 GraphQL Client",
+    "section": "🏗️ Architecture",
+    "text": "🏗️ Architecture\n┌─────────────────────────────────────────────────────────────────┐\n│                    Streaming Pagination Flow                    │\n├─────────────────────────────────────────────────────────────────┤\n│  Page 1: query($cursor: null) → yield [batch] → process        │\n│  Page 2: query($cursor: xyz)  → yield [batch] → process        │\n│  Page N: query($cursor: abc)  → yield [batch] → process        │\n│                                                                 │\n│  ⚠️ CRITICAL: Never accumulates full dataset in memory         │\n│  ✅ Memory: O(page_size) not O(total_records)                  │\n└─────────────────────────────────────────────────────────────────┘",
+    "crumbs": [
+      "🔌 Integrations",
+      "🔮 GraphQL Client"
+    ]
+  },
+  {
+    "objectID": "utils_graphql.html#graphqlclient",
+    "href": "utils_graphql.html#graphqlclient",
+    "title": "🔮 GraphQL Client",
+    "section": "🔮 GraphQLClient",
+    "text": "🔮 GraphQLClient\n\n\n\n\n\n\n\nMethod\nPurpose\n\n\n\n\n.from_url()\n✨ NEW - Create client from URL + token\n\n\n.execute()\n✨ NEW - Unified query/mutation (returns data only)\n\n\n.execute_query()\nExecute single GraphQL query (full response)\n\n\n.execute_mutation()\nExecute GraphQL mutation\n\n\n.fetch_pages_relay()\n✨ NEW - Auto-accumulate Relay pagination\n\n\n.fetch_pages_generator()\nAsync generator for paginated data (streaming)\n\n\n\n\n\n🚀 Quick Start Examples\n\nOne-Liner Query\nfrom fh_saas.utils_graphql import execute_graphql\n\n# NEW: No client management needed\nresult = await execute_graphql(\n    url=\"https://api.example.com/graphql\",\n    query=\"query { users { id name } }\",\n    bearer_token=\"your-token\"\n)\n\n\nConvenience Constructor\nfrom fh_saas.utils_graphql import GraphQLClient\n\n# NEW: Direct from URL\nasync with GraphQLClient.from_url(\n    url=\"https://api.example.com/graphql\",\n    bearer_token=\"your-token\"\n) as gql:\n    result = await gql.execute(\"query { users { id name } }\")\n\n\nRelay Pagination (Auto-Accumulate)\n# NEW: Fetch all pages automatically\nasync with GraphQLClient.from_url(url, bearer_token=token) as gql:\n    all_items = await gql.fetch_pages_relay(\n        query='''\n            query($first: Int, $after: String, $filter: Filter) {\n                transactionsConnection(first: $first, after: $after, filter: $filter) {\n                    edges { node { id amount } }\n                    pageInfo { hasNextPage endCursor }\n                }\n            }\n        ''',\n        connection_path=\"transactionsConnection\",\n        variables={\"filter\": {\"status\": \"completed\"}},\n        page_size=100,\n        max_pages=50  # Safety limit\n    )\n    print(f\"Fetched {len(all_items)} total items\")\n\n\nLegacy: Manual Client Management\nfrom fh_saas.utils_api import AsyncAPIClient, bearer_token_auth\nfrom fh_saas.utils_graphql import GraphQLClient\n\n# Still supported for advanced use cases\nasync with AsyncAPIClient(\n    'https://api.example.com/graphql',\n    auth_headers=bearer_token_auth('TOKEN')\n) as http_client:\n    \n    client = GraphQLClient(http_client)\n    result = await client.execute_query(\n        query='{ users { id name } }'\n    )\n\n\nMemory-Efficient Streaming (Generator)\n# For very large datasets - process batches without accumulating\nasync with GraphQLClient.from_url(url, bearer_token=token) as gql:\n    async for batch in gql.fetch_pages_generator(\n        query_template='''\n            query($cursor: String) {\n                users(after: $cursor, first: 1000) {\n                    nodes { id name email }\n                    pageInfo { hasNextPage endCursor }\n                }\n            }\n        ''',\n        variables={'cursor': None},\n        items_path=['data', 'users', 'nodes'],\n        cursor_path=['data', 'users', 'pageInfo', 'endCursor'],\n        has_next_path=['data', 'users', 'pageInfo', 'hasNextPage']\n    ):\n        print(f\"Processing batch of {len(batch)} records\")\n        # Process immediately - never load full dataset\n\nsource\n\n\n\nGraphQLClient\n\ndef GraphQLClient(\n    api_client:AsyncAPIClient, # Initialized AsyncAPIClient instance\n    endpoint:str='', # GraphQL endpoint path (default: '' for base URL)\n):\n\nGraphQL client with streaming pagination for memory-efficient data fetching.\n\nsource\n\n\nGraphQLClient.__init__\n\ndef __init__(\n    api_client:AsyncAPIClient, # Initialized AsyncAPIClient instance\n    endpoint:str='', # GraphQL endpoint path (default: '' for base URL)\n):\n\nInitialize self. See help(type(self)) for accurate signature.\n\nsource\n\n\nGraphQLClient.execute_query\n\ndef execute_query(\n    query:str, # GraphQL query string\n    variables:dict=None, # Query variables\n)-&gt;Dict[str, Any]:\n\nExecute a single GraphQL query and return the JSON response.\n\nsource\n\n\nGraphQLClient.execute_mutation\n\ndef execute_mutation(\n    mutation:str, # GraphQL mutation string\n    variables:dict=None, # Mutation variables\n)-&gt;Dict[str, Any]:\n\nExecute a GraphQL mutation (alias for execute_query).\n\nsource\n\n\nGraphQLClient.fetch_pages_generator\n\ndef fetch_pages_generator(\n    query_template:str, # GraphQL query with $variables placeholders\n    variables:dict, # Initial variables (must include cursor key)\n    items_path:list[str], # JSONPath to list of items (e.g., ['data', 'users', 'nodes'])\n    cursor_path:list[str], # JSONPath to next cursor (e.g., ['data', 'users', 'pageInfo', 'endCursor'])\n    has_next_path:list[str]=None, # Optional path to hasNextPage boolean (if None, checks cursor != None)\n    cursor_var:str='cursor', # Variable name for cursor in query (default: 'cursor')\n)-&gt;AsyncGenerator[List[Dict], None]:\n\nStream paginated GraphQL data page-by-page using async generator.\n\nsource\n\n\nGraphQLClient.fetch_pages_relay\n\ndef fetch_pages_relay(\n    query:str, # GraphQL query with $first and $after variables\n    connection_path:str, # Dot-notation path to connection object (e.g., \"transactionsConnection\")\n    variables:dict | None=None, # Base variables for the query (excluding first/after)\n    page_size:int=100, # Number of items per page\n    max_pages:int | None=None, # Maximum pages to fetch (None for unlimited)\n)-&gt;list[dict]:\n\nFetch all pages from a Relay-style paginated GraphQL query.\nExample query structure: query($first: Int, $after: String, $filter: TransactionFilter) { transactionsConnection(first: $first, after: $after, filter: $filter) { edges { node { id amount } } pageInfo { hasNextPage endCursor } } }\nReturns: List of all nodes from all pages\n\nsource\n\n\nGraphQLClient.execute\n\ndef execute(\n    query:str, # GraphQL query or mutation string\n    variables:dict=None, # Query/mutation variables\n)-&gt;Dict[str, Any]:\n\nExecute a GraphQL query or mutation and return the data portion.\nThis is a unified method that works for both queries and mutations. Returns only the ‘data’ portion of the response for convenience.\n\nsource\n\n\nGraphQLClient.from_url\n\ndef from_url(\n    cls, url:str, # GraphQL endpoint URL\n    bearer_token:str | None=None, # Optional bearer token for Authorization header\n    headers:dict | None=None, # Optional additional headers\n):\n\nCreate GraphQL client directly from URL with optional bearer token.\nUsage: async with GraphQLClient.from_url(url, bearer_token=token) as gql: result = await gql.execute(query)\n\n\nStreaming Pagination Details\nWhy use generators? For large datasets (millions of rows), accumulating all data in memory causes OOM errors. The async generator yields batches instead.\nParameters:\n\n\n\n\n\n\n\nParameter\nDescription\n\n\n\n\nquery_template\nGraphQL query with $cursor variable\n\n\nvariables\nInitial variables dict (e.g., {'cursor': None})\n\n\nitems_path\nPath to data list in response (e.g., ['data', 'users', 'nodes'])\n\n\ncursor_path\nPath to next cursor (e.g., ['data', 'users', 'pageInfo', 'endCursor'])\n\n\nhas_next_path\nOptional path to hasNextPage flag\n\n\ncursor_var\nCursor variable name in query (default: 'cursor')\n\n\n\nExample with database insert:\nasync for batch in client.fetch_pages_generator(\n    query_template='''\n        query($cursor: String) {\n            users(after: $cursor, first: 1000) {\n                nodes { id name }\n                pageInfo { hasNextPage endCursor }\n            }\n        }\n    ''',\n    variables={'cursor': None},\n    items_path=['data', 'users', 'nodes'],\n    cursor_path=['data', 'users', 'pageInfo', 'endCursor'],\n    has_next_path=['data', 'users', 'pageInfo', 'hasNextPage']\n):\n    # Process each batch immediately\n    df = pl.DataFrame(batch)\n    df.write_database('staging_table', connection=conn)\n\nsource\n\n\nexecute_graphql\n\ndef execute_graphql(\n    url:str, # GraphQL endpoint URL\n    query:str, # GraphQL query string\n    variables:dict | None=None, # Optional query variables\n    bearer_token:str | None=None, # Optional bearer token for Authorization header\n    headers:dict | None=None, # Optional additional headers\n)-&gt;dict:\n\nExecute a single GraphQL query without managing client lifecycle.\nThis is a convenience function for one-off queries. For multiple queries, use GraphQLClient.from_url() to reuse the connection.\nUsage: result = await execute_graphql( url=“https://api.example.com/graphql”, query=“query { users { id name } }”, bearer_token=“your-token” )\nRaises: ValueError: If the response contains GraphQL errors",
+    "crumbs": [
+      "🔌 Integrations",
+      "🔮 GraphQL Client"
+    ]
+  },
+  {
+    "objectID": "utils_blog.html",
+    "href": "utils_blog.html",
+    "title": "📝 Blog Publishing",
+    "section": "",
+    "text": "Class\nPurpose\n\n\n\n\nPostLoader\nLoad markdown posts from filesystem\n\n\nMarkdownEngine\nRender markdown to SEO-friendly HTML",
+    "crumbs": [
+      "📣 Content",
+      "📝 Blog Publishing"
+    ]
+  },
+  {
+    "objectID": "utils_blog.html#overview",
+    "href": "utils_blog.html#overview",
+    "title": "📝 Blog Publishing",
+    "section": "",
+    "text": "Class\nPurpose\n\n\n\n\nPostLoader\nLoad markdown posts from filesystem\n\n\nMarkdownEngine\nRender markdown to SEO-friendly HTML",
+    "crumbs": [
+      "📣 Content",
+      "📝 Blog Publishing"
+    ]
+  },
+  {
+    "objectID": "utils_blog.html#postloader",
+    "href": "utils_blog.html#postloader",
+    "title": "📝 Blog Publishing",
+    "section": "📂 PostLoader",
+    "text": "📂 PostLoader\n\n\n\nMethod\nPurpose\n\n\n\n\n.load_posts()\nLoad all posts sorted by date\n\n\n.get_post()\nGet single post by slug\n\n\n\n\nsource\n\nPostLoader\n\ndef PostLoader(\n    posts_dir:str, # Directory containing .md files\n):\n\nLoad and parse markdown blog posts from filesystem\n\nsource\n\n\nPostLoader.load_posts\n\ndef load_posts(\n    \n)-&gt;List[Dict]:\n\nLoad all markdown posts from directory.\nReturns list of post dicts sorted by date (newest first). Each post contains: title, date, slug, body, categories, author, series.\nExample: ```python loader = PostLoader(‘blog/posts’) posts = loader.load_posts()\nfor post in posts:\n    print(f\"{post['title']} - {post['slug']}\")\n```\n\nsource\n\n\nPostLoader.get_post\n\ndef get_post(\n    slug:str\n)-&gt;Optional[Dict]: # URL slug (e.g., 'my-post')\n\nGet single post by slug.\nExample: python     post = loader.get_post('bg0010')     if post:         print(post['title'])",
+    "crumbs": [
+      "📣 Content",
+      "📝 Blog Publishing"
+    ]
+  },
+  {
+    "objectID": "utils_blog.html#markdownengine",
+    "href": "utils_blog.html#markdownengine",
+    "title": "📝 Blog Publishing",
+    "section": "🎨 MarkdownEngine",
+    "text": "🎨 MarkdownEngine\n\n\n\nMethod\nPurpose\n\n\n\n\n.render()\nConvert markdown to HTML\n\n\n\n\nsource\n\nMarkdownEngine\n\ndef MarkdownEngine(\n    \n):\n\nRender markdown to HTML with SEO extensions\n\nsource\n\n\nMarkdownEngine.render\n\ndef render(\n    content:str\n)-&gt;str: # Markdown content\n\nConvert markdown to HTML.\n    Returns HTML string with proper semantic tags for SEO.\n\n    Example:\n        ```python\n        engine = MarkdownEngine()\n        html = engine.render('# Hello\nThis is bold.’) print(html) #\n\nHello\n\n\nThis is bold.\n\n        ```\n\nsource\n\n\nMarkdownEngine.get_toc\n\ndef get_toc(\n    \n)-&gt;str:\n\nGet table of contents HTML from last render.\n    Must call render() first. Returns empty string if no headings.\n\n    Example:\n        ```python\n        engine = MarkdownEngine()\n        html = engine.render('# Title",
+    "crumbs": [
+      "📣 Content",
+      "📝 Blog Publishing"
+    ]
+  },
+  {
+    "objectID": "utils_blog.html#section-1",
+    "href": "utils_blog.html#section-1",
+    "title": "📝 Blog Publishing",
+    "section": "Section 1",
+    "text": "Section 1",
+    "crumbs": [
+      "📣 Content",
+      "📝 Blog Publishing"
+    ]
+  },
+  {
+    "objectID": "utils_blog.html#section-2",
+    "href": "utils_blog.html#section-2",
+    "title": "📝 Blog Publishing",
+    "section": "Section 2’)",
+    "text": "Section 2’)\n        toc = engine.get_toc()\n        print(toc)  # &lt;ul&gt;&lt;li&gt;&lt;a href=\"#section-1\"&gt;Section 1&lt;/a&gt;...&lt;/li&gt;&lt;/ul&gt;\n        ```",
+    "crumbs": [
+      "📣 Content",
+      "📝 Blog Publishing"
+    ]
+  },
+  {
+    "objectID": "utils_blog.html#fasthtml-integration-example",
+    "href": "utils_blog.html#fasthtml-integration-example",
+    "title": "📝 Blog Publishing",
+    "section": "FastHTML Integration Example",
+    "text": "FastHTML Integration Example\nBasic pattern for server-side rendering with FastHTML:\nfrom fasthtml.common import *\nfrom fh_saas.utils_blog import PostLoader, MarkdownEngine\n\napp = FastHTML()\nloader = PostLoader('blog/posts')\nengine = MarkdownEngine()\n\n@app.get('/blog')\ndef blog_index():\n    posts = loader.load_posts()\n    return Titled('Blog',\n        *[Article(\n            H2(A(p['title'], href=f\"/blog/{p['slug']}\")),\n            P(p['description']),\n            Small(p['date'].strftime('%Y-%m-%d') if p['date'] else '')\n        ) for p in posts]\n    )\n\n@app.get('/blog/{slug}')\ndef blog_post(slug: str):\n    post = loader.get_post(slug)\n    if not post:\n        return 'Post not found', 404\n    \n    html_content = engine.render(post['body'])\n    toc = engine.get_toc()\n    \n    return Titled(post['title'],\n        Article(\n            NotStr(toc),  # Table of contents\n            NotStr(html_content)  # Rendered markdown\n        )\n    )",
+    "crumbs": [
+      "📣 Content",
+      "📝 Blog Publishing"
+    ]
+  },
+  {
+    "objectID": "utils_workflow.html",
+    "href": "utils_workflow.html",
+    "title": "🔧 Workflow Engine",
+    "section": "",
+    "text": "Class\nPurpose\n\n\n\n\nWorkflow\nExecute callable steps sequentially",
+    "crumbs": [
+      "📣 Content",
+      "🔧 Workflow Engine"
+    ]
+  },
+  {
+    "objectID": "utils_workflow.html#overview",
+    "href": "utils_workflow.html#overview",
+    "title": "🔧 Workflow Engine",
+    "section": "",
+    "text": "Class\nPurpose\n\n\n\n\nWorkflow\nExecute callable steps sequentially",
+    "crumbs": [
+      "📣 Content",
+      "🔧 Workflow Engine"
+    ]
+  },
+  {
+    "objectID": "utils_workflow.html#workflow-class",
+    "href": "utils_workflow.html#workflow-class",
+    "title": "🔧 Workflow Engine",
+    "section": "🔧 Workflow Class",
+    "text": "🔧 Workflow Class\n\n\n\nMethod\nPurpose\n\n\n\n\nWorkflow(steps)\nInitialize with list of callables\n\n\n.execute()\nRun all steps sequentially\n\n\n\n\nfrom nbdev.showdoc import *\n\n\nsource\n\nWorkflow\n\ndef Workflow(\n    steps:List\n):\n\nExecute a list of callables sequentially. Minimal wrapper for code readability.\n\nsource\n\n\nWorkflow.execute\n\ndef execute(\n    \n):\n\nExecute all steps in order",
+    "crumbs": [
+      "📣 Content",
+      "🔧 Workflow Engine"
+    ]
+  },
+  {
+    "objectID": "utils_db.html",
+    "href": "utils_db.html",
+    "title": "🗄️ Table Management",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nregister_table\nCreate table from dataclass model\n\n\nregister_tables\nCreate multiple tables atomically\n\n\ndrop_table\nDrop table if exists\n\n\ncreate_index\nCreate index with dialect-specific SQL\n\n\ndrop_index\nDrop index if exists\n\n\nlist_tables\nList all tables in database\n\n\nlist_indexes\nList indexes for a table",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Table Management"
+    ]
+  },
+  {
+    "objectID": "utils_db.html#overview",
+    "href": "utils_db.html#overview",
+    "title": "🗄️ Table Management",
+    "section": "",
+    "text": "Function\nPurpose\n\n\n\n\nregister_table\nCreate table from dataclass model\n\n\nregister_tables\nCreate multiple tables atomically\n\n\ndrop_table\nDrop table if exists\n\n\ncreate_index\nCreate index with dialect-specific SQL\n\n\ndrop_index\nDrop index if exists\n\n\nlist_tables\nList all tables in database\n\n\nlist_indexes\nList indexes for a table",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Table Management"
+    ]
+  },
+  {
+    "objectID": "utils_db.html#table-registration",
+    "href": "utils_db.html#table-registration",
+    "title": "🗄️ Table Management",
+    "section": "📋 Table Registration",
+    "text": "📋 Table Registration\n\n\n\nFunction\nPurpose\n\n\n\n\nregister_table\nCreate single table from dataclass\n\n\nregister_tables\nCreate multiple tables atomically\n\n\ndrop_table\nDrop table if exists\n\n\n\nExample:\nclass Transaction:\n    id: str\n    amount: float\n    date: str\n    category: str = None\n\ntenant_db = get_or_create_tenant_db(\"tenant_123\")\ntransactions = register_table(tenant_db, Transaction, \"transactions\")\n\n# Use table object for CRUD\ntransactions.insert(Transaction(id=\"t1\", amount=100.0, date=\"2024-01-01\"))\n\nsource\n\nregister_table\n\ndef register_table(\n    tenant_db:Database, model_class:Type, table_name:str, pk:str='id'\n):\n\nCreate a table from a dataclass model if it doesn’t exist (atomic).\n\nsource\n\n\nregister_tables\n\ndef register_tables(\n    tenant_db:Database, models:List\n)-&gt;Dict:\n\nCreate multiple tables atomically (all succeed or all rollback).\nParameters: - models: List of tuples [(ModelClass, table_name, pk), ...]\nReturns: Dict mapping table names to table objects {table_name: table_object}\nExample:\nclass Transaction:\n    id: str; amount: float; date: str\n\nclass Connection:\n    id: str; provider: str; status: str\n\ntables = register_tables(tenant_db, [\n    (Transaction, \"transactions\", \"id\"),\n    (Connection, \"connections\", \"id\"),\n])\n\ntables[\"transactions\"].insert(...)\n\nsource\n\n\ndrop_table\n\ndef drop_table(\n    tenant_db:Database, table_name:str\n)-&gt;None:\n\nDrop a table if it exists (atomic operation).",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Table Management"
+    ]
+  },
+  {
+    "objectID": "utils_db.html#index-management",
+    "href": "utils_db.html#index-management",
+    "title": "🗄️ Table Management",
+    "section": "📇 Index Management",
+    "text": "📇 Index Management\n\n\n\nFunction\nPurpose\n\n\n\n\ncreate_index\nCreate index with dialect-specific SQL\n\n\ncreate_indexes\nCreate multiple indexes atomically\n\n\ndrop_index\nDrop index if exists\n\n\n\nParameters for create_index:\n\n\n\n\n\n\n\nParameter\nDescription\n\n\n\n\ntable_name\nName of the table\n\n\ncolumns\nList of column names to index\n\n\nunique\nIf True, creates UNIQUE index (default: False)\n\n\nindex_name\nCustom name (auto-generates idx_{table}_{cols} if None)\n\n\n\nExample:\n# Simple index\ncreate_index(tenant_db, \"transactions\", [\"date\"])\n\n# Composite unique index\ncreate_index(tenant_db, \"transactions\", [\"account_id\", \"external_id\"], unique=True)\n\n# Custom name\ncreate_index(tenant_db, \"transactions\", [\"category\"], index_name=\"idx_txn_cat\")\n\nsource\n\ncreate_index\n\ndef create_index(\n    tenant_db:Database, table_name:str, columns:List, unique:bool=False, index_name:str=None\n)-&gt;None:\n\nCreate an index on a table if it doesn’t exist (atomic operation).\n\nsource\n\n\ncreate_indexes\n\ndef create_indexes(\n    tenant_db:Database, indexes:List\n)-&gt;None:\n\nCreate multiple indexes atomically (all succeed or all rollback).\nParameters: - indexes: List of tuples [(table_name, columns, unique, index_name), ...] - index_name can be None for auto-generated names\nExample:\ncreate_indexes(tenant_db, [\n    (\"transactions\", [\"date\"], False, None),\n    (\"transactions\", [\"account_id\", \"external_id\"], True, \"idx_txn_unique\"),\n    (\"connections\", [\"provider\"], False, None),\n])\n\nsource\n\n\ndrop_index\n\ndef drop_index(\n    tenant_db:Database, index_name:str, table_name:str=None\n)-&gt;None:\n\nDrop an index if it exists (atomic operation).",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Table Management"
+    ]
+  },
+  {
+    "objectID": "utils_db.html#schema-introspection",
+    "href": "utils_db.html#schema-introspection",
+    "title": "🗄️ Table Management",
+    "section": "🔍 Schema Introspection",
+    "text": "🔍 Schema Introspection\n\n\n\nFunction\nPurpose\n\n\n\n\ntable_exists\nCheck if a table exists\n\n\n\nExample:\nif not table_exists(tenant_db, \"transactions\"):\n    transactions = register_table(tenant_db, Transaction, \"transactions\")\n\nsource\n\ntable_exists\n\ndef table_exists(\n    tenant_db:Database, table_name:str\n)-&gt;bool:\n\nCheck if a table exists in the database.",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Table Management"
+    ]
+  },
+  {
+    "objectID": "utils_db.html#usage-example",
+    "href": "utils_db.html#usage-example",
+    "title": "🗄️ Table Management",
+    "section": "Usage Example",
+    "text": "Usage Example\nComplete workflow: Define dataclass models → Get tenant DB → Register tables → Create indexes",
+    "crumbs": [
+      "📦 Core",
+      "🗄️ Table Management"
+    ]
+  },
+  {
+    "objectID": "utils_migrate.html",
+    "href": "utils_migrate.html",
+    "title": "utils_migrate",
+    "section": "",
+    "text": "See utils_migrate.py for the source code."
+  }
+]

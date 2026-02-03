@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Multi-user tenant authentication with Google OAuth, CSRF protection, and automatic tenant provisioning.">
+
+<title>🔐 Authentication – fh-saas</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-000f0825b9c55ed21d14970d810c14a9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="🔐 Authentication – fh-saas">
+<meta property="og:description" content="Multi-user tenant authentication with Google OAuth, CSRF protection, and automatic tenant provisioning.">
+<meta property="og:site_name" content="fh-saas">
+<meta name="twitter:title" content="🔐 Authentication – fh-saas">
+<meta name="twitter:description" content="Multi-user tenant authentication with Google OAuth, CSRF protection, and automatic tenant provisioning.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">fh-saas</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./utils_sql.html">🛠️ Utilities</a></li><li class="breadcrumb-item"><a href="./utils_auth.html">🔐 Authentication</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🚀 fh-saas</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">📦 Core</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./db_host.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏠 Multi-Tenant Setup</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./db_tenant.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🗄️ Tenant Databases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_db.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🗄️ Table Management</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">🔌 Integrations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_api.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🌐 HTTP Client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_graphql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🔮 GraphQL Client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_webhook.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🪝 Webhooks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">⚙️ Data Pipeline</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_bgtsk.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">⚡ Background Tasks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_polars_mapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🐻‍❄️ Data Transforms</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">🛠️ Utilities</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_sql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🗃️ SQL Helpers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_log.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📊 Logging</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_auth.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">🔐 Authentication</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_email.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📧 Email Sending</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">📣 Content</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_blog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Blog Publishing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_seo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🔍 SEO &amp; Sitemaps</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🔧 Workflow Engine</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sliding-session-configuration" id="toc-sliding-session-configuration" class="nav-link active" data-scroll-target="#sliding-session-configuration">⏰ Sliding Session Configuration</a>
+  <ul class="collapse">
+  <li><a href="#how-sliding-sessions-work" id="toc-how-sliding-sessions-work" class="nav-link" data-scroll-target="#how-sliding-sessions-work">How Sliding Sessions Work</a></li>
+  </ul></li>
+  <li><a href="#sliding-session-middleware" id="toc-sliding-session-middleware" class="nav-link" data-scroll-target="#sliding-session-middleware">🔄 Sliding Session Middleware</a>
+  <ul class="collapse">
+  <li><a href="#sessionconfig" id="toc-sessionconfig" class="nav-link" data-scroll-target="#sessionconfig">SessionConfig</a></li>
+  <li><a href="#slidingsessionmiddleware" id="toc-slidingsessionmiddleware" class="nav-link" data-scroll-target="#slidingsessionmiddleware">SlidingSessionMiddleware</a></li>
+  <li><a href="#create_session_middleware" id="toc-create_session_middleware" class="nav-link" data-scroll-target="#create_session_middleware">create_session_middleware</a></li>
+  </ul></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">🎯 Overview</a></li>
+  <li><a href="#architecture" id="toc-architecture" class="nav-link" data-scroll-target="#architecture">🏗️ Architecture</a></li>
+  <li><a href="#quick-reference" id="toc-quick-reference" class="nav-link" data-scroll-target="#quick-reference">📚 Quick Reference</a>
+  <ul class="collapse">
+  <li><a href="#security-features" id="toc-security-features" class="nav-link" data-scroll-target="#security-features">Security Features</a></li>
+  <li><a href="#token-expiry" id="toc-token-expiry" class="nav-link" data-scroll-target="#token-expiry">Token Expiry</a></li>
+  </ul></li>
+  <li><a href="#role-based-access-control" id="toc-role-based-access-control" class="nav-link" data-scroll-target="#role-based-access-control">🎭 Role-Based Access Control</a>
+  <ul class="collapse">
+  <li><a href="#role-hierarchy" id="toc-role-hierarchy" class="nav-link" data-scroll-target="#role-hierarchy">Role Hierarchy</a></li>
+  <li><a href="#key-functions" id="toc-key-functions" class="nav-link" data-scroll-target="#key-functions">Key Functions</a></li>
+  <li><a href="#has_min_role" id="toc-has_min_role" class="nav-link" data-scroll-target="#has_min_role">has_min_role</a></li>
+  <li><a href="#get_user_role" id="toc-get_user_role" class="nav-link" data-scroll-target="#get_user_role">get_user_role</a></li>
+  <li><a href="#require_role" id="toc-require_role" class="nav-link" data-scroll-target="#require_role">require_role</a></li>
+  </ul></li>
+  <li><a href="#session-caching" id="toc-session-caching" class="nav-link" data-scroll-target="#session-caching">⚡ Session Caching</a>
+  <ul class="collapse">
+  <li><a href="#configuration" id="toc-configuration" class="nav-link" data-scroll-target="#configuration">Configuration</a></li>
+  <li><a href="#how-it-works" id="toc-how-it-works" class="nav-link" data-scroll-target="#how-it-works">How It Works</a></li>
+  <li><a href="#cache-invalidation" id="toc-cache-invalidation" class="nav-link" data-scroll-target="#cache-invalidation">Cache Invalidation</a></li>
+  <li><a href="#invalidate_auth_cache" id="toc-invalidate_auth_cache" class="nav-link" data-scroll-target="#invalidate_auth_cache">invalidate_auth_cache</a></li>
+  <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example">Usage Example</a></li>
+  <li><a href="#usage-in-routes" id="toc-usage-in-routes" class="nav-link" data-scroll-target="#usage-in-routes">Usage in Routes</a></li>
+  <li><a href="#role-derivation-flow" id="toc-role-derivation-flow" class="nav-link" data-scroll-target="#role-derivation-flow">Role Derivation Flow</a></li>
+  </ul></li>
+  <li><a href="#auth-beforeware" id="toc-auth-beforeware" class="nav-link" data-scroll-target="#auth-beforeware">🛡️ Auth Beforeware</a>
+  <ul class="collapse">
+  <li><a href="#create_auth_beforeware" id="toc-create_auth_beforeware" class="nav-link" data-scroll-target="#create_auth_beforeware">create_auth_beforeware</a></li>
+  </ul></li>
+  <li><a href="#oauth-client" id="toc-oauth-client" class="nav-link" data-scroll-target="#oauth-client">🔑 OAuth Client</a>
+  <ul class="collapse">
+  <li><a href="#get_google_oauth_client" id="toc-get_google_oauth_client" class="nav-link" data-scroll-target="#get_google_oauth_client">get_google_oauth_client</a></li>
+  </ul></li>
+  <li><a href="#csrf-protection" id="toc-csrf-protection" class="nav-link" data-scroll-target="#csrf-protection">🔒 CSRF Protection</a>
+  <ul class="collapse">
+  <li><a href="#attack-without-csrf-protection" id="toc-attack-without-csrf-protection" class="nav-link" data-scroll-target="#attack-without-csrf-protection">Attack Without CSRF Protection</a></li>
+  <li><a href="#verify_oauth_state" id="toc-verify_oauth_state" class="nav-link" data-scroll-target="#verify_oauth_state">verify_oauth_state</a></li>
+  <li><a href="#generate_oauth_state" id="toc-generate_oauth_state" class="nav-link" data-scroll-target="#generate_oauth_state">generate_oauth_state</a></li>
+  </ul></li>
+  <li><a href="#user-management" id="toc-user-management" class="nav-link" data-scroll-target="#user-management">👤 User Management</a>
+  <ul class="collapse">
+  <li><a href="#verify_membership" id="toc-verify_membership" class="nav-link" data-scroll-target="#verify_membership">verify_membership</a></li>
+  <li><a href="#get_user_membership" id="toc-get_user_membership" class="nav-link" data-scroll-target="#get_user_membership">get_user_membership</a></li>
+  <li><a href="#create_or_get_global_user" id="toc-create_or_get_global_user" class="nav-link" data-scroll-target="#create_or_get_global_user">create_or_get_global_user</a></li>
+  </ul></li>
+  <li><a href="#auto-provisioning" id="toc-auto-provisioning" class="nav-link" data-scroll-target="#auto-provisioning">🏗️ Auto-Provisioning</a>
+  <ul class="collapse">
+  <li><a href="#provisioning-steps" id="toc-provisioning-steps" class="nav-link" data-scroll-target="#provisioning-steps">Provisioning Steps</a></li>
+  <li><a href="#provision_new_user" id="toc-provision_new_user" class="nav-link" data-scroll-target="#provision_new_user">provision_new_user</a></li>
+  </ul></li>
+  <li><a href="#session-management" id="toc-session-management" class="nav-link" data-scroll-target="#session-management">📋 Session Management</a>
+  <ul class="collapse">
+  <li><a href="#clear_session" id="toc-clear_session" class="nav-link" data-scroll-target="#clear_session">clear_session</a></li>
+  <li><a href="#get_current_user" id="toc-get_current_user" class="nav-link" data-scroll-target="#get_current_user">get_current_user</a></li>
+  <li><a href="#create_user_session" id="toc-create_user_session" class="nav-link" data-scroll-target="#create_user_session">create_user_session</a></li>
+  </ul></li>
+  <li><a href="#route-helpers" id="toc-route-helpers" class="nav-link" data-scroll-target="#route-helpers">🚦 Route Helpers</a>
+  <ul class="collapse">
+  <li><a href="#auth_redirect" id="toc-auth_redirect" class="nav-link" data-scroll-target="#auth_redirect">auth_redirect</a></li>
+  <li><a href="#require_tenant_access" id="toc-require_tenant_access" class="nav-link" data-scroll-target="#require_tenant_access">require_tenant_access</a></li>
+  <li><a href="#route_user_after_login" id="toc-route_user_after_login" class="nav-link" data-scroll-target="#route_user_after_login">route_user_after_login</a></li>
+  </ul></li>
+  <li><a href="#oauth-route-handlers" id="toc-oauth-route-handlers" class="nav-link" data-scroll-target="#oauth-route-handlers">🌐 OAuth Route Handlers</a>
+  <ul class="collapse">
+  <li><a href="#handle_logout" id="toc-handle_logout" class="nav-link" data-scroll-target="#handle_logout">handle_logout</a></li>
+  <li><a href="#handle_oauth_callback" id="toc-handle_oauth_callback" class="nav-link" data-scroll-target="#handle_oauth_callback">handle_oauth_callback</a></li>
+  <li><a href="#handle_login_request" id="toc-handle_login_request" class="nav-link" data-scroll-target="#handle_login_request">handle_login_request</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/abhisheksreesaila/fh-saas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="utils_auth.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./utils_sql.html">🛠️ Utilities</a></li><li class="breadcrumb-item"><a href="./utils_auth.html">🔐 Authentication</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">🔐 Authentication</h1>
+</div>
+
+<div>
+  <div class="description">
+    Multi-user tenant authentication with Google OAuth, CSRF protection, and automatic tenant provisioning.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<section id="sliding-session-configuration" class="level2">
+<h2 class="anchored" data-anchor-id="sliding-session-configuration">⏰ Sliding Session Configuration</h2>
+<p>Configure session timeout behavior with sliding expiry.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 27%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>max_age</code></td>
+<td><code>3600</code></td>
+<td>Session expires after this many seconds of inactivity</td>
+</tr>
+<tr class="even">
+<td><code>sliding</code></td>
+<td><code>True</code></td>
+<td>Refresh session on each request</td>
+</tr>
+<tr class="odd">
+<td><code>absolute_max</code></td>
+<td><code>None</code></td>
+<td>Optional hard limit regardless of activity (e.g., 86400 for 24h)</td>
+</tr>
+<tr class="even">
+<td><code>secure</code></td>
+<td><code>True</code></td>
+<td>HTTPS-only cookies in production</td>
+</tr>
+<tr class="odd">
+<td><code>same_site</code></td>
+<td><code>"lax"</code></td>
+<td>SameSite cookie policy for CSRF protection</td>
+</tr>
+</tbody>
+</table>
+<section id="how-sliding-sessions-work" class="level3">
+<h3 class="anchored" data-anchor-id="how-sliding-sessions-work">How Sliding Sessions Work</h3>
+<pre><code>Current (Fixed Timeout):
+  Login at 10:00 → Expires at 11:00 (regardless of activity)
+  User active at 10:55 → STILL logged out at 11:00 ❌
+
+Sliding Timeout:
+  Login at 10:00 → Expires at 11:00
+  User active at 10:55 → Expires at 11:55 ✓
+  User active at 11:50 → Expires at 12:50 ✓
+  User idle for 1 hour → Logged out ✓</code></pre>
+<hr>
+</section>
+</section>
+<section id="sliding-session-middleware" class="level2">
+<h2 class="anchored" data-anchor-id="sliding-session-middleware">🔄 Sliding Session Middleware</h2>
+<p>Custom middleware that extends Starlette’s SessionMiddleware to refresh cookie <code>max_age</code> on each authenticated request.</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L48" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="sessionconfig" class="level3">
+<h3 class="anchored" data-anchor-id="sessionconfig">SessionConfig</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SessionConfig(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    max_age:<span class="bu">int</span><span class="op">=</span><span class="dv">3600</span>, sliding:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span>, absolute_max:<span class="bu">int</span><span class="op">=</span><span class="va">None</span>, secure:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span>, same_site:<span class="bu">str</span><span class="op">=</span><span class="st">'lax'</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    http_only:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="va">None</span>:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Configuration for sliding session behavior.</em></p>
+<p>Attributes: max_age: Session expires after this many seconds of inactivity. Default: 3600 (1 hour) sliding: If True, refresh session expiry on each request. Default: True absolute_max: Optional hard limit in seconds regardless of activity. Default: None secure: If True, cookie only sent over HTTPS. Default: True same_site: SameSite cookie policy (‘lax’, ‘strict’, ‘none’). Default: ‘lax’ http_only: If True, cookie not accessible via JavaScript. Default: True</p>
+<p>Example: &gt;&gt;&gt; config = SessionConfig() # 1 hour inactivity timeout, sliding enabled &gt;&gt;&gt; config = SessionConfig(max_age=1800) # 30 min inactivity timeout &gt;&gt;&gt; config = SessionConfig(max_age=3600, absolute_max=86400) # 1h sliding, 24h hard limit</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L87" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="slidingsessionmiddleware" class="level3">
+<h3 class="anchored" data-anchor-id="slidingsessionmiddleware">SlidingSessionMiddleware</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SlidingSessionMiddleware(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    app, secret_key:<span class="bu">str</span>, session_config:SessionConfig<span class="op">=</span><span class="va">None</span>, session_cookie:<span class="bu">str</span><span class="op">=</span><span class="st">'session'</span>, path:<span class="bu">str</span><span class="op">=</span><span class="st">'/'</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Session middleware with sliding expiry.</em></p>
+<p>Extends Starlette’s SessionMiddleware to refresh the session cookie max_age on each request, implementing sliding session expiry.</p>
+<p>Sessions expire after <code>max_age</code> seconds of INACTIVITY, not from login time.</p>
+<p>Args: app: ASGI application secret_key: Secret key for signing cookies session_config: SessionConfig instance for timeout settings session_cookie: Cookie name. Default: ‘session’ path: Cookie path. Default: ‘/’</p>
+<p>Example: &gt;&gt;&gt; from starlette.applications import Starlette &gt;&gt;&gt; app = Starlette() &gt;&gt;&gt; config = SessionConfig(max_age=3600) # 1 hour inactivity &gt;&gt;&gt; app = SlidingSessionMiddleware(app, secret_key=‘…’, session_config=config)</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L173" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_session_middleware" class="level3">
+<h3 class="anchored" data-anchor-id="create_session_middleware">create_session_middleware</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_session_middleware(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    secret_key:<span class="bu">str</span>, session_config:SessionConfig<span class="op">=</span><span class="va">None</span>, session_cookie:<span class="bu">str</span><span class="op">=</span><span class="st">'session'</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>SlidingSessionMiddleware:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Factory to create SlidingSessionMiddleware for FastHTML apps.</em></p>
+<p>Args: secret_key: Secret key for signing session cookies (required) session_config: SessionConfig instance. Default: SessionConfig.default() session_cookie: Cookie name. Default: ‘session’</p>
+<p>Returns: Configured SlidingSessionMiddleware instance</p>
+<p>Example: &gt;&gt;&gt; from fasthtml.common import FastHTML &gt;&gt;&gt; &gt;&gt;&gt; # Create app WITHOUT default session middleware &gt;&gt;&gt; app = FastHTML(sess_cls=None) # Disable default sessions &gt;&gt;&gt; &gt;&gt;&gt; # Add sliding session middleware &gt;&gt;&gt; config = SessionConfig(max_age=3600) # 1 hour inactivity &gt;&gt;&gt; app = create_session_middleware(‘your-secret-key’, config)(app) &gt;&gt;&gt; &gt;&gt;&gt; # Or wrap during app creation (recommended) &gt;&gt;&gt; middleware = create_session_middleware(‘your-secret-key’, config) &gt;&gt;&gt; # Then configure FastHTML to use it</p>
+<p>Note: FastHTML’s default SessionMiddleware needs to be disabled first. See integration documentation for patterns.</p>
+</section>
+</section>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">🎯 Overview</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Functions</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>⏰ Sliding Sessions</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#sessionconfig"><code>SessionConfig</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#slidingsessionmiddleware"><code>SlidingSessionMiddleware</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_session_middleware"><code>create_session_middleware</code></a></td>
+<td>Sliding session expiry (inactivity timeout)</td>
+</tr>
+<tr class="even">
+<td>🛡️ Beforeware</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_auth_beforeware"><code>create_auth_beforeware</code></a></td>
+<td>Protect routes, auto-setup tenant DB</td>
+</tr>
+<tr class="odd">
+<td>🔑 OAuth Client</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oauth_client"><code>get_google_oauth_client</code></a></td>
+<td>Initialize Google OAuth</td>
+</tr>
+<tr class="even">
+<td>🔒 CSRF</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#generate_oauth_state"><code>generate_oauth_state</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_state"><code>verify_oauth_state</code></a></td>
+<td>Prevent session hijacking</td>
+</tr>
+<tr class="odd">
+<td>👤 Users</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_or_get_global_user"><code>create_or_get_global_user</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_membership"><code>get_user_membership</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_membership"><code>verify_membership</code></a></td>
+<td>User &amp; membership management</td>
+</tr>
+<tr class="even">
+<td>🏗️ Provisioning</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_user"><code>provision_new_user</code></a></td>
+<td>Auto-create tenant for new users</td>
+</tr>
+<tr class="odd">
+<td>📋 Session</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_user_session"><code>create_user_session</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_current_user"><code>get_current_user</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"><code>clear_session</code></a></td>
+<td>Session management</td>
+</tr>
+<tr class="even">
+<td>🚦 Routing</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#auth_redirect"><code>auth_redirect</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#route_user_after_login"><code>route_user_after_login</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant_access"><code>require_tenant_access</code></a></td>
+<td>Authorization &amp; routing</td>
+</tr>
+<tr class="odd">
+<td>🌐 Handlers</td>
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_login_request"><code>handle_login_request</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_oauth_callback"><code>handle_oauth_callback</code></a>, <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"><code>handle_logout</code></a></td>
+<td>Route implementations</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="architecture" class="level2">
+<h2 class="anchored" data-anchor-id="architecture">🏗️ Architecture</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    OAuth Authentication Flow                     │
+├─────────────────────────────────────────────────────────────────┤
+│  1. User clicks "Login with Google"                             │
+│  2. Generate CSRF state token → store in session                │
+│  3. Redirect to Google OAuth                                    │
+│  4. Google authenticates → redirects with code + state          │
+│  5. Verify CSRF state matches session                           │
+│  6. Exchange code for user info                                 │
+│  7. Create/get GlobalUser in host DB                            │
+│  8. Check membership OR auto-provision new tenant               │
+│  9. Create session → redirect to dashboard                      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       Tenant Model                              │
+├─────────────────────────────────────────────────────────────────┤
+│  Many Users → One Tenant (many-to-one)                          │
+│  Each user belongs to exactly ONE tenant                        │
+│  Each tenant can have MANY users                                │
+│  New users auto-create their own tenant                         │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+<hr>
+</section>
+<section id="quick-reference" class="level2">
+<h2 class="anchored" data-anchor-id="quick-reference">📚 Quick Reference</h2>
+<section id="security-features" class="level3">
+<h3 class="anchored" data-anchor-id="security-features">Security Features</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Protection</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CSRF State Token</td>
+<td>Prevents session hijacking attacks</td>
+</tr>
+<tr class="even">
+<td>Membership Validation</td>
+<td>Ensures cross-tenant isolation</td>
+</tr>
+<tr class="odd">
+<td>Audit Logging</td>
+<td>Tracks all authentication events</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="token-expiry" class="level3">
+<h3 class="anchored" data-anchor-id="token-expiry">Token Expiry</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Token Type</th>
+<th>Expiry</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Google OAuth</td>
+<td>1 hour</td>
+<td>User must re-login (refresh tokens: future)</td>
+</tr>
+<tr class="even">
+<td>Session (sliding)</td>
+<td>1 hour inactivity</td>
+<td>Refreshes on each request via <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#slidingsessionmiddleware"><code>SlidingSessionMiddleware</code></a></td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>💡 <strong>Sliding Sessions</strong>: Use <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#slidingsessionmiddleware"><code>SlidingSessionMiddleware</code></a> or <a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_session_middleware"><code>create_session_middleware()</code></a> to keep users logged in while active. Sessions only expire after configured inactivity period.</p>
+</blockquote>
+<div id="4c01a905" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nbdev.showdoc <span class="im">import</span> show_doc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+</section>
+</section>
+<section id="role-based-access-control" class="level2">
+<h2 class="anchored" data-anchor-id="role-based-access-control">🎭 Role-Based Access Control</h2>
+<p>Control access based on user roles within the tenant.</p>
+<section id="role-hierarchy" class="level3">
+<h3 class="anchored" data-anchor-id="role-hierarchy">Role Hierarchy</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Role</th>
+<th>Level</th>
+<th>Automatic For</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>admin</code></td>
+<td>3</td>
+<td>Tenant owners</td>
+</tr>
+<tr class="even">
+<td><code>editor</code></td>
+<td>2</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td><code>viewer</code></td>
+<td>1</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="key-functions" class="level3">
+<h3 class="anchored" data-anchor-id="key-functions">Key Functions</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#has_min_role"><code>has_min_role</code></a></td>
+<td>Check if user meets minimum role requirement</td>
+</tr>
+<tr class="even">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_role"><code>require_role</code></a></td>
+<td>Route decorator for role-based protection</td>
+</tr>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_role"><code>get_user_role</code></a></td>
+<td>Derive effective role from session + tenant DB</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L226" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="has_min_role" class="level3">
+<h3 class="anchored" data-anchor-id="has_min_role">has_min_role</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> has_min_role(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    user:<span class="bu">dict</span>, required_role:<span class="bu">str</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bool</span>:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Check if user meets the minimum role requirement.</em></p>
+<p>Args: user: User dict with ‘role’ field (from request.state.user) required_role: Minimum role needed (‘admin’, ‘editor’, ‘viewer’)</p>
+<p>Returns: True if user’s role &gt;= required_role in hierarchy</p>
+<p>Example: &gt;&gt;&gt; user = {‘role’: ‘editor’} &gt;&gt;&gt; has_min_role(user, ‘viewer’) # True - editor &gt; viewer &gt;&gt;&gt; has_min_role(user, ‘admin’) # False - editor &lt; admin</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L247" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_user_role" class="level3">
+<h3 class="anchored" data-anchor-id="get_user_role">get_user_role</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_user_role(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    session:<span class="bu">dict</span>, tenant_db:Database<span class="op">=</span><span class="va">None</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">str</span>:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Derive effective role from session and tenant database.</em></p>
+<p>Rules: 1. Tenant owner (session[‘tenant_role’] == ‘owner’) → ‘admin’ 2. System admin → ‘admin’ 3. Otherwise → lookup TenantUser.local_role from tenant DB 4. Fallback → None (user must be explicitly assigned a role)</p>
+<p>Args: session: User session dict tenant_db: Tenant database connection (optional)</p>
+<p>Returns: Effective role string: ‘admin’, ‘editor’, ‘viewer’, or None</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L292" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="require_role" class="level3">
+<h3 class="anchored" data-anchor-id="require_role">require_role</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> require_role(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    min_role:<span class="bu">str</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Decorator to protect routes with minimum role requirement.</em></p>
+<p>Args: min_role: Minimum role required (‘admin’, ‘editor’, ‘viewer’)</p>
+<p>Returns: Decorator that checks request.state.user[‘role’] Returns 403 Forbidden if user lacks required role</p>
+<p>Example: &gt;&gt;&gt; <span class="citation" data-cites="app.get">@app.get</span>(‘/admin/settings’) &gt;&gt;&gt; <span class="citation" data-cites="require_role">@require_role</span>(‘admin’) &gt;&gt;&gt; def admin_settings(request): … return “Admin only content”</p>
+<pre><code>&gt;&gt;&gt; @app.get('/reports')  
+&gt;&gt;&gt; @require_role('viewer')  # All authenticated users
+&gt;&gt;&gt; def view_reports(request):
+...     return "Reports"</code></pre>
+<hr>
+</section>
+</section>
+<section id="session-caching" class="level2">
+<h2 class="anchored" data-anchor-id="session-caching">⚡ Session Caching</h2>
+<p>For HTMX-heavy apps with many partial requests, the beforeware can cache auth data in the session to avoid database queries on every request.</p>
+<section id="configuration" class="level3">
+<h3 class="anchored" data-anchor-id="configuration">Configuration</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>session_cache</code></td>
+<td><code>False</code></td>
+<td>Enable caching user dict in session</td>
+</tr>
+<tr class="even">
+<td><code>session_cache_ttl</code></td>
+<td><code>300</code></td>
+<td>Cache TTL in seconds (5 minutes)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-it-works" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-works">How It Works</h3>
+<pre><code>Request arrives
+    │
+    ▼
+Check session cache
+    │
+    ├── Cache valid? → Use cached user data (0 DB queries)
+    │
+    └── Cache miss/expired? → Query DB → Update cache</code></pre>
+</section>
+<section id="cache-invalidation" class="level3">
+<h3 class="anchored" data-anchor-id="cache-invalidation">Cache Invalidation</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Event</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Logout</td>
+<td>Automatic (session cleared)</td>
+</tr>
+<tr class="even">
+<td>Role change</td>
+<td>Call <code>invalidate_auth_cache(session)</code></td>
+</tr>
+<tr class="odd">
+<td>TTL expiry</td>
+<td>Automatic refresh on next request</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L349" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="invalidate_auth_cache" class="level3">
+<h3 class="anchored" data-anchor-id="invalidate_auth_cache">invalidate_auth_cache</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> invalidate_auth_cache(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    session:<span class="bu">dict</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Clear the auth cache from session.</em></p>
+<p>Call this when: - User role or permissions change - User is added/removed from tenant - Admin changes user’s local_role</p>
+<p>Args: session: User session dict</p>
+<p>Example: &gt;&gt;&gt; # After admin changes user role &gt;&gt;&gt; tenant_user.local_role = ‘editor’ &gt;&gt;&gt; tables[‘tenant_users’].update(tenant_user) &gt;&gt;&gt; invalidate_auth_cache(session) # Force fresh lookup</p>
+</section>
+<section id="usage-example" class="level3">
+<h3 class="anchored" data-anchor-id="usage-example">Usage Example</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fh_saas.utils_auth <span class="im">import</span> invalidate_auth_cache</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable caching (recommended for HTMX apps)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>app <span class="op">=</span> FastHTML(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    before<span class="op">=</span>create_auth_beforeware(</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        session_cache<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        session_cache_ttl<span class="op">=</span><span class="dv">300</span>  <span class="co"># 5 minutes</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># After changing user role, invalidate their cache</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="at">@app.post</span>(<span class="st">'/admin/users/</span><span class="sc">{user_id}</span><span class="st">/role'</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_role(request, user_id: <span class="bu">str</span>, new_role: <span class="bu">str</span>):</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    tables <span class="op">=</span> request.state.tables</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    user <span class="op">=</span> tables[<span class="st">'tenant_users'</span>].get(user_id)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    user.local_role <span class="op">=</span> new_role</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    tables[<span class="st">'tenant_users'</span>].update(user)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If changing own role, invalidate cache</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> user_id <span class="op">==</span> request.state.user[<span class="st">'user_id'</span>]:</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        invalidate_auth_cache(request.session)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"Role updated"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="usage-in-routes" class="level3">
+<h3 class="anchored" data-anchor-id="usage-in-routes">Usage in Routes</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fh_saas.utils_auth <span class="im">import</span> require_role, has_min_role</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Option 1: Decorator for route-level protection</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">'/admin/users'</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="at">@require_role</span>(<span class="st">'admin'</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> manage_users(request):</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"Admin-only user management"</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">'/dashboard'</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="at">@require_role</span>(<span class="st">'viewer'</span>)  <span class="co"># All roles can access</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dashboard(request):</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"Dashboard for all users"</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Option 2: Inline check for conditional logic</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="at">@app.get</span>(<span class="st">'/data'</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> view_data(request):</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    user <span class="op">=</span> request.state.user</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> has_min_role(user, <span class="st">'admin'</span>):</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"All data with admin controls"</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> has_min_role(user, <span class="st">'editor'</span>):</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"Data with edit buttons"</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"Read-only data view"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="role-derivation-flow" class="level3">
+<h3 class="anchored" data-anchor-id="role-derivation-flow">Role Derivation Flow</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    Role Derivation (in beforeware)              │
+├─────────────────────────────────────────────────────────────────┤
+│  1. Check session['tenant_role']                                │
+│     └── If 'owner' → effective role = 'admin'                  │
+│                                                                 │
+│  2. Check session['is_sys_admin']                               │
+│     └── If True → effective role = 'admin'                     │
+│                                                                 │
+│  3. Lookup TenantUser.local_role in tenant DB                   │
+│     └── Returns assigned role or None                          │
+│                                                                 │
+│  4. Attach to request.state.user['role']                        │
+│     └── Used by require_role() and has_min_role()              │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+<hr>
+</section>
+</section>
+<section id="auth-beforeware" class="level2">
+<h2 class="anchored" data-anchor-id="auth-beforeware">🛡️ Auth Beforeware</h2>
+<p>Protect routes by checking for authenticated sessions with auto tenant DB setup.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_auth_beforeware"><code>create_auth_beforeware</code></a></td>
+<td>Factory to create route protection middleware</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>💡 <strong>Use case</strong>: Pass to FastHTML’s <code>before=</code> parameter for app-wide authentication</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L422" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="create_auth_beforeware" class="level3">
+<h3 class="anchored" data-anchor-id="create_auth_beforeware">create_auth_beforeware</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_auth_beforeware(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    redirect_path:<span class="bu">str</span><span class="op">=</span><span class="st">'/login'</span>, session_key:<span class="bu">str</span><span class="op">=</span><span class="st">'user_id'</span>, skip:<span class="bu">list</span><span class="op">=</span><span class="va">None</span>, include_defaults:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    setup_tenant_db:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span>, schema_init:Callable<span class="op">=</span><span class="va">None</span>, session_cache:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>, session_cache_ttl:<span class="bu">int</span><span class="op">=</span><span class="dv">300</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    require_subscription:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>, subscription_redirect:<span class="bu">str</span><span class="op">=</span><span class="va">None</span>, grace_period_days:<span class="bu">int</span><span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    session_config:SessionConfig<span class="op">=</span><span class="va">None</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Create Beforeware that checks for authenticated session and sets up request.state.</em></p>
+<p>Args: redirect_path: Where to redirect unauthenticated users session_key: Session key for user ID skip: List of regex patterns to skip auth include_defaults: Include default skip patterns setup_tenant_db: Auto-setup tenant database on request.state schema_init: Optional callback to initialize tables dict. Signature: (tenant_db: Database) -&gt; dict[str, Table] Result stored in request.state.tables session_cache: Enable caching user dict in session to reduce DB queries. Recommended for HTMX-heavy apps. Default: False session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes) require_subscription: If True, check for active subscription and return 402 if not found. Default: False subscription_redirect: Optional URL to redirect if subscription required. If None, returns 402 Payment Required response. grace_period_days: Days to allow access after payment failure (default: 3) session_config: Optional SessionConfig for absolute timeout enforcement. Note: Sliding expiry requires SlidingSessionMiddleware. This parameter only enforces absolute_max if configured.</p>
+<p>Returns: Beforeware instance for FastHTML apps</p>
+<p>Sets on request.state: - user: dict with user_id, email, tenant_id, role, is_owner - tenant_id: str - tenant_db: Database connection - tables: dict of Table objects (if schema_init provided) - subscription: Subscription object (if require_subscription enabled)</p>
+<p>Example: &gt;&gt;&gt; # Basic usage &gt;&gt;&gt; beforeware = create_auth_beforeware()</p>
+<pre><code>&gt;&gt;&gt; # With session caching for HTMX apps
+&gt;&gt;&gt; beforeware = create_auth_beforeware(
+...     session_cache=True,
+...     session_cache_ttl=300
+... )
+
+&gt;&gt;&gt; # With schema initialization
+&gt;&gt;&gt; def get_app_tables(db):
+...     return {'users': db.create(User, pk='id')}
+&gt;&gt;&gt; beforeware = create_auth_beforeware(schema_init=get_app_tables)
+
+&gt;&gt;&gt; # With subscription requirement
+&gt;&gt;&gt; beforeware = create_auth_beforeware(
+...     require_subscription=True,
+...     subscription_redirect='/pricing'
+... )</code></pre>
+<hr>
+</section>
+</section>
+<section id="oauth-client" class="level2">
+<h2 class="anchored" data-anchor-id="oauth-client">🔑 OAuth Client</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oauth_client"><code>get_google_oauth_client</code></a></td>
+<td>Initialize Google OAuth client from env vars</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>⚠️ <strong>Required env vars</strong>: <code>GOOGLE_CLIENT_ID</code>, <code>GOOGLE_CLIENT_SECRET</code></p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L595" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_google_oauth_client" class="level3">
+<h3 class="anchored" data-anchor-id="get_google_oauth_client">get_google_oauth_client</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_google_oauth_client(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Initialize Google OAuth client with credentials from environment.</em></p>
+<hr>
+</section>
+</section>
+<section id="csrf-protection" class="level2">
+<h2 class="anchored" data-anchor-id="csrf-protection">🔒 CSRF Protection</h2>
+<p>Prevent session hijacking via state token validation.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#generate_oauth_state"><code>generate_oauth_state</code></a></td>
+<td>Create random UUID for CSRF protection</td>
+</tr>
+<tr class="even">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_state"><code>verify_oauth_state</code></a></td>
+<td>Validate callback state matches session</td>
+</tr>
+</tbody>
+</table>
+<section id="attack-without-csrf-protection" class="level3">
+<h3 class="anchored" data-anchor-id="attack-without-csrf-protection">Attack Without CSRF Protection</h3>
+<pre><code>1. Attacker initiates OAuth → gets auth code
+2. Attacker sends victim: yourapp.com/auth/callback?code=ATTACKER_CODE
+3. Victim clicks → session created for attacker's account
+4. Victim enters data → attacker sees it all</code></pre>
+<blockquote class="blockquote">
+<p>🛡️ <strong>Solution</strong>: State token generated at login, verified at callback</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L611" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="verify_oauth_state" class="level3">
+<h3 class="anchored" data-anchor-id="verify_oauth_state">verify_oauth_state</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> verify_oauth_state(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    session:<span class="bu">dict</span>, callback_state:<span class="bu">str</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Verify OAuth callback state matches stored session state (CSRF protection).</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L606" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="generate_oauth_state" class="level3">
+<h3 class="anchored" data-anchor-id="generate_oauth_state">generate_oauth_state</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_oauth_state(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Generate cryptographically secure random state token for CSRF protection.</em></p>
+<hr>
+</section>
+</section>
+<section id="user-management" class="level2">
+<h2 class="anchored" data-anchor-id="user-management">👤 User Management</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_or_get_global_user"><code>create_or_get_global_user</code></a></td>
+<td>Create or retrieve user from host DB</td>
+</tr>
+<tr class="even">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_membership"><code>get_user_membership</code></a></td>
+<td>Get user’s active tenant membership</td>
+</tr>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_membership"><code>verify_membership</code></a></td>
+<td>Validate user has access to tenant</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L663" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="verify_membership" class="level3">
+<h3 class="anchored" data-anchor-id="verify_membership">verify_membership</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> verify_membership(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    host_db:HostDatabase, user_id:<span class="bu">str</span>, tenant_id:<span class="bu">str</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">bool</span>:</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Verify user has active membership for specific tenant.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L655" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_user_membership" class="level3">
+<h3 class="anchored" data-anchor-id="get_user_membership">get_user_membership</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_user_membership(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    host_db:HostDatabase, user_id:<span class="bu">str</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Get single active membership for user.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L624" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_or_get_global_user" class="level3">
+<h3 class="anchored" data-anchor-id="create_or_get_global_user">create_or_get_global_user</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_or_get_global_user(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    host_db:HostDatabase, oauth_id:<span class="bu">str</span>, email:<span class="bu">str</span>, oauth_info:<span class="bu">dict</span><span class="op">=</span><span class="va">None</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Create or retrieve GlobalUser from host database.</em></p>
+<hr>
+</section>
+</section>
+<section id="auto-provisioning" class="level2">
+<h2 class="anchored" data-anchor-id="auto-provisioning">🏗️ Auto-Provisioning</h2>
+<p>Create tenant infrastructure for first-time users.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_user"><code>provision_new_user</code></a></td>
+<td>Create tenant DB, catalog entry, membership, and TenantUser</td>
+</tr>
+</tbody>
+</table>
+<section id="provisioning-steps" class="level3">
+<h3 class="anchored" data-anchor-id="provisioning-steps">Provisioning Steps</h3>
+<pre><code>1. Create physical tenant database (PostgreSQL/SQLite)
+2. Register tenant in host catalog
+3. Create membership (user → tenant, role='owner')
+4. Create TenantUser profile (local_role='admin')
+5. Initialize core tenant schema
+6. Log audit event</code></pre>
+<blockquote class="blockquote">
+<p>💡 <strong>Future</strong>: Insert payment screen before step 1</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L671" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="provision_new_user" class="level3">
+<h3 class="anchored" data-anchor-id="provision_new_user">provision_new_user</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> provision_new_user(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    host_db:HostDatabase, global_user:GlobalUser</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">str</span>:</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Auto-provision new tenant for first-time user.</em></p>
+<hr>
+</section>
+</section>
+<section id="session-management" class="level2">
+<h2 class="anchored" data-anchor-id="session-management">📋 Session Management</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_user_session"><code>create_user_session</code></a></td>
+<td>Populate session after successful OAuth</td>
+</tr>
+<tr class="even">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_current_user"><code>get_current_user</code></a></td>
+<td>Extract user info from session</td>
+</tr>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"><code>clear_session</code></a></td>
+<td>Clear all session data (logout)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L785" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="clear_session" class="level3">
+<h3 class="anchored" data-anchor-id="clear_session">clear_session</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clear_session(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    session:<span class="bu">dict</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Clear all session data (logout).</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L762" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_current_user" class="level3">
+<h3 class="anchored" data-anchor-id="get_current_user">get_current_user</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_current_user(</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    session:<span class="bu">dict</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">dict</span> <span class="op">|</span> <span class="va">None</span>:</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Extract current user info from session.</em></p>
+<p>Returns: dict with keys: user_id, email, tenant_id, tenant_role, is_sys_admin</p>
+<p>Note: The ‘role’ and ‘is_owner’ fields are added by create_auth_beforeware after deriving the effective role from TenantUser.local_role. Access via request.state.user[‘role’] in routes.</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L745" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_user_session" class="level3">
+<h3 class="anchored" data-anchor-id="create_user_session">create_user_session</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_user_session(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    session:<span class="bu">dict</span>, global_user:GlobalUser, membership:Membership</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Create authenticated session after successful OAuth login.</em></p>
+<p>Sets session keys for user identity and tracking: - user_id, email, tenant_id, tenant_role, is_sys_admin: Identity - login_at: Timestamp when user logged in - session_started_at: Unix timestamp for absolute session timeout tracking</p>
+<hr>
+</section>
+</section>
+<section id="route-helpers" class="level2">
+<h2 class="anchored" data-anchor-id="route-helpers">🚦 Route Helpers</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#auth_redirect"><code>auth_redirect</code></a></td>
+<td>HTMX-aware redirect to login page</td>
+</tr>
+<tr class="even">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#route_user_after_login"><code>route_user_after_login</code></a></td>
+<td>Determine redirect URL based on user type</td>
+</tr>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant_access"><code>require_tenant_access</code></a></td>
+<td>Get tenant DB with membership validation</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L790" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="auth_redirect" class="level3">
+<h3 class="anchored" data-anchor-id="auth_redirect">auth_redirect</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> auth_redirect(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    request, redirect_url:<span class="bu">str</span><span class="op">=</span><span class="st">'/login'</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>HTMX-aware redirect for authentication flows.</em></p>
+<p>When HTMX makes a partial request and receives a standard redirect (302/303), it follows the redirect and swaps the response into the target element. This causes the login page to appear inside the partial content area.</p>
+<p>This function detects HTMX requests and uses the <code>HX-Redirect</code> header to trigger a full page navigation instead.</p>
+<p>Args: request: Starlette request object redirect_url: URL to redirect to (default: ‘/login’)</p>
+<p>Returns: Response with appropriate redirect mechanism</p>
+<p>Example: <code>python     @app.get('/dashboard')     def dashboard(request):         if not get_current_user(request.session):             return auth_redirect(request)         return render_dashboard()</code></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L839" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="require_tenant_access" class="level3">
+<h3 class="anchored" data-anchor-id="require_tenant_access">require_tenant_access</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> require_tenant_access(</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    request_or_session</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Get tenant database with membership validation.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L830" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="route_user_after_login" class="level3">
+<h3 class="anchored" data-anchor-id="route_user_after_login">route_user_after_login</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> route_user_after_login(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    global_user:GlobalUser, membership:Membership<span class="op">=</span><span class="va">None</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">str</span>:</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Determine redirect URL based on user type and membership.</em></p>
+</section>
+</section>
+<section id="oauth-route-handlers" class="level2">
+<h2 class="anchored" data-anchor-id="oauth-route-handlers">🌐 OAuth Route Handlers</h2>
+<p>Complete OAuth 2.0 flow handlers:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_login_request"><code>handle_login_request</code></a></td>
+<td>Initiate OAuth with CSRF protection</td>
+</tr>
+<tr class="even">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_oauth_callback"><code>handle_oauth_callback</code></a></td>
+<td>Process provider response</td>
+</tr>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"><code>handle_logout</code></a></td>
+<td>Clear session and redirect</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L921" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="handle_logout" class="level3">
+<h3 class="anchored" data-anchor-id="handle_logout">handle_logout</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> handle_logout(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    session</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Clear session and redirect to login page.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L877" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="handle_oauth_callback" class="level3">
+<h3 class="anchored" data-anchor-id="handle_oauth_callback">handle_oauth_callback</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> handle_oauth_callback(</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    code:<span class="bu">str</span>, state:<span class="bu">str</span>, request, session</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Complete OAuth flow: CSRF verify → user info → provision → session → redirect.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L861" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="handle_login_request" class="level3">
+<h3 class="anchored" data-anchor-id="handle_login_request">handle_login_request</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> handle_login_request(</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    request, session</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Generate Google OAuth URL with CSRF state protection.</em></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/abhisheksreesaila\.github\.io\/fh-saas");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/abhisheksreesaila/fh-saas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

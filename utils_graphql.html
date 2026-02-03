@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="GraphQL client with streaming pagination for memory-efficient data fetching.">
+
+<title>🔮 GraphQL Client – fh-saas</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-000f0825b9c55ed21d14970d810c14a9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="🔮 GraphQL Client – fh-saas">
+<meta property="og:description" content="GraphQL client with streaming pagination for memory-efficient data fetching.">
+<meta property="og:site_name" content="fh-saas">
+<meta name="twitter:title" content="🔮 GraphQL Client – fh-saas">
+<meta name="twitter:description" content="GraphQL client with streaming pagination for memory-efficient data fetching.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">fh-saas</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./utils_api.html">🔌 Integrations</a></li><li class="breadcrumb-item"><a href="./utils_graphql.html">🔮 GraphQL Client</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🚀 fh-saas</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">📦 Core</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./db_host.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🏠 Multi-Tenant Setup</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./db_tenant.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🗄️ Tenant Databases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_db.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🗄️ Table Management</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">🔌 Integrations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_api.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🌐 HTTP Client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_graphql.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">🔮 GraphQL Client</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_webhook.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🪝 Webhooks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">⚙️ Data Pipeline</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_bgtsk.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">⚡ Background Tasks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_polars_mapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🐻‍❄️ Data Transforms</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">🛠️ Utilities</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_sql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🗃️ SQL Helpers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_log.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📊 Logging</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_auth.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🔐 Authentication</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_email.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📧 Email Sending</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">📣 Content</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_blog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Blog Publishing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_seo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🔍 SEO &amp; Sitemaps</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils_workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">🔧 Workflow Engine</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">🎯 Overview</a></li>
+  <li><a href="#architecture" id="toc-architecture" class="nav-link" data-scroll-target="#architecture">🏗️ Architecture</a></li>
+  <li><a href="#graphqlclient" id="toc-graphqlclient" class="nav-link" data-scroll-target="#graphqlclient">🔮 GraphQLClient</a>
+  <ul class="collapse">
+  <li><a href="#quick-start-examples" id="toc-quick-start-examples" class="nav-link" data-scroll-target="#quick-start-examples">🚀 Quick Start Examples</a></li>
+  <li><a href="#graphqlclient-1" id="toc-graphqlclient-1" class="nav-link" data-scroll-target="#graphqlclient-1">GraphQLClient</a></li>
+  <li><a href="#graphqlclient.__init__" id="toc-graphqlclient.__init__" class="nav-link" data-scroll-target="#graphqlclient.__init__">GraphQLClient.__init__</a></li>
+  <li><a href="#graphqlclient.execute_query" id="toc-graphqlclient.execute_query" class="nav-link" data-scroll-target="#graphqlclient.execute_query">GraphQLClient.execute_query</a></li>
+  <li><a href="#graphqlclient.execute_mutation" id="toc-graphqlclient.execute_mutation" class="nav-link" data-scroll-target="#graphqlclient.execute_mutation">GraphQLClient.execute_mutation</a></li>
+  <li><a href="#graphqlclient.fetch_pages_generator" id="toc-graphqlclient.fetch_pages_generator" class="nav-link" data-scroll-target="#graphqlclient.fetch_pages_generator">GraphQLClient.fetch_pages_generator</a></li>
+  <li><a href="#graphqlclient.fetch_pages_relay" id="toc-graphqlclient.fetch_pages_relay" class="nav-link" data-scroll-target="#graphqlclient.fetch_pages_relay">GraphQLClient.fetch_pages_relay</a></li>
+  <li><a href="#graphqlclient.execute" id="toc-graphqlclient.execute" class="nav-link" data-scroll-target="#graphqlclient.execute">GraphQLClient.execute</a></li>
+  <li><a href="#graphqlclient.from_url" id="toc-graphqlclient.from_url" class="nav-link" data-scroll-target="#graphqlclient.from_url">GraphQLClient.from_url</a></li>
+  <li><a href="#streaming-pagination-details" id="toc-streaming-pagination-details" class="nav-link" data-scroll-target="#streaming-pagination-details">Streaming Pagination Details</a></li>
+  <li><a href="#execute_graphql" id="toc-execute_graphql" class="nav-link" data-scroll-target="#execute_graphql">execute_graphql</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/abhisheksreesaila/fh-saas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="utils_graphql.html.md"><i class="bi bi-file-code"></i>CommonMark</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./utils_api.html">🔌 Integrations</a></li><li class="breadcrumb-item"><a href="./utils_graphql.html">🔮 GraphQL Client</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">🔮 GraphQL Client</h1>
+</div>
+
+<div>
+  <div class="description">
+    GraphQL client with streaming pagination for memory-efficient data fetching.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">🎯 Overview</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#graphqlclient"><code>GraphQLClient</code></a></td>
+<td>GraphQL client with async generator pagination</td>
+</tr>
+<tr class="even">
+<td><code>.from_url()</code></td>
+<td>✨ <strong>NEW</strong> - Create client from URL with optional bearer token</td>
+</tr>
+<tr class="odd">
+<td><code>.execute()</code></td>
+<td>✨ <strong>NEW</strong> - Unified method for queries and mutations</td>
+</tr>
+<tr class="even">
+<td><code>.execute_query()</code></td>
+<td>Execute single query (returns full response)</td>
+</tr>
+<tr class="odd">
+<td><code>.execute_mutation()</code></td>
+<td>Execute mutation (alias for execute_query)</td>
+</tr>
+<tr class="even">
+<td><code>.fetch_pages_relay()</code></td>
+<td>✨ <strong>NEW</strong> - Fetch all pages from Relay-style pagination</td>
+</tr>
+<tr class="odd">
+<td><code>.fetch_pages_generator()</code></td>
+<td>Stream paginated data (memory-efficient)</td>
+</tr>
+<tr class="even">
+<td><a href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#execute_graphql"><code>execute_graphql()</code></a></td>
+<td>✨ <strong>NEW</strong> - One-liner function for simple queries</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="architecture" class="level2">
+<h2 class="anchored" data-anchor-id="architecture">🏗️ Architecture</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    Streaming Pagination Flow                    │
+├─────────────────────────────────────────────────────────────────┤
+│  Page 1: query($cursor: null) → yield [batch] → process        │
+│  Page 2: query($cursor: xyz)  → yield [batch] → process        │
+│  Page N: query($cursor: abc)  → yield [batch] → process        │
+│                                                                 │
+│  ⚠️ CRITICAL: Never accumulates full dataset in memory         │
+│  ✅ Memory: O(page_size) not O(total_records)                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+</section>
+<section id="graphqlclient" class="level2">
+<h2 class="anchored" data-anchor-id="graphqlclient">🔮 GraphQLClient</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 47%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>.from_url()</code></td>
+<td>✨ <strong>NEW</strong> - Create client from URL + token</td>
+</tr>
+<tr class="even">
+<td><code>.execute()</code></td>
+<td>✨ <strong>NEW</strong> - Unified query/mutation (returns data only)</td>
+</tr>
+<tr class="odd">
+<td><code>.execute_query()</code></td>
+<td>Execute single GraphQL query (full response)</td>
+</tr>
+<tr class="even">
+<td><code>.execute_mutation()</code></td>
+<td>Execute GraphQL mutation</td>
+</tr>
+<tr class="odd">
+<td><code>.fetch_pages_relay()</code></td>
+<td>✨ <strong>NEW</strong> - Auto-accumulate Relay pagination</td>
+</tr>
+<tr class="even">
+<td><code>.fetch_pages_generator()</code></td>
+<td>Async generator for paginated data (streaming)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<section id="quick-start-examples" class="level3">
+<h3 class="anchored" data-anchor-id="quick-start-examples">🚀 Quick Start Examples</h3>
+<section id="one-liner-query" class="level4">
+<h4 class="anchored" data-anchor-id="one-liner-query">One-Liner Query</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fh_saas.utils_graphql <span class="im">import</span> execute_graphql</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># NEW: No client management needed</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> <span class="cf">await</span> execute_graphql(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    url<span class="op">=</span><span class="st">"https://api.example.com/graphql"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    query<span class="op">=</span><span class="st">"query { users { id name } }"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    bearer_token<span class="op">=</span><span class="st">"your-token"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="convenience-constructor" class="level4">
+<h4 class="anchored" data-anchor-id="convenience-constructor">Convenience Constructor</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fh_saas.utils_graphql <span class="im">import</span> GraphQLClient</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># NEW: Direct from URL</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">with</span> GraphQLClient.from_url(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    url<span class="op">=</span><span class="st">"https://api.example.com/graphql"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    bearer_token<span class="op">=</span><span class="st">"your-token"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>) <span class="im">as</span> gql:</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> <span class="cf">await</span> gql.execute(<span class="st">"query { users { id name } }"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="relay-pagination-auto-accumulate" class="level4">
+<h4 class="anchored" data-anchor-id="relay-pagination-auto-accumulate">Relay Pagination (Auto-Accumulate)</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># NEW: Fetch all pages automatically</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">with</span> GraphQLClient.from_url(url, bearer_token<span class="op">=</span>token) <span class="im">as</span> gql:</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    all_items <span class="op">=</span> <span class="cf">await</span> gql.fetch_pages_relay(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        query<span class="op">=</span><span class="st">'''</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">            query($first: Int, $after: String, $filter: Filter) {</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">                transactionsConnection(first: $first, after: $after, filter: $filter) {</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">                    edges { node { id amount } }</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">                    pageInfo { hasNextPage endCursor }</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="st">                }</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">        '''</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        connection_path<span class="op">=</span><span class="st">"transactionsConnection"</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        variables<span class="op">=</span>{<span class="st">"filter"</span>: {<span class="st">"status"</span>: <span class="st">"completed"</span>}},</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        page_size<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        max_pages<span class="op">=</span><span class="dv">50</span>  <span class="co"># Safety limit</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Fetched </span><span class="sc">{</span><span class="bu">len</span>(all_items)<span class="sc">}</span><span class="ss"> total items"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="legacy-manual-client-management" class="level4">
+<h4 class="anchored" data-anchor-id="legacy-manual-client-management">Legacy: Manual Client Management</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fh_saas.utils_api <span class="im">import</span> AsyncAPIClient, bearer_token_auth</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fh_saas.utils_graphql <span class="im">import</span> GraphQLClient</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Still supported for advanced use cases</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">with</span> AsyncAPIClient(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'https://api.example.com/graphql'</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    auth_headers<span class="op">=</span>bearer_token_auth(<span class="st">'TOKEN'</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>) <span class="im">as</span> http_client:</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> GraphQLClient(http_client)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> <span class="cf">await</span> client.execute_query(</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        query<span class="op">=</span><span class="st">'{ users { id name } }'</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="memory-efficient-streaming-generator" class="level4">
+<h4 class="anchored" data-anchor-id="memory-efficient-streaming-generator">Memory-Efficient Streaming (Generator)</h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For very large datasets - process batches without accumulating</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">with</span> GraphQLClient.from_url(url, bearer_token<span class="op">=</span>token) <span class="im">as</span> gql:</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">for</span> batch <span class="kw">in</span> gql.fetch_pages_generator(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        query_template<span class="op">=</span><span class="st">'''</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="st">            query($cursor: String) {</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="st">                users(after: $cursor, first: 1000) {</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">                    nodes { id name email }</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">                    pageInfo { hasNextPage endCursor }</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">                }</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="st">        '''</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        variables<span class="op">=</span>{<span class="st">'cursor'</span>: <span class="va">None</span>},</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        items_path<span class="op">=</span>[<span class="st">'data'</span>, <span class="st">'users'</span>, <span class="st">'nodes'</span>],</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        cursor_path<span class="op">=</span>[<span class="st">'data'</span>, <span class="st">'users'</span>, <span class="st">'pageInfo'</span>, <span class="st">'endCursor'</span>],</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        has_next_path<span class="op">=</span>[<span class="st">'data'</span>, <span class="st">'users'</span>, <span class="st">'pageInfo'</span>, <span class="st">'hasNextPage'</span>]</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Processing batch of </span><span class="sc">{</span><span class="bu">len</span>(batch)<span class="sc">}</span><span class="ss"> records"</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Process immediately - never load full dataset</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L19" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+<section id="graphqlclient-1" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient-1">GraphQLClient</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> GraphQLClient(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    api_client:AsyncAPIClient, <span class="co"># Initialized AsyncAPIClient instance</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    endpoint:<span class="bu">str</span><span class="op">=</span><span class="st">''</span>, <span class="co"># GraphQL endpoint path (default: '' for base URL)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>GraphQL client with streaming pagination for memory-efficient data fetching.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L22" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="graphqlclient.__init__" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient.__init__">GraphQLClient.__init__</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">__init__</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    api_client:AsyncAPIClient, <span class="co"># Initialized AsyncAPIClient instance</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    endpoint:<span class="bu">str</span><span class="op">=</span><span class="st">''</span>, <span class="co"># GraphQL endpoint path (default: '' for base URL)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L89" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="graphqlclient.execute_query" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient.execute_query">GraphQLClient.execute_query</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> execute_query(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    query:<span class="bu">str</span>, <span class="co"># GraphQL query string</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    variables:<span class="bu">dict</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Query variables</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Dict[<span class="bu">str</span>, Any]:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Execute a single GraphQL query and return the JSON response.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L114" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="graphqlclient.execute_mutation" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient.execute_mutation">GraphQLClient.execute_mutation</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> execute_mutation(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    mutation:<span class="bu">str</span>, <span class="co"># GraphQL mutation string</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    variables:<span class="bu">dict</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Mutation variables</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Dict[<span class="bu">str</span>, Any]:</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Execute a GraphQL mutation (alias for execute_query).</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L177" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="graphqlclient.fetch_pages_generator" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient.fetch_pages_generator">GraphQLClient.fetch_pages_generator</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch_pages_generator(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    query_template:<span class="bu">str</span>, <span class="co"># GraphQL query with $variables placeholders</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    variables:<span class="bu">dict</span>, <span class="co"># Initial variables (must include cursor key)</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    items_path:<span class="bu">list</span>[<span class="bu">str</span>], <span class="co"># JSONPath to list of items (e.g., ['data', 'users', 'nodes'])</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    cursor_path:<span class="bu">list</span>[<span class="bu">str</span>], <span class="co"># JSONPath to next cursor (e.g., ['data', 'users', 'pageInfo', 'endCursor'])</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    has_next_path:<span class="bu">list</span>[<span class="bu">str</span>]<span class="op">=</span><span class="va">None</span>, <span class="co"># Optional path to hasNextPage boolean (if None, checks cursor != None)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    cursor_var:<span class="bu">str</span><span class="op">=</span><span class="st">'cursor'</span>, <span class="co"># Variable name for cursor in query (default: 'cursor')</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>AsyncGenerator[List[Dict], <span class="va">None</span>]:</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Stream paginated GraphQL data page-by-page using async generator.</em></p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L122" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="graphqlclient.fetch_pages_relay" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient.fetch_pages_relay">GraphQLClient.fetch_pages_relay</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch_pages_relay(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    query:<span class="bu">str</span>, <span class="co"># GraphQL query with $first and $after variables</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    connection_path:<span class="bu">str</span>, <span class="co"># Dot-notation path to connection object (e.g., "transactionsConnection")</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    variables:<span class="bu">dict</span> <span class="op">|</span> <span class="va">None</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Base variables for the query (excluding first/after)</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    page_size:<span class="bu">int</span><span class="op">=</span><span class="dv">100</span>, <span class="co"># Number of items per page</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    max_pages:<span class="bu">int</span> <span class="op">|</span> <span class="va">None</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Maximum pages to fetch (None for unlimited)</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">list</span>[<span class="bu">dict</span>]:</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Fetch all pages from a Relay-style paginated GraphQL query.</em></p>
+<p>Example query structure: query($first: Int, $after: String, $filter: TransactionFilter) { transactionsConnection(first: $first, after: $after, filter: $filter) { edges { node { id amount } } pageInfo { hasNextPage endCursor } } }</p>
+<p>Returns: List of all nodes from all pages</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L60" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="graphqlclient.execute" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient.execute">GraphQLClient.execute</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> execute(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    query:<span class="bu">str</span>, <span class="co"># GraphQL query or mutation string</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    variables:<span class="bu">dict</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Query/mutation variables</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span>Dict[<span class="bu">str</span>, Any]:</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Execute a GraphQL query or mutation and return the data portion.</em></p>
+<p>This is a unified method that works for both queries and mutations. Returns only the ‘data’ portion of the response for convenience.</p>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L33" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="graphqlclient.from_url" class="level3">
+<h3 class="anchored" data-anchor-id="graphqlclient.from_url">GraphQLClient.from_url</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> from_url(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    cls, url:<span class="bu">str</span>, <span class="co"># GraphQL endpoint URL</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    bearer_token:<span class="bu">str</span> <span class="op">|</span> <span class="va">None</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Optional bearer token for Authorization header</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    headers:<span class="bu">dict</span> <span class="op">|</span> <span class="va">None</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Optional additional headers</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Create GraphQL client directly from URL with optional bearer token.</em></p>
+<p>Usage: async with GraphQLClient.from_url(url, bearer_token=token) as gql: result = await gql.execute(query)</p>
+</section>
+<section id="streaming-pagination-details" class="level3">
+<h3 class="anchored" data-anchor-id="streaming-pagination-details">Streaming Pagination Details</h3>
+<p><strong>Why use generators?</strong> For large datasets (millions of rows), accumulating all data in memory causes OOM errors. The async generator yields batches instead.</p>
+<p><strong>Parameters:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 54%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>query_template</code></td>
+<td>GraphQL query with <code>$cursor</code> variable</td>
+</tr>
+<tr class="even">
+<td><code>variables</code></td>
+<td>Initial variables dict (e.g., <code>{'cursor': None}</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>items_path</code></td>
+<td>Path to data list in response (e.g., <code>['data', 'users', 'nodes']</code>)</td>
+</tr>
+<tr class="even">
+<td><code>cursor_path</code></td>
+<td>Path to next cursor (e.g., <code>['data', 'users', 'pageInfo', 'endCursor']</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>has_next_path</code></td>
+<td>Optional path to <code>hasNextPage</code> flag</td>
+</tr>
+<tr class="even">
+<td><code>cursor_var</code></td>
+<td>Cursor variable name in query (default: <code>'cursor'</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example with database insert:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">for</span> batch <span class="kw">in</span> client.fetch_pages_generator(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    query_template<span class="op">=</span><span class="st">'''</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">        query($cursor: String) {</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">            users(after: $cursor, first: 1000) {</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="st">                nodes { id name }</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">                pageInfo { hasNextPage endCursor }</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="st">    '''</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    variables<span class="op">=</span>{<span class="st">'cursor'</span>: <span class="va">None</span>},</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    items_path<span class="op">=</span>[<span class="st">'data'</span>, <span class="st">'users'</span>, <span class="st">'nodes'</span>],</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    cursor_path<span class="op">=</span>[<span class="st">'data'</span>, <span class="st">'users'</span>, <span class="st">'pageInfo'</span>, <span class="st">'endCursor'</span>],</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    has_next_path<span class="op">=</span>[<span class="st">'data'</span>, <span class="st">'users'</span>, <span class="st">'pageInfo'</span>, <span class="st">'hasNextPage'</span>]</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Process each batch immediately</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pl.DataFrame(batch)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    df.write_database(<span class="st">'staging_table'</span>, connection<span class="op">=</span>conn)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+<p><a href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L234" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="execute_graphql" class="level3">
+<h3 class="anchored" data-anchor-id="execute_graphql">execute_graphql</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> execute_graphql(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    url:<span class="bu">str</span>, <span class="co"># GraphQL endpoint URL</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    query:<span class="bu">str</span>, <span class="co"># GraphQL query string</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    variables:<span class="bu">dict</span> <span class="op">|</span> <span class="va">None</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Optional query variables</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    bearer_token:<span class="bu">str</span> <span class="op">|</span> <span class="va">None</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Optional bearer token for Authorization header</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    headers:<span class="bu">dict</span> <span class="op">|</span> <span class="va">None</span><span class="op">=</span><span class="va">None</span>, <span class="co"># Optional additional headers</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>)<span class="op">-&gt;</span><span class="bu">dict</span>:</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><em>Execute a single GraphQL query without managing client lifecycle.</em></p>
+<p>This is a convenience function for one-off queries. For multiple queries, use GraphQLClient.from_url() to reuse the connection.</p>
+<p>Usage: result = await execute_graphql( url=“https://api.example.com/graphql”, query=“query { users { id name } }”, bearer_token=“your-token” )</p>
+<p>Raises: ValueError: If the response contains GraphQL errors</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/abhisheksreesaila\.github\.io\/fh-saas");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/abhisheksreesaila/fh-saas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
