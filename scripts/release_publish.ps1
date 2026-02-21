@@ -24,13 +24,18 @@
 # ========================================
 # USAGE
 # ========================================
-# .\scripts\release_publish.ps1
+# .\scripts\release_publish.ps1              # Full release (GitHub + PyPI)
+# .\scripts\release_publish.ps1 -SkipRelease # Skip GitHub release, only build & upload to PyPI
 #
 # Prerequisites:
 # - GitHub token set: [Environment]::SetEnvironmentVariable('GITHUB_TOKEN', 'ghp_...', 'User')
 # - PyPI token configured in ~/.pypirc or pass to twine
 #
 # ========================================
+
+param(
+    [switch]$SkipRelease
+)
 
 # Navigate to project root (parent of scripts folder)
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -55,15 +60,19 @@ if ($env:GITHUB_TOKEN) {
 }
 
 # Step 2: Create GitHub release
-Write-Host "`n[2/4] Creating GitHub release..." -ForegroundColor Yellow
-nbdev_release_git
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "  ✓ GitHub release created" -ForegroundColor Green
-    Write-Host "  View at: https://github.com/abhisheksreesaila/fh-saas/releases" -ForegroundColor DarkGray
+if (-not $SkipRelease) {
+    Write-Host "`n[2/4] Creating GitHub release..." -ForegroundColor Yellow
+    nbdev_release_git
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  ✓ GitHub release created" -ForegroundColor Green
+        Write-Host "  View at: https://github.com/abhisheksreesaila/fh-saas/releases" -ForegroundColor DarkGray
+    } else {
+        Write-Host "  ✗ GitHub release failed" -ForegroundColor Red
+        Write-Host "  Check that version in settings.ini was updated" -ForegroundColor Yellow
+        exit 1
+    }
 } else {
-    Write-Host "  ✗ GitHub release failed" -ForegroundColor Red
-    Write-Host "  Check that version in settings.ini was updated" -ForegroundColor Yellow
-    exit 1
+    Write-Host "`n[2/4] Skipping GitHub release (-SkipRelease flag)" -ForegroundColor DarkGray
 }
 
 # Step 3: Build Python package

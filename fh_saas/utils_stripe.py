@@ -74,37 +74,37 @@ class StripeConfig:
     def from_env(cls) -> 'StripeConfig':
         """Create StripeConfig from environment variables.
         
-        Reads CONFIG_STRIPE_* environment variables with sensible defaults.
+        Reads STRIPE_* environment variables with sensible defaults.
         
         Returns:
             Configured StripeConfig instance
             
         Raises:
-            ValueError: If CONFIG_STRIPE_SECRETKEY is not set
+            ValueError: If STRIPE_SECRET_KEY is not set
             
         Example:
             >>> # Set environment variables first
-            >>> os.environ['CONFIG_STRIPE_SECRETKEY'] = 'sk_test_...' 
+            >>> os.environ['STRIPE_SECRET_KEY'] = 'sk_test_...' 
             >>> config = StripeConfig.from_env()
         """
-        secret_key = os.getenv('CONFIG_STRIPE_SECRETKEY')
+        secret_key = os.getenv('STRIPE_SECRET_KEY')
         if not secret_key:
-            raise ValueError("CONFIG_STRIPE_SECRETKEY environment variable is required")
+            raise ValueError("STRIPE_SECRET_KEY environment variable is required")
         
         # Check if development mode
         is_dev = os.getenv('ENVIRONMENT', 'production').lower() in ('development', 'dev', 'local')
         
         return cls(
             secret_key=secret_key,
-            webhook_secret=os.getenv('CONFIG_STRIPE_WEBHOOKSECRET'),
-            monthly_price_id=os.getenv('CONFIG_STRIPE_MONTHLY_PRICE_ID'),
-            yearly_price_id=os.getenv('CONFIG_STRIPE_YEARLY_PRICE_ID'),
-            trial_days=int(os.getenv('CONFIG_STRIPE_TRIAL_DAYS', '30')),
-            grace_period_days=int(os.getenv('CONFIG_STRIPE_GRACE_DAYS', '3')),
-            base_url=os.getenv('CONFIG_STRIPE_BASE_URL', 'http://localhost:5001'),
-            success_path=os.getenv('CONFIG_STRIPE_SUCCESS_PATH', '/payment-success'),
-            cancel_path=os.getenv('CONFIG_STRIPE_CANCEL_PATH', '/settings/payment'),
-            allow_promotions=os.getenv('CONFIG_STRIPE_ALLOW_PROMOTIONS', 'true').lower() == 'true',
+            webhook_secret=os.getenv('STRIPE_WEBHOOK_SECRET'),
+            monthly_price_id=os.getenv('STRIPE_MONTHLY_PRICE_ID'),
+            yearly_price_id=os.getenv('STRIPE_YEARLY_PRICE_ID'),
+            trial_days=int(os.getenv('STRIPE_TRIAL_DAYS', '30')),
+            grace_period_days=int(os.getenv('STRIPE_GRACE_DAYS', '3')),
+            base_url=os.getenv('STRIPE_BASE_URL', 'http://localhost:5001'),
+            success_path=os.getenv('STRIPE_SUCCESS_PATH', '/payment-success'),
+            cancel_path=os.getenv('STRIPE_CANCEL_PATH', '/settings/payment'),
+            allow_promotions=os.getenv('STRIPE_ALLOW_PROMOTIONS', 'true').lower() == 'true',
             is_development=is_dev,
         )
     

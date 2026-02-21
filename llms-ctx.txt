@@ -1555,6 +1555,10 @@ cookie `max_age` on each authenticated request.
 
 ------------------------------------------------------------------------
 
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L48"
+target="_blank" style="float:right; font-size:smaller">source</a>
+
 ### SessionConfig
 
 ``` python
@@ -1582,6 +1586,10 @@ inactivity timeout \>\>\> config = SessionConfig(max_age=3600,
 absolute_max=86400) \# 1h sliding, 24h hard limit
 
 ------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L87"
+target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### SlidingSessionMiddleware
 
@@ -1612,6 +1620,10 @@ inactivity \>\>\> app = SlidingSessionMiddleware(app, secret_key=‘…’,
 session_config=config)
 
 ------------------------------------------------------------------------
+
+<a
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L173"
+target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_session_middleware
 
@@ -1662,8 +1674,12 @@ See integration documentation for patterns.
 <tbody>
 <tr>
 <td>⏰ Sliding Sessions</td>
-<td><code>SessionConfig</code>, <code>SlidingSessionMiddleware</code>,
-<code>create_session_middleware</code></td>
+<td><a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#sessionconfig"><code>SessionConfig</code></a>,
+<a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#slidingsessionmiddleware"><code>SlidingSessionMiddleware</code></a>,
+<a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_session_middleware"><code>create_session_middleware</code></a></td>
 <td>Sliding session expiry (inactivity timeout)</td>
 </tr>
 <tr>
@@ -1816,15 +1832,18 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 <tr>
 <td>Session (sliding)</td>
 <td>1 hour inactivity</td>
-<td>Refreshes on each request via
-<code>SlidingSessionMiddleware</code></td>
+<td>Refreshes on each request via <a
+href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#slidingsessionmiddleware"><code>SlidingSessionMiddleware</code></a></td>
 </tr>
 </tbody>
 </table>
 
-> 💡 **Sliding Sessions**: Use `SlidingSessionMiddleware` or
-> `create_session_middleware()` to keep users logged in while active.
-> Sessions only expire after configured inactivity period.
+> 💡 **Sliding Sessions**: Use
+> [`SlidingSessionMiddleware`](https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#slidingsessionmiddleware)
+> or
+> [`create_session_middleware()`](https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_session_middleware)
+> to keep users logged in while active. Sessions only expire after
+> configured inactivity period.
 
 ``` python
 from nbdev.showdoc import show_doc
@@ -1900,7 +1919,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_role"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L48"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L226"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### has_min_role
@@ -1927,7 +1946,7 @@ Example: \>\>\> user = {‘role’: ‘editor’} \>\>\> has_min_role(user,
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L69"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L247"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_role
@@ -1955,7 +1974,7 @@ Returns: Effective role string: ‘admin’, ‘editor’, ‘viewer’, or None
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L114"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L292"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_role
@@ -2054,7 +2073,7 @@ auth data in the session to avoid database queries on every request.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L171"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L349"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### invalidate_auth_cache
@@ -2187,7 +2206,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_auth_be
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L244"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L422"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_auth_beforeware
@@ -2279,7 +2298,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L405"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L595"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_google_oauth_client
@@ -2337,7 +2356,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_s
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L421"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L611"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_oauth_state
@@ -2356,7 +2375,7 @@ protection).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L416"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L606"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_oauth_state
@@ -2409,7 +2428,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_members
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L473"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L663"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_membership
@@ -2427,7 +2446,7 @@ def verify_membership(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L465"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L655"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_membership
@@ -2445,7 +2464,7 @@ def get_user_membership(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L434"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L624"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_or_get_global_user
@@ -2500,7 +2519,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L481"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L671"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### provision_new_user
@@ -2552,7 +2571,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L588"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L785"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### clear_session
@@ -2570,7 +2589,7 @@ def clear_session(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L565"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L762"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_current_user
@@ -2596,7 +2615,7 @@ routes.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L555"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L745"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_user_session
@@ -2653,7 +2672,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L593"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L790"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### auth_redirect
@@ -2687,7 +2706,7 @@ Example:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L642"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L839"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_tenant_access
@@ -2705,7 +2724,7 @@ def require_tenant_access(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L633"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L830"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### route_user_after_login
@@ -2757,7 +2776,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L724"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L921"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_logout
@@ -2775,7 +2794,7 @@ def handle_logout(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L680"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L877"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_oauth_callback
@@ -2794,7 +2813,7 @@ redirect.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L664"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L861"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_login_request
@@ -5578,27 +5597,27 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#create_porta
 </thead>
 <tbody>
 <tr>
-<td><code>CONFIG_STRIPE_SECRETKEY</code></td>
+<td><code>STRIPE_SECRET_KEY</code></td>
 <td>✅</td>
 <td>Stripe secret API key (sk_live_* or sk_test_*)</td>
 </tr>
 <tr>
-<td><code>CONFIG_STRIPE_WEBHOOKSECRET</code></td>
+<td><code>STRIPE_WEBHOOK_SECRET</code></td>
 <td>✅</td>
 <td>Webhook endpoint signing secret (whsec_*)</td>
 </tr>
 <tr>
-<td><code>CONFIG_STRIPE_MONTHLY_PRICE_ID</code></td>
+<td><code>STRIPE_MONTHLY_PRICE_ID</code></td>
 <td>⚠️</td>
 <td>Pre-created monthly price ID (price_*)</td>
 </tr>
 <tr>
-<td><code>CONFIG_STRIPE_YEARLY_PRICE_ID</code></td>
+<td><code>STRIPE_YEARLY_PRICE_ID</code></td>
 <td>⚠️</td>
 <td>Pre-created yearly price ID (price_*)</td>
 </tr>
 <tr>
-<td><code>CONFIG_STRIPE_BASE_URL</code></td>
+<td><code>STRIPE_BASE_URL</code></td>
 <td>⚠️</td>
 <td>Application base URL for callbacks</td>
 </tr>
@@ -5675,14 +5694,14 @@ def from_env(
 
 *Create StripeConfig from environment variables.*
 
-Reads CONFIG_STRIPE\_\* environment variables with sensible defaults.
+Reads STRIPE\_\* environment variables with sensible defaults.
 
 Returns: Configured StripeConfig instance
 
-Raises: ValueError: If CONFIG_STRIPE_SECRETKEY is not set
+Raises: ValueError: If STRIPE_SECRET_KEY is not set
 
 Example: \>\>\> \# Set environment variables first \>\>\>
-os.environ\[‘CONFIG_STRIPE_SECRETKEY’\] = ‘sk_test\_…’ \>\>\> config =
+os.environ\[‘STRIPE_SECRET_KEY’\] = ‘sk_test\_…’ \>\>\> config =
 StripeConfig.from_env()
 
 ------------------------------------------------------------------------
@@ -6356,15 +6375,15 @@ service.create_subscription_checkout(…)
 
 ``` bash
 # Required
-export CONFIG_STRIPE_SECRETKEY="sk_test_..."
-export CONFIG_STRIPE_WEBHOOKSECRET="whsec_..."
+export STRIPE_SECRET_KEY="sk_test_..."
+export STRIPE_WEBHOOK_SECRET="whsec_..."
 
 # Create prices in Stripe Dashboard, then set IDs
-export CONFIG_STRIPE_MONTHLY_PRICE_ID="price_..."
-export CONFIG_STRIPE_YEARLY_PRICE_ID="price_..."
+export STRIPE_MONTHLY_PRICE_ID="price_..."
+export STRIPE_YEARLY_PRICE_ID="price_..."
 
 # Application URL
-export CONFIG_STRIPE_BASE_URL="https://yourapp.com"
+export STRIPE_BASE_URL="https://yourapp.com"
 ```
 
 ### 2. Initialize Service & Routes
