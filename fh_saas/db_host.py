@@ -4,7 +4,7 @@
 
 # %% auto #0
 __all__ = ['timestamp', 'gen_id', 'get_db_uri', 'GlobalUser', 'TenantCatalog', 'Membership', 'Subscription', 'HostAuditLog',
-           'SystemJob', 'PricingPlan', 'HostDatabase']
+           'SystemJob', 'PricingPlan', 'StripeWebhookEvent', 'HostDatabase']
 
 # %% ../nbs/00_db_host.ipynb #ef523bd9
 from fastsql import *
@@ -162,6 +162,26 @@ class PricingPlan:
     sort_order: int = 0
     created_at: str = None
 
+class StripeWebhookEvent:
+    """Idempotency: Has this webhook already been processed?
+
+    Stores processed Stripe event IDs to prevent duplicate handling.
+
+    Attributes:
+        id: Unique record ID (gen_id)
+        event_id: Stripe event ID (e.g., evt_xxx)
+        event_type: Stripe event type (e.g., customer.subscription.updated)
+        status: Processing result: 'processed', 'failed', or 'skipped_out_of_order'
+        payload_json: Optional JSON snapshot of the event result
+        created_at: ISO timestamp of when the event was recorded
+    """
+    id: str
+    event_id: str
+    event_type: str
+    status: str = 'processed'
+    payload_json: str = None
+    created_at: str = None
+
 # %% ../nbs/00_db_host.ipynb #31c0ad68
 class HostDatabase:
     """Singleton connection manager for the host database."""
@@ -193,6 +213,7 @@ class HostDatabase:
         self.pricing_plans = self.db.create(PricingPlan, name="core_pricing_plans", pk='id')
         self.audit_logs = self.db.create(HostAuditLog, name="sys_audit_logs", pk='id')
         self.system_jobs = self.db.create(SystemJob, name="sys_jobs", pk='id')
+        self.stripe_webhook_events = self.db.create(StripeWebhookEvent, name="core_stripe_webhook_events", pk='id')
         
         self._initialized = True
     

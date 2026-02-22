@@ -197,7 +197,7 @@ class StripeService:
             raise ValueError(f"Invalid plan_type: {plan_type}. Use 'monthly' or 'yearly'")
         
         if not price_id:
-            raise ValueError(f"Price ID not configured for {plan_type} plan. Set CONFIG_STRIPE_{plan_type.upper()}_PRICE_ID")
+            raise ValueError(f"Price ID not configured for {plan_type} plan. Set STRIPE_{plan_type.upper()}_PRICE_ID")
         
         # Build metadata
         sub_metadata = {
@@ -710,7 +710,7 @@ class StripeService:
     def _find_subscription_by_stripe_id(self, stripe_sub_id: str) -> Optional[Subscription]:
         """Find subscription by Stripe subscription ID."""
         try:
-            results = self.host_db.subscriptions(where=f"stripe_sub_id = '{stripe_sub_id}'")
+            results = self.host_db.subscriptions(where="stripe_sub_id = :sid", where_args={"sid": stripe_sub_id})
             return results[0] if results else None
         except Exception as e:
             logger.error(f"Error finding subscription {stripe_sub_id}: {e}")
@@ -719,7 +719,7 @@ class StripeService:
     def _update_user_stripe_customer(self, email: str, stripe_cust_id: str):
         """Update user's Stripe customer ID in host database."""
         try:
-            users = self.host_db.global_users(where=f"email = '{email}'")
+            users = self.host_db.global_users(where="email = :email", where_args={"email": email})
             if users:
                 user = users[0]
                 user.stripe_cust_id = stripe_cust_id
@@ -867,7 +867,7 @@ def get_pricing_plan(
         host_db = HostDatabase.from_env()
     
     try:
-        plans = host_db.pricing_plans(where=f"id = '{plan_id}'")
+        plans = host_db.pricing_plans(where="id = :pid", where_args={"pid": plan_id})
         return plans[0] if plans else None
     except Exception as e:
         logger.error(f"Error fetching pricing plan {plan_id}: {e}")
@@ -904,7 +904,7 @@ def get_active_subscription(
     try:
         # Get subscription records for tenant (subscription type only)
         subs = host_db.subscriptions(
-            where=f"tenant_id = '{tenant_id}' AND payment_type = 'subscription'"
+            where="tenant_id = :tid AND payment_type = 'subscription'", where_args={"tid": tenant_id}
         )
         
         if not subs:
@@ -1035,7 +1035,7 @@ def get_subscription_status(
         # Check if there's any subscription (even canceled)
         try:
             subs = host_db.subscriptions(
-                where=f"tenant_id = '{tenant_id}' AND payment_type = 'subscription'"
+                where="tenant_id = :tid AND payment_type = 'subscription'", where_args={"tid": tenant_id}
             )
             if subs:
                 latest = sorted(subs, key=lambda s: s.created_at or '', reverse=True)[0]

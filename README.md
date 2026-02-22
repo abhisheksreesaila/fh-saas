@@ -130,6 +130,7 @@ tenant_db.conn.commit()
 | [GraphQL Client](https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html) | Streaming pagination for large datasets |
 | [Webhooks](https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html) | Receive & verify external webhooks |
 | **💳 Payments & Migrations** |  |
+| [Billing Orchestrator](https://abhisheksreesaila.github.io/fh-saas/utils_billing.html) | Provider-agnostic billing contracts, lifecycle services, one-liner route registration |
 | [Stripe Payments](https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html) | Subscriptions, trials, access control |
 | [DB Migrations](https://abhisheksreesaila.github.io/fh-saas/utils_migrate.html) | Version tracking, rollback support |
 | **⚙️ Data Pipeline** |  |

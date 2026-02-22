@@ -35,3 +35,5 @@ website:
       - 16_utils_stripe_tests.ipynb
       - 17_utils_migrate.ipynb
       - 17_utils_migrate_tests.ipynb
+      - 18_utils_billing.ipynb
+      - 18_utils_billing_tests.ipynb

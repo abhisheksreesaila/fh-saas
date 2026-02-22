@@ -220,6 +220,29 @@ table with the `core_` or `sys_` prefix.
 
 ------------------------------------------------------------------------
 
+### StripeWebhookEvent
+
+``` python
+
+def StripeWebhookEvent(
+    args:VAR_POSITIONAL, kwargs:VAR_KEYWORD
+):
+
+```
+
+*Idempotency: Has this webhook already been processed?*
+
+Stores processed Stripe event IDs to prevent duplicate handling.
+
+Attributes: id: Unique record ID (gen_id) event_id: Stripe event ID
+(e.g., evt_xxx) event_type: Stripe event type (e.g.,
+customer.subscription.updated) status: Processing result: ‘processed’,
+‘failed’, or ‘skipped_out_of_order’ payload_json: Optional JSON snapshot
+of the event result created_at: ISO timestamp of when the event was
+recorded
+
+------------------------------------------------------------------------
+
 <a
 href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L116"
 target="_blank" style="float:right; font-size:smaller">source</a>
@@ -433,6 +456,12 @@ href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#systemjob"><code>
 <td><code>sys_jobs</code></td>
 <td><code>id</code></td>
 <td>Background task queue for provisioning, cleanup</td>
+</tr>
+<tr>
+<td><code>StripeWebhookEvent</code></td>
+<td><code>core_stripe_webhook_events</code></td>
+<td><code>id</code></td>
+<td>Idempotency tracking for processed Stripe webhook events</td>
 </tr>
 </tbody>
 </table>
