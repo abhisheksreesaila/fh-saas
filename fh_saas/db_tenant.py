@@ -8,97 +8,242 @@ __all__ = ['logger', 'get_or_create_tenant_db', 'TenantUser', 'TenantPermission'
 # %% ../nbs/01_db_tenant.ipynb #ef523bd9
 from fastsql import *
 from fastcore.utils import *
-from .db_host import timestamp, gen_id
+from .db_host import timestamp, gen_id, TenantCatalog
+from .utils_log import log_timing_event
 import urllib.parse
 import os
+import re
+import time
+import threading
 import logging
+import sqlalchemy as sa
 
 # Module-level logger - configured by app via configure_logging()
 logger = logging.getLogger(__name__)
 
 # %% ../nbs/01_db_tenant.ipynb #45847eb4
-def get_or_create_tenant_db(tenant_id: str, tenant_name: str = None):
-    """Get or create a tenant database connection by tenant ID.
-    
-    ⚠️ IMPORTANT: Caller is responsible for closing the returned Database connection
-    by calling `db.conn.close()` and `db.engine.dispose()` when done.
-    """
-    from sqlalchemy import text
-    
-    # Connect to host - read from environment
-    DB_TYPE = os.getenv("DB_TYPE", "POSTGRESQL")
-    DB_USER = os.getenv("DB_USER", "postgres")
-    DB_PASS = os.getenv("DB_PASS", "")
-    DB_HOST = os.getenv("DB_HOST", "localhost")
-    DB_PORT = os.getenv("DB_PORT", "5432")
-    DB_NAME = os.getenv("DB_NAME", "app_host")  # Host database name
-    
-    # Build host database connection
-    if DB_TYPE == "POSTGRESQL":
-        if not DB_PASS:
-            raise ValueError("DB_PASS is required for PostgreSQL")
-        encoded_pass = urllib.parse.quote_plus(DB_PASS)
-        host_url = f"postgresql://{DB_USER}:{encoded_pass}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    else:
-        host_url = f"sqlite:///{DB_NAME}.db"
-    
-    # Use try/finally to ensure host_db connection is always closed
-    host_db = Database(host_url)
+_TENANT_URL_CACHE = {}
+_TENANT_DB_CACHE = {}
+_TENANT_CACHE_LOCK = threading.RLock()
+
+
+class _TenantEngineHandle:
+    """Per-request engine handle that protects the shared cached engine from disposal."""
+    def __init__(self, engine):
+        self._engine = engine
+
+    def dispose(self):
+        return None
+
+    def __getattr__(self, name):
+        return getattr(self._engine, name)
+
+
+def _close_database_handle(db):
+    """Close a request-scoped database handle without tearing down the shared engine cache."""
+    if not db:
+        return
     try:
-        # Check if tenant registered
-        class TenantCatalog:
-            id: str; name: str; db_url: str
-            is_active: bool = True; plan_tier: str = "free"; created_at: str
-        
-        tenant_catalogs = host_db.create(TenantCatalog, name="core_tenants", pk='id')
-        host_db.conn.rollback()
-        all_tenants = tenant_catalogs()
-        existing = [t for t in all_tenants if t.id == tenant_id]
-        
-        # Build tenant database connection
-        # PostgreSQL databases cannot start with numbers, so prefix with 't_'
-        if DB_TYPE == "POSTGRESQL":
-            tenant_db_name = f"t_{tenant_id}_db"
-            tenant_url = f"postgresql://{DB_USER}:{encoded_pass}@{DB_HOST}:{DB_PORT}/{tenant_db_name}"
-        else:
-            tenant_db_name = f"{tenant_id}_db"
-            tenant_url = f"sqlite:///{tenant_db_name}.db"
-        
-        if not existing:
-            print(f"⚡ Creating new tenant: {tenant_id}")
-            
-            # Create physical database (PostgreSQL only)
-            if DB_TYPE == "POSTGRESQL":
-                with host_db.engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
-                    try:
-                        conn.execute(text(f"CREATE DATABASE {tenant_db_name}"))
-                        print(f"   ✅ Database created: {tenant_db_name}")
-                    except Exception as e:
-                        if "already exists" not in str(e):
-                            raise
-            
-            # Register in host
-            new_tenant = TenantCatalog(
-                id=tenant_id,
-                name=tenant_name or tenant_id,
-                db_url=tenant_url,
-                created_at=timestamp()
-            )
-            tenant_catalogs.insert(new_tenant)
-            host_db.conn.commit()
-            print(f"   ✅ Registered in host DB")
-        else:
-            print(f"ℹ️  Tenant exists: {existing[0].name}")
-            tenant_url = existing[0].db_url
-        
-        return Database(tenant_url)
-    finally:
-        # Always close the internal host_db connection to prevent leaks
+        db.conn.close()
+    except Exception:
+        pass
+    try:
+        db.engine.dispose()
+    except Exception:
+        pass
+
+
+def _reset_tenant_db_cache():
+    """Dispose cached tenant engines and clear routing caches. Intended for tests."""
+    with _TENANT_CACHE_LOCK:
+        cached_entries = list(_TENANT_DB_CACHE.values())
+        _TENANT_URL_CACHE.clear()
+        _TENANT_DB_CACHE.clear()
+    for cached in cached_entries:
         try:
-            host_db.conn.close()
-            host_db.engine.dispose()
+            cached['engine'].dispose()
         except Exception:
-            pass  # Ignore cleanup errors
+            pass
+
+
+def _tenant_db_settings():
+    db_type = os.getenv('DB_TYPE', 'POSTGRESQL')
+    db_user = os.getenv('DB_USER', 'postgres')
+    db_pass = os.getenv('DB_PASS', '')
+    db_host = os.getenv('DB_HOST', 'localhost')
+    db_port = os.getenv('DB_PORT', '5432')
+    db_name = os.getenv('DB_NAME', 'app_host')
+    if db_type == 'POSTGRESQL' and not db_pass:
+        raise ValueError('DB_PASS is required for PostgreSQL')
+    encoded_pass = urllib.parse.quote_plus(db_pass) if db_pass else ''
+    return {
+        'db_type': db_type,
+        'db_user': db_user,
+        'db_pass': db_pass,
+        'db_host': db_host,
+        'db_port': db_port,
+        'db_name': db_name,
+        'encoded_pass': encoded_pass,
+    }
+
+
+def _build_host_url(settings: dict) -> str:
+    if settings['db_type'] == 'POSTGRESQL':
+        return (
+            f"postgresql://{settings['db_user']}:{settings['encoded_pass']}@"
+            f"{settings['db_host']}:{settings['db_port']}/{settings['db_name']}"
+        )
+    return f"sqlite:///{settings['db_name']}.db"
+
+
+def _tenant_db_name(settings: dict, tenant_id: str) -> str:
+    if settings['db_type'] == 'POSTGRESQL':
+        name = f't_{tenant_id}_db'
+        if not re.fullmatch(r'[A-Za-z0-9_]+', name):
+            raise ValueError(f'Invalid tenant database name: {name}')
+        return name
+    return f'{tenant_id}_db'
+
+
+def _tenant_url_from_settings(settings: dict, tenant_id: str) -> str:
+    tenant_db_name = _tenant_db_name(settings, tenant_id)
+    if settings['db_type'] == 'POSTGRESQL':
+        return (
+            f"postgresql://{settings['db_user']}:{settings['encoded_pass']}@"
+            f"{settings['db_host']}:{settings['db_port']}/{tenant_db_name}"
+        )
+    return f'sqlite:///{tenant_db_name}.db'
+
+
+def _clone_reflected_metadata(template_meta, conn, engine):
+    meta = sa.MetaData()
+    for table in template_meta.tables.values():
+        table.to_metadata(meta)
+    meta.bind = engine
+    meta.conn = conn
+    return meta
+
+
+def _create_tenant_db_handle(tenant_url: str, engine, template_meta):
+    conn = engine.connect()
+    meta = _clone_reflected_metadata(template_meta, conn, engine)
+    db = Database.__new__(Database)
+    db.conn_str = tenant_url
+    db._tables = {}
+    db._shared_engine = engine
+    db.engine = _TenantEngineHandle(engine)
+    db.conn = conn
+    db.meta = meta
+    db.meta.bind = engine
+    db.meta.conn = conn
+    return db
+
+
+def _get_cached_tenant_resources(tenant_url: str):
+    cached = _TENANT_DB_CACHE.get(tenant_url)
+    if cached is not None:
+        return cached
+
+    with _TENANT_CACHE_LOCK:
+        cached = _TENANT_DB_CACHE.get(tenant_url)
+        if cached is not None:
+            return cached
+
+        shared_engine = sa.create_engine(tenant_url)
+        template_meta = sa.MetaData()
+        template_meta.reflect(bind=shared_engine)
+        template_meta.bind = shared_engine
+        cached = {
+            'engine': shared_engine,
+            'meta': template_meta,
+        }
+        _TENANT_DB_CACHE[tenant_url] = cached
+        return cached
+
+
+def _lookup_tenant_url(host_db: Database, tenant_id: str):
+    tenant_catalogs = host_db.create(TenantCatalog, name='core_tenants', pk='id')
+    host_db.conn.rollback()
+    existing = tenant_catalogs(
+        where='id = :tenant_id',
+        where_args={'tenant_id': tenant_id},
+        limit=1,
+    )
+    return existing[0].db_url if existing else None
+
+
+def _register_tenant(host_db: Database, tenant_id: str, tenant_name: str, tenant_url: str):
+    tenant_catalogs = host_db.create(TenantCatalog, name='core_tenants', pk='id')
+    tenant_catalogs.insert(TenantCatalog(
+        id=tenant_id,
+        name=tenant_name or tenant_id,
+        db_url=tenant_url,
+        created_at=timestamp(),
+    ))
+    host_db.conn.commit()
+
+
+def _ensure_tenant_database(host_db: Database, settings: dict, tenant_id: str, tenant_name: str = None):
+    tenant_url = _lookup_tenant_url(host_db, tenant_id)
+    if tenant_url:
+        logger.debug(f'Tenant route cache miss resolved from host DB: {tenant_id}')
+        return tenant_url
+
+    tenant_db_name = _tenant_db_name(settings, tenant_id)
+    tenant_url = _tenant_url_from_settings(settings, tenant_id)
+    logger.info(f'Creating new tenant database for {tenant_id}')
+
+    if settings['db_type'] == 'POSTGRESQL':
+        with host_db.engine.connect().execution_options(isolation_level='AUTOCOMMIT') as conn:
+            conn.execute(sa.text(f'CREATE DATABASE {tenant_db_name}'))
+    else:
+        sqlite_engine = sa.create_engine(tenant_url)
+        sqlite_engine.dispose()
+
+    _register_tenant(host_db, tenant_id, tenant_name, tenant_url)
+    return tenant_url
+
+
+def get_or_create_tenant_db(tenant_id: str, tenant_name: str = None):
+    """Get or create a tenant database handle by tenant ID.
+
+    The package caches tenant routing, SQLAlchemy engines, and reflected table metadata,
+    but each call returns a fresh live connection bound to its own cloned metadata object.
+    Callers should still close the returned connection when done.
+    """
+    total_started = time.perf_counter()
+    settings = _tenant_db_settings()
+
+    tenant_url = _TENANT_URL_CACHE.get(tenant_id)
+    if tenant_url is None:
+        host_started = time.perf_counter()
+        host_db = Database(_build_host_url(settings))
+        log_timing_event(logger, 'tenant_db_open_host', host_started)
+        try:
+            lookup_started = time.perf_counter()
+            tenant_url = _ensure_tenant_database(host_db, settings, tenant_id, tenant_name)
+            log_timing_event(logger, 'tenant_db_lookup_tenant', lookup_started)
+        finally:
+            try:
+                host_db.conn.close()
+            except Exception:
+                pass
+            try:
+                host_db.engine.dispose()
+            except Exception:
+                pass
+        with _TENANT_CACHE_LOCK:
+            _TENANT_URL_CACHE[tenant_id] = tenant_url
+    else:
+        lookup_started = time.perf_counter()
+        log_timing_event(logger, 'tenant_db_lookup_tenant', lookup_started)
+
+    open_started = time.perf_counter()
+    cached = _get_cached_tenant_resources(tenant_url)
+    tenant_db = _create_tenant_db_handle(tenant_url, cached['engine'], cached['meta'])
+    log_timing_event(logger, 'tenant_db_open_tenant', open_started)
+    log_timing_event(logger, 'tenant_db_total', total_started)
+    return tenant_db
 
 # %% ../nbs/01_db_tenant.ipynb #f9da900f
 class TenantUser:

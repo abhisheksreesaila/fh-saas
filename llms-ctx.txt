@@ -26,38 +26,32 @@ answers the critical questions:
 <tbody>
 <tr>
 <td>👤 <strong>Who is this person?</strong></td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#globaluser"><code>GlobalUser</code></a></td>
+<td><code>GlobalUser</code></td>
 <td>Identity &amp; authentication</td>
 </tr>
 <tr>
 <td>🏢 <strong>Where is their data?</strong></td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#tenantcatalog"><code>TenantCatalog</code></a></td>
+<td><code>TenantCatalog</code></td>
 <td>Database routing</td>
 </tr>
 <tr>
 <td>🔑 <strong>What can they access?</strong></td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#membership"><code>Membership</code></a></td>
+<td><code>Membership</code></td>
 <td>Access control</td>
 </tr>
 <tr>
 <td>💳 <strong>Are they paying?</strong></td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#subscription"><code>Subscription</code></a></td>
+<td><code>Subscription</code></td>
 <td>Billing status</td>
 </tr>
 <tr>
 <td>📋 <strong>What happened?</strong></td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#hostauditlog"><code>HostAuditLog</code></a></td>
+<td><code>HostAuditLog</code></td>
 <td>Security audit trail</td>
 </tr>
 <tr>
 <td>⚙️ <strong>Background work?</strong></td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#systemjob"><code>SystemJob</code></a></td>
+<td><code>SystemJob</code></td>
 <td>Async operations</td>
 </tr>
 </tbody>
@@ -94,10 +88,6 @@ Helper functions used throughout the host database operations.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L20"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### gen_id
 
 ``` python
@@ -110,10 +100,6 @@ def gen_id(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L19"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### timestamp
 
 ``` python
@@ -125,10 +111,6 @@ def timestamp(
 ```
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L23"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_db_uri
 
@@ -143,9 +125,7 @@ def get_db_uri(
 *Extract SQLAlchemy connection URI from a Database object.*
 
 Safely renders the URL with the actual password (required for utilities
-like
-[`map_and_upsert`](https://abhisheksreesaila.github.io/fh-saas/utils_polars_mapper.html#map_and_upsert)
-that create new connections).
+like `map_and_upsert` that create new connections).
 
 **Why this is needed:** - `str(db.conn.engine.url)` masks the password
 as `***` - This causes “password authentication failed” errors -
@@ -194,13 +174,11 @@ map_and_upsert(df, 'my_table', 'id', db_uri)
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#timestamp"><code>timestamp()</code></a></td>
+<td><code>timestamp()</code></td>
 <td>🕐 Returns current UTC time in ISO format</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#gen_id"><code>gen_id()</code></a></td>
+<td><code>gen_id()</code></td>
 <td>🆔 Generates a unique 32-character hex ID</td>
 </tr>
 <tr>
@@ -243,10 +221,6 @@ recorded
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L116"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### PricingPlan
 
 ``` python
@@ -282,10 +256,6 @@ features=‘\[“api_access”, “exports”, “priority_support”\]’, … 
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L110"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### SystemJob
 
 ``` python
@@ -299,10 +269,6 @@ def SystemJob(
 *Maintenance: Provisioning & Cleanups*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L104"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostAuditLog
 
@@ -318,10 +284,6 @@ def HostAuditLog(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L92"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### Subscription
 
 ``` python
@@ -335,10 +297,6 @@ def Subscription(
 *Billing: Are they allowed to use the app?*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L86"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Membership
 
@@ -354,10 +312,6 @@ def Membership(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L81"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### TenantCatalog
 
 ``` python
@@ -371,10 +325,6 @@ def TenantCatalog(
 *Registry: Where is the database?*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L75"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GlobalUser
 
@@ -407,52 +357,45 @@ def GlobalUser(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#globaluser"><code>GlobalUser</code></a></td>
+<td><code>GlobalUser</code></td>
 <td><code>core_users</code></td>
 <td><code>id</code></td>
 <td>OAuth identity, email, optional password hash, Stripe customer
 ID</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#tenantcatalog"><code>TenantCatalog</code></a></td>
+<td><code>TenantCatalog</code></td>
 <td><code>core_tenants</code></td>
 <td><code>id</code></td>
 <td>Maps tenant ID to database URL, tracks plan tier and status</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#membership"><code>Membership</code></a></td>
+<td><code>Membership</code></td>
 <td><code>core_memberships</code></td>
 <td><code>id</code></td>
 <td>Links users to tenants with roles (<code>owner</code>,
 <code>admin</code>, <code>member</code>)</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#subscription"><code>Subscription</code></a></td>
+<td><code>Subscription</code></td>
 <td><code>core_subscriptions</code></td>
 <td><code>id</code></td>
 <td>Stripe subscription state for billing enforcement</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#pricingplan"><code>PricingPlan</code></a></td>
+<td><code>PricingPlan</code></td>
 <td><code>core_pricing_plans</code></td>
 <td><code>id</code></td>
 <td>Available subscription tiers with Stripe price IDs</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#hostauditlog"><code>HostAuditLog</code></a></td>
+<td><code>HostAuditLog</code></td>
 <td><code>sys_audit_logs</code></td>
 <td><code>id</code></td>
 <td>Immutable security log for compliance</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#systemjob"><code>SystemJob</code></a></td>
+<td><code>SystemJob</code></td>
 <td><code>sys_jobs</code></td>
 <td><code>id</code></td>
 <td>Background task queue for provisioning, cleanup</td>
@@ -470,9 +413,8 @@ href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#systemjob"><code>
 
 ## 🔌 HostDatabase Singleton
 
-The
-[`HostDatabase`](https://abhisheksreesaila.github.io/fh-saas/db_host.html#hostdatabase)
-class provides a **singleton** connection manager for the host database.
+The `HostDatabase` class provides a **singleton** connection manager for
+the host database.
 
 ✅ **Why Singleton?** - Single connection pool shared across the
 application - Consistent transaction management - Easy dependency
@@ -497,10 +439,6 @@ injection for testing
              └────────────────────────┘
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L166"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase
 
@@ -593,10 +531,6 @@ def HostDatabase(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L205"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### HostDatabase.from_env
 
 ``` python
@@ -610,10 +544,6 @@ def from_env(
 *Create HostDatabase from DB\_* environment variables.\*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L224"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.commit
 
@@ -629,10 +559,6 @@ def commit(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L228"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### HostDatabase.rollback
 
 ``` python
@@ -646,10 +572,6 @@ def rollback(
 *Rollback current transaction.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_host.py#L248"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### HostDatabase.reset_instance
 
@@ -690,9 +612,7 @@ all_users = host_db.global_users()
 ```
 
 💡 **Tip:** The singleton ensures you always get the same connection, so
-you can call
-[`HostDatabase.from_env()`](https://abhisheksreesaila.github.io/fh-saas/db_host.html#hostdatabase.from_env)
-anywhere in your app.
+you can call `HostDatabase.from_env()` anywhere in your app.
 
 
 ========================================
@@ -821,7 +741,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/db_host.html#membership"><code
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L20"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L207"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_or_create_tenant_db
@@ -834,11 +754,12 @@ def get_or_create_tenant_db(
 
 ```
 
-*Get or create a tenant database connection by tenant ID.*
+*Get or create a tenant database handle by tenant ID.*
 
-⚠️ IMPORTANT: Caller is responsible for closing the returned Database
-connection by calling `db.conn.close()` and `db.engine.dispose()` when
-done.
+The package caches tenant routing, SQLAlchemy engines, and reflected
+table metadata, but each call returns a fresh live connection bound to
+its own cloned metadata object. Callers should still close the returned
+connection when done.
 
 ------------------------------------------------------------------------
 
@@ -850,7 +771,7 @@ app-specific models (transactions, budgets, etc.) build on top of these.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L122"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L267"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantSettings
@@ -868,7 +789,7 @@ def TenantSettings(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L113"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L258"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantPermission
@@ -886,7 +807,7 @@ def TenantPermission(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L104"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L249"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### TenantUser
@@ -963,7 +884,7 @@ creates all infrastructure tables in a tenant database:
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L132"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/db_tenant.py#L277"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### init_tenant_core_schema
@@ -1132,10 +1053,6 @@ FILE: _proc/15_utils_db.html.md
 ## 🎯 Overview
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -1144,28 +1061,23 @@ FILE: _proc/15_utils_db.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#register_table"><code>register_table</code></a></td>
+<td><code>register_table</code></td>
 <td>Create table from dataclass model</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#register_tables"><code>register_tables</code></a></td>
+<td><code>register_tables</code></td>
 <td>Create multiple tables atomically</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#drop_table"><code>drop_table</code></a></td>
+<td><code>drop_table</code></td>
 <td>Drop table if exists</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#create_index"><code>create_index</code></a></td>
+<td><code>create_index</code></td>
 <td>Create index with dialect-specific SQL</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#drop_index"><code>drop_index</code></a></td>
+<td><code>drop_index</code></td>
 <td>Drop index if exists</td>
 </tr>
 <tr>
@@ -1182,10 +1094,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#drop_index"><cod
 ## 📋 Table Registration
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -1194,18 +1102,15 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#drop_index"><cod
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#register_table"><code>register_table</code></a></td>
+<td><code>register_table</code></td>
 <td>Create single table from dataclass</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#register_tables"><code>register_tables</code></a></td>
+<td><code>register_tables</code></td>
 <td>Create multiple tables atomically</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#drop_table"><code>drop_table</code></a></td>
+<td><code>drop_table</code></td>
 <td>Drop table if exists</td>
 </tr>
 </tbody>
@@ -1229,10 +1134,6 @@ transactions.insert(Transaction(id="t1", amount=100.0, date="2024-01-01"))
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_db.py#L21"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### register_table
 
 ``` python
@@ -1246,10 +1147,6 @@ def register_table(
 *Create a table from a dataclass model if it doesn’t exist (atomic).*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_db.py#L33"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### register_tables
 
@@ -1288,10 +1185,6 @@ tables["transactions"].insert(...)
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_db.py#L49"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### drop_table
 
 ``` python
@@ -1307,10 +1200,6 @@ def drop_table(
 ## 📇 Index Management
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -1319,25 +1208,21 @@ def drop_table(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#create_index"><code>create_index</code></a></td>
+<td><code>create_index</code></td>
 <td>Create index with dialect-specific SQL</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#create_indexes"><code>create_indexes</code></a></td>
+<td><code>create_indexes</code></td>
 <td>Create multiple indexes atomically</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#drop_index"><code>drop_index</code></a></td>
+<td><code>drop_index</code></td>
 <td>Drop index if exists</td>
 </tr>
 </tbody>
 </table>
 
-**Parameters for
-[`create_index`](https://abhisheksreesaila.github.io/fh-saas/utils_db.html#create_index):**
+**Parameters for `create_index`:**
 
 <table>
 <colgroup>
@@ -1386,10 +1271,6 @@ create_index(tenant_db, "transactions", ["category"], index_name="idx_txn_cat")
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_db.py#L61"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### create_index
 
 ``` python
@@ -1403,10 +1284,6 @@ def create_index(
 *Create an index on a table if it doesn’t exist (atomic operation).*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_db.py#L83"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_indexes
 
@@ -1436,10 +1313,6 @@ create_indexes(tenant_db, [
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_db.py#L107"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### drop_index
 
 ``` python
@@ -1455,10 +1328,6 @@ def drop_index(
 ## 🔍 Schema Introspection
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -1467,8 +1336,7 @@ def drop_index(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_db.html#table_exists"><code>table_exists</code></a></td>
+<td><code>table_exists</code></td>
 <td>Check if a table exists</td>
 </tr>
 </tbody>
@@ -1482,10 +1350,6 @@ if not table_exists(tenant_db, "transactions"):
 ```
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_db.py#L127"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### table_exists
 
@@ -1585,7 +1449,7 @@ cookie `max_age` on each authenticated request.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L48"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L50"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### SessionConfig
@@ -1617,7 +1481,7 @@ absolute_max=86400) \# 1h sliding, 24h hard limit
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L87"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L89"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### SlidingSessionMiddleware
@@ -1651,7 +1515,7 @@ session_config=config)
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L173"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L175"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_session_middleware
@@ -1948,7 +1812,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_user_role"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L226"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L266"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### has_min_role
@@ -1975,7 +1839,7 @@ Example: \>\>\> user = {‘role’: ‘editor’} \>\>\> has_min_role(user,
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L247"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L287"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_role
@@ -1990,10 +1854,10 @@ def get_user_role(
 
 *Derive effective role from session and tenant database.*
 
-Rules: 1. Tenant owner (session\[‘tenant_role’\] == ‘owner’) → ‘admin’
-2. System admin → ‘admin’ 3. Otherwise → lookup TenantUser.local_role
-from tenant DB 4. Fallback → None (user must be explicitly assigned a
-role)
+Rules: 1. Tenant owner (session\[‘tenant_role’\] == ‘owner’) -\> ‘admin’
+2. System admin -\> ‘admin’ 3. Otherwise -\> lookup
+TenantUser.local_role from tenant DB 4. Fallback -\> None (user must be
+explicitly assigned a role)
 
 Args: session: User session dict tenant_db: Tenant database connection
 (optional)
@@ -2003,7 +1867,7 @@ Returns: Effective role string: ‘admin’, ‘editor’, ‘viewer’, or None
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L292"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L319"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_role
@@ -2102,7 +1966,7 @@ auth data in the session to avoid database queries on every request.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L349"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L376"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### invalidate_auth_cache
@@ -2235,7 +2099,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#create_auth_be
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L422"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L506"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_auth_beforeware
@@ -2251,52 +2115,13 @@ def create_auth_beforeware(
 
 ```
 
-*Create Beforeware that checks for authenticated session and sets up
+*Create Beforeware that checks for authenticated session and hydrates
 request.state.*
 
-Args: redirect_path: Where to redirect unauthenticated users
-session_key: Session key for user ID skip: List of regex patterns to
-skip auth include_defaults: Include default skip patterns
-setup_tenant_db: Auto-setup tenant database on request.state
-schema_init: Optional callback to initialize tables dict. Signature:
-(tenant_db: Database) -\> dict\[str, Table\] Result stored in
-request.state.tables session_cache: Enable caching user dict in session
-to reduce DB queries. Recommended for HTMX-heavy apps. Default: False
-session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes)
-require_subscription: If True, check for active subscription and return
-402 if not found. Default: False subscription_redirect: Optional URL to
-redirect if subscription required. If None, returns 402 Payment Required
-response. grace_period_days: Days to allow access after payment failure
-(default: 3) session_config: Optional SessionConfig for absolute timeout
-enforcement. Note: Sliding expiry requires SlidingSessionMiddleware.
-This parameter only enforces absolute_max if configured.
-
-Returns: Beforeware instance for FastHTML apps
-
-Sets on request.state: - user: dict with user_id, email, tenant_id,
-role, is_owner - tenant_id: str - tenant_db: Database connection -
-tables: dict of Table objects (if schema_init provided) - subscription:
-Subscription object (if require_subscription enabled)
-
-Example: \>\>\> \# Basic usage \>\>\> beforeware =
-create_auth_beforeware()
-
-    >>> # With session caching for HTMX apps
-    >>> beforeware = create_auth_beforeware(
-    ...     session_cache=True,
-    ...     session_cache_ttl=300
-    ... )
-
-    >>> # With schema initialization
-    >>> def get_app_tables(db):
-    ...     return {'users': db.create(User, pk='id')}
-    >>> beforeware = create_auth_beforeware(schema_init=get_app_tables)
-
-    >>> # With subscription requirement
-    >>> beforeware = create_auth_beforeware(
-    ...     require_subscription=True,
-    ...     subscription_redirect='/pricing'
-    ... )
+When setup_tenant_db is False, the beforeware still hydrates
+request.state.user, request.state.tenant_id, and request.state.tables,
+but it does not attach a live tenant database handle or initialize
+schema tables.
 
 ------------------------------------------------------------------------
 
@@ -2327,7 +2152,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#get_google_oau
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L595"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L608"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_google_oauth_client
@@ -2385,7 +2210,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_oauth_s
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L611"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L624"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_oauth_state
@@ -2404,7 +2229,7 @@ protection).*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L606"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L619"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_oauth_state
@@ -2457,7 +2282,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#verify_members
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L663"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L682"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_membership
@@ -2470,12 +2295,13 @@ def verify_membership(
 
 ```
 
-*Verify user has active membership for specific tenant.*
+*Verify user has active membership for a specific tenant via a direct
+lookup.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L655"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L671"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_user_membership
@@ -2488,12 +2314,12 @@ def get_user_membership(
 
 ```
 
-*Get single active membership for user.*
+*Get the first active membership for a user via a direct point lookup.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L624"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L637"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_or_get_global_user
@@ -2548,7 +2374,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#provision_new_
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L671"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L697"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### provision_new_user
@@ -2600,7 +2426,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#clear_session"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L785"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L805"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### clear_session
@@ -2618,7 +2444,7 @@ def clear_session(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L762"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L782"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_current_user
@@ -2644,7 +2470,7 @@ routes.
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L745"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L765"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_user_session
@@ -2701,7 +2527,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#require_tenant
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L790"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L810"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### auth_redirect
@@ -2729,13 +2555,10 @@ Args: request: Starlette request object redirect_url: URL to redirect to
 
 Returns: Response with appropriate redirect mechanism
 
-Example:
-`python     @app.get('/dashboard')     def dashboard(request):         if not get_current_user(request.session):             return auth_redirect(request)         return render_dashboard()`
-
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L839"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L847"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_tenant_access
@@ -2748,12 +2571,13 @@ def require_tenant_access(
 
 ```
 
-*Get tenant database with membership validation.*
+*Get tenant database with membership validation, opening it only on
+demand.*
 
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L830"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L838"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### route_user_after_login
@@ -2805,7 +2629,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_auth.html#handle_logout"
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L921"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L931"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_logout
@@ -2823,7 +2647,7 @@ def handle_logout(
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L877"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L887"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_oauth_callback
@@ -2842,7 +2666,7 @@ redirect.*
 ------------------------------------------------------------------------
 
 <a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L861"
+href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_auth.py#L871"
 target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_login_request
@@ -2870,10 +2694,6 @@ FILE: _proc/06_utils_log.html.md
 ## 🎯 Overview
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -2882,8 +2702,7 @@ FILE: _proc/06_utils_log.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_log.html#configure_logging"><code>configure_logging</code></a></td>
+<td><code>configure_logging</code></td>
 <td>One-time setup at app startup</td>
 </tr>
 </tbody>
@@ -2917,15 +2736,39 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_log.html#configure_loggi
 
 ## ⚙️ configure_logging
 
+------------------------------------------------------------------------
+
+### log_timing_event
+
+``` python
+
+def log_timing_event(
+    logger, label:str, started_at:float, level:int=20
+):
+
+```
+
+*Emit a labeled timing metric when FH_TIMING_ENABLED is enabled.*
+
+------------------------------------------------------------------------
+
+### timing_enabled
+
+``` python
+
+def timing_enabled(
+    
+)->bool:
+
+```
+
+*Return True when env-gated fh_saas timing logs should be emitted.*
+
 ``` python
 from nbdev.showdoc import show_doc
 ```
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_log.py#L15"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### configure_logging
 
@@ -2975,11 +2818,6 @@ def handle_login_request(request, session):
 ### 3. Where Do Logs Go?
 
 <table>
-<colgroup>
-<col style="width: 48%" />
-<col style="width: 31%" />
-<col style="width: 20%" />
-</colgroup>
 <thead>
 <tr>
 <th>Configuration</th>
@@ -2989,8 +2827,7 @@ def handle_login_request(request, session):
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_log.html#configure_logging"><code>configure_logging()</code></a></td>
+<td><code>configure_logging()</code></td>
 <td>✅</td>
 <td>❌</td>
 </tr>
@@ -3000,9 +2837,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_log.html#configure_loggi
 <td>✅</td>
 </tr>
 <tr>
-<td>No <a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_log.html#configure_logging"><code>configure_logging()</code></a>
-call</td>
+<td>No <code>configure_logging()</code> call</td>
 <td>❌ silent</td>
 <td>❌</td>
 </tr>
@@ -3104,18 +2939,13 @@ FILE: _proc/07_utils_api.html.md
 <tbody>
 <tr>
 <td>🔄 Client</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#asyncapiclient"><code>AsyncAPIClient</code></a></td>
+<td><code>AsyncAPIClient</code></td>
 <td>Async HTTP with retry</td>
 </tr>
 <tr>
 <td>🔑 Auth</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#bearer_token_auth"><code>bearer_token_auth</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#api_key_auth"><code>api_key_auth</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#oauth_token_auth"><code>oauth_token_auth</code></a></td>
+<td><code>bearer_token_auth</code>, <code>api_key_auth</code>,
+<code>oauth_token_auth</code></td>
 <td>Auth header generators</td>
 </tr>
 </tbody>
@@ -3142,10 +2972,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#oauth_token_aut
 ## 🔄 AsyncAPIClient
 
 <table>
-<colgroup>
-<col style="width: 47%" />
-<col style="width: 52%" />
-</colgroup>
 <thead>
 <tr>
 <th>Method</th>
@@ -3154,8 +2980,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#oauth_token_aut
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#asyncapiclient"><code>AsyncAPIClient</code></a></td>
+<td><code>AsyncAPIClient</code></td>
 <td>Async HTTP client with retry</td>
 </tr>
 <tr>
@@ -3171,10 +2996,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#asyncapiclient"
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_api.py#L28"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### AsyncAPIClient
 
 ``` python
@@ -3188,10 +3009,6 @@ def AsyncAPIClient(
 *Async HTTP client with retry logic for external API integrations.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_api.py#L31"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AsyncAPIClient.\_\_init\_\_
 
@@ -3207,10 +3024,6 @@ def __init__(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_api.py#L63"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### AsyncAPIClient.request
 
 ``` python
@@ -3224,10 +3037,6 @@ def request(
 *Execute HTTP request with automatic retry on 429/500+ errors.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_api.py#L87"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### AsyncAPIClient.get_json
 
@@ -3244,10 +3053,6 @@ def get_json(
 ## 🔑 Auth Helpers
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -3256,28 +3061,21 @@ def get_json(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#bearer_token_auth"><code>bearer_token_auth</code></a></td>
+<td><code>bearer_token_auth</code></td>
 <td>Bearer token header</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#api_key_auth"><code>api_key_auth</code></a></td>
+<td><code>api_key_auth</code></td>
 <td>API key header (customizable)</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_api.html#oauth_token_auth"><code>oauth_token_auth</code></a></td>
+<td><code>oauth_token_auth</code></td>
 <td>OAuth 2.0 access token</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_api.py#L97"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bearer_token_auth
 
@@ -3293,10 +3091,6 @@ def bearer_token_auth(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_api.py#L102"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### api_key_auth
 
 ``` python
@@ -3310,10 +3104,6 @@ def api_key_auth(
 *Generate API key header with customizable header name.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_api.py#L107"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### oauth_token_auth
 
@@ -3352,8 +3142,7 @@ FILE: _proc/08_utils_graphql.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#graphqlclient"><code>GraphQLClient</code></a></td>
+<td><code>GraphQLClient</code></td>
 <td>GraphQL client with async generator pagination</td>
 </tr>
 <tr>
@@ -3384,8 +3173,7 @@ pagination</td>
 <td>Stream paginated data (memory-efficient)</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_graphql.html#execute_graphql"><code>execute_graphql()</code></a></td>
+<td><code>execute_graphql()</code></td>
 <td>✨ <strong>NEW</strong> - One-liner function for simple queries</td>
 </tr>
 </tbody>
@@ -3543,10 +3331,6 @@ async with GraphQLClient.from_url(url, bearer_token=token) as gql:
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L19"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### GraphQLClient
 
 ``` python
@@ -3563,10 +3347,6 @@ fetching.*
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L22"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### GraphQLClient.\_\_init\_\_
 
 ``` python
@@ -3581,10 +3361,6 @@ def __init__(
 *Initialize self. See help(type(self)) for accurate signature.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L89"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.execute_query
 
@@ -3601,10 +3377,6 @@ def execute_query(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L114"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### GraphQLClient.execute_mutation
 
 ``` python
@@ -3619,10 +3391,6 @@ def execute_mutation(
 *Execute a GraphQL mutation (alias for execute_query).*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L177"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.fetch_pages_generator
 
@@ -3642,10 +3410,6 @@ def fetch_pages_generator(
 *Stream paginated GraphQL data page-by-page using async generator.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L122"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.fetch_pages_relay
 
@@ -3672,10 +3436,6 @@ Returns: List of all nodes from all pages
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L60"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### GraphQLClient.execute
 
 ``` python
@@ -3693,10 +3453,6 @@ This is a unified method that works for both queries and mutations.
 Returns only the ‘data’ portion of the response for convenience.
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L33"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### GraphQLClient.from_url
 
@@ -3788,10 +3544,6 @@ async for batch in client.fetch_pages_generator(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_graphql.py#L234"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### execute_graphql
 
 ``` python
@@ -3830,10 +3582,6 @@ FILE: _proc/14_utils_webhook.html.md
 ## 🎯 Overview
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -3842,28 +3590,23 @@ FILE: _proc/14_utils_webhook.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#verify_webhook_signature"><code>verify_webhook_signature</code></a></td>
+<td><code>verify_webhook_signature</code></td>
 <td>HMAC-SHA256 signature verification</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#check_idempotency"><code>check_idempotency</code></a></td>
+<td><code>check_idempotency</code></td>
 <td>Prevent duplicate processing</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#log_webhook_event"><code>log_webhook_event</code></a></td>
+<td><code>log_webhook_event</code></td>
 <td>Persist event to database</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#process_webhook"><code>process_webhook</code></a></td>
+<td><code>process_webhook</code></td>
 <td>Main orchestration function</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#handle_webhook_request"><code>handle_webhook_request</code></a></td>
+<td><code>handle_webhook_request</code></td>
 <td>FastHTML route handler</td>
 </tr>
 </tbody>
@@ -3884,10 +3627,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#handle_webh
 ## 🔐 Signature Verification
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -3896,8 +3635,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#handle_webh
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#verify_webhook_signature"><code>verify_webhook_signature</code></a></td>
+<td><code>verify_webhook_signature</code></td>
 <td>HMAC-SHA256 with timing-safe comparison</td>
 </tr>
 </tbody>
@@ -3908,10 +3646,6 @@ from nbdev.showdoc import *
 ```
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L25"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### verify_webhook_signature
 
@@ -3931,10 +3665,6 @@ valid.*
 ## 🔄 Idempotency
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -3943,18 +3673,13 @@ valid.*
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#check_idempotency"><code>check_idempotency</code></a></td>
+<td><code>check_idempotency</code></td>
 <td>Check if event already processed</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L50"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### check_idempotency
 
@@ -3972,10 +3697,6 @@ def check_idempotency(
 ## 📝 Event Logging
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -3984,23 +3705,17 @@ def check_idempotency(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#log_webhook_event"><code>log_webhook_event</code></a></td>
+<td><code>log_webhook_event</code></td>
 <td>Persist event to database</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#update_webhook_status"><code>update_webhook_status</code></a></td>
+<td><code>update_webhook_status</code></td>
 <td>Update status after processing</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L62"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### log_webhook_event
 
@@ -4025,10 +3740,6 @@ def log_webhook_event(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L85"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### update_webhook_status
 
 ``` python
@@ -4047,10 +3758,6 @@ def update_webhook_status(
 ## ⚡ Process Webhook
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -4059,23 +3766,17 @@ def update_webhook_status(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#process_webhook"><code>process_webhook</code></a></td>
+<td><code>process_webhook</code></td>
 <td>Main orchestration function</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_webhook.html#handle_webhook_request"><code>handle_webhook_request</code></a></td>
+<td><code>handle_webhook_request</code></td>
 <td>FastHTML route handler</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L102"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### process_webhook
 
@@ -4105,10 +3806,6 @@ from nbdev.showdoc import show_doc
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L25"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### verify_webhook_signature
 
 ``` python
@@ -4126,10 +3823,6 @@ valid.*
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L50"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### check_idempotency
 
 ``` python
@@ -4144,10 +3837,6 @@ def check_idempotency(
 *Check if webhook event already processed. Returns True if duplicate.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L62"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### log_webhook_event
 
@@ -4170,10 +3859,6 @@ def log_webhook_event(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L85"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### update_webhook_status
 
 ``` python
@@ -4190,10 +3875,6 @@ def update_webhook_status(
 *Update webhook event status and processed timestamp*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L102"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### process_webhook
 
@@ -4218,10 +3899,6 @@ def process_webhook(
 execution*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_webhook.py#L144"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### handle_webhook_request
 
@@ -4279,56 +3956,34 @@ database-heavy applications:
 <tbody>
 <tr>
 <td>🔍 Query Registry</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#run_id"><code>run_id</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#validate_params"><code>validate_params</code></a></td>
+<td><code>run_id</code>, <code>validate_params</code></td>
 <td>Execute queries by ID from centralized registries</td>
 </tr>
 <tr>
 <td>➕ Insert-Only</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#insert_only"><code>insert_only</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_insert_only"><code>bulk_insert_only</code></a></td>
+<td><code>insert_only</code>, <code>bulk_insert_only</code></td>
 <td>Insert new records, skip conflicts</td>
 </tr>
 <tr>
 <td>🔄 Upsert</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#upsert"><code>upsert</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_upsert"><code>bulk_upsert</code></a></td>
+<td><code>upsert</code>, <code>bulk_upsert</code></td>
 <td>Insert or update existing records</td>
 </tr>
 <tr>
 <td>📝 CRUD</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#get_by_id"><code>get_by_id</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#update_record"><code>update_record</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#delete_record"><code>delete_record</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_delete"><code>bulk_delete</code></a></td>
+<td><code>get_by_id</code>, <code>update_record</code>,
+<code>delete_record</code>, <code>bulk_delete</code></td>
 <td>Standard database operations</td>
 </tr>
 <tr>
 <td>🔧 Utilities</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#with_transaction"><code>with_transaction</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#paginate_sql"><code>paginate_sql</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#batch_execute"><code>batch_execute</code></a></td>
+<td><code>with_transaction</code>, <code>paginate_sql</code>,
+<code>batch_execute</code></td>
 <td>Transaction management &amp; helpers</td>
 </tr>
 <tr>
 <td>💰 Money</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#to_cents"><code>to_cents</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#from_cents"><code>from_cents</code></a></td>
+<td><code>to_cents</code>, <code>from_cents</code></td>
 <td>Currency conversion for <code>int</code>-only storage</td>
 </tr>
 </tbody>
@@ -4377,14 +4032,12 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#from_cents"><co
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#insert_only"><code>insert_only</code></a></td>
+<td><code>insert_only</code></td>
 <td><strong>Skip</strong> (DO NOTHING)</td>
 <td>Append-only logs, idempotent imports</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#upsert"><code>upsert</code></a></td>
+<td><code>upsert</code></td>
 <td><strong>Update</strong> existing</td>
 <td>Sync external data, refresh caches</td>
 </tr>
@@ -4394,11 +4047,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#upsert"><code>u
 ### Performance Tips
 
 <table>
-<colgroup>
-<col style="width: 35%" />
-<col style="width: 46%" />
-<col style="width: 17%" />
-</colgroup>
 <thead>
 <tr>
 <th>Scenario</th>
@@ -4409,10 +4057,7 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#upsert"><code>u
 <tbody>
 <tr>
 <td>Single record</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#insert_only"><code>insert_only</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#upsert"><code>upsert</code></a></td>
+<td><code>insert_only</code>, <code>upsert</code></td>
 <td>Simple, immediate</td>
 </tr>
 <tr>
@@ -4422,14 +4067,12 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#upsert"><code>u
 </tr>
 <tr>
 <td>100+ records</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#batch_execute"><code>batch_execute</code></a></td>
+<td><code>batch_execute</code></td>
 <td>Commits per batch, memory-safe</td>
 </tr>
 <tr>
 <td>Multi-table changes</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#with_transaction"><code>with_transaction</code></a></td>
+<td><code>with_transaction</code></td>
 <td>All-or-nothing commits</td>
 </tr>
 </tbody>
@@ -4443,10 +4086,6 @@ Automatically detects PostgreSQL vs SQLite from `DB_TYPE` environment
 variable to generate appropriate SQL syntax.
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L24"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_db_type
 
@@ -4468,10 +4107,6 @@ Execute queries by ID from a centralized registry with automatic
 parameter validation.
 
 <table>
-<colgroup>
-<col style="width: 55%" />
-<col style="width: 44%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -4480,23 +4115,17 @@ parameter validation.
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#run_id"><code>run_id</code></a></td>
+<td><code>run_id</code></td>
 <td>Execute a registered query by its ID</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#validate_params"><code>validate_params</code></a></td>
+<td><code>validate_params</code></td>
 <td>Ensure all <code>:param</code> placeholders have values</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L42"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### run_id
 
@@ -4511,10 +4140,6 @@ def run_id(
 *Execute a query by ID from a query registry.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L33"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### validate_params
 
@@ -4550,15 +4175,13 @@ skipped.
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#insert_only"><code>insert_only</code></a></td>
+<td><code>insert_only</code></td>
 <td>Single</td>
 <td><code>ON CONFLICT DO NOTHING</code> (PG) /
 <code>INSERT OR IGNORE</code> (SQLite)</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_insert_only"><code>bulk_insert_only</code></a></td>
+<td><code>bulk_insert_only</code></td>
 <td>Multiple</td>
 <td>Same, with batch execution</td>
 </tr>
@@ -4569,10 +4192,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_insert_onl
 > deduplication
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L95"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bulk_insert_only
 
@@ -4588,10 +4207,6 @@ def bulk_insert_only(
 operation).*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L64"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### insert_only
 
@@ -4626,15 +4241,13 @@ Insert new records **or update existing ones** on conflict.
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#upsert"><code>upsert</code></a></td>
+<td><code>upsert</code></td>
 <td>Single</td>
 <td><code>ON CONFLICT DO UPDATE</code> (PG) /
 <code>INSERT OR REPLACE</code> (SQLite)</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_upsert"><code>bulk_upsert</code></a></td>
+<td><code>bulk_upsert</code></td>
 <td>Multiple</td>
 <td>Same, with batch execution</td>
 </tr>
@@ -4645,10 +4258,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_upsert"><c
 > settings
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L166"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bulk_upsert
 
@@ -4663,10 +4272,6 @@ def bulk_upsert(
 *Insert or update multiple records (optimized batch operation).*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L129"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### upsert
 
@@ -4687,11 +4292,6 @@ def upsert(
 Standard Create, Read, Update, Delete operations.
 
 <table>
-<colgroup>
-<col style="width: 29%" />
-<col style="width: 32%" />
-<col style="width: 38%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -4701,26 +4301,22 @@ Standard Create, Read, Update, Delete operations.
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#get_by_id"><code>get_by_id</code></a></td>
+<td><code>get_by_id</code></td>
 <td><strong>Read</strong></td>
 <td>Fetch single record by primary key</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#update_record"><code>update_record</code></a></td>
+<td><code>update_record</code></td>
 <td><strong>Update</strong></td>
 <td>Modify record fields by ID</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#delete_record"><code>delete_record</code></a></td>
+<td><code>delete_record</code></td>
 <td><strong>Delete</strong></td>
 <td>Remove single record by ID</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_delete"><code>bulk_delete</code></a></td>
+<td><code>bulk_delete</code></td>
 <td><strong>Delete</strong></td>
 <td>Remove multiple records by ID list</td>
 </tr>
@@ -4728,10 +4324,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#bulk_delete"><c
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L251"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### bulk_delete
 
@@ -4747,10 +4339,6 @@ def bulk_delete(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L237"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### delete_record
 
 ``` python
@@ -4765,10 +4353,6 @@ def delete_record(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L216"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### update_record
 
 ``` python
@@ -4782,10 +4366,6 @@ def update_record(
 *Update a single record by ID.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L206"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_by_id
 
@@ -4806,10 +4386,6 @@ def get_by_id(
 Transaction management, pagination, and batch processing.
 
 <table>
-<colgroup>
-<col style="width: 55%" />
-<col style="width: 44%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -4818,28 +4394,21 @@ Transaction management, pagination, and batch processing.
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#with_transaction"><code>with_transaction</code></a></td>
+<td><code>with_transaction</code></td>
 <td>Context manager for atomic operations</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#paginate_sql"><code>paginate_sql</code></a></td>
+<td><code>paginate_sql</code></td>
 <td>Add LIMIT/OFFSET to queries</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#batch_execute"><code>batch_execute</code></a></td>
+<td><code>batch_execute</code></td>
 <td>Process large lists in memory-safe chunks</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L289"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### batch_execute
 
@@ -4856,10 +4425,6 @@ batch.*
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L284"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### paginate_sql
 
 ``` python
@@ -4873,10 +4438,6 @@ def paginate_sql(
 *Add LIMIT/OFFSET pagination to a SQL query.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L275"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### with_transaction
 
@@ -4901,11 +4462,6 @@ Convert between dollar amounts and integer cents for database storage.
 > storing money as cents avoids floating-point precision issues.
 
 <table>
-<colgroup>
-<col style="width: 34%" />
-<col style="width: 37%" />
-<col style="width: 27%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -4915,14 +4471,12 @@ Convert between dollar amounts and integer cents for database storage.
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#to_cents"><code>to_cents</code></a></td>
+<td><code>to_cents</code></td>
 <td><code>"$150.00"</code> → <code>15000</code></td>
 <td>Store in DB</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#from_cents"><code>from_cents</code></a></td>
+<td><code>from_cents</code></td>
 <td><code>15000</code> → <code>"$150.00"</code></td>
 <td>Display to user</td>
 </tr>
@@ -4930,10 +4484,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_sql.html#from_cents"><co
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L303"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### to_cents
 
@@ -4948,10 +4498,6 @@ def to_cents(
 *Convert dollar amount to integer cents for database storage.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_sql.py#L313"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### from_cents
 
@@ -4993,14 +4539,12 @@ FILE: _proc/03_utils_bgtsk.html.md
 <tbody>
 <tr>
 <td>📦 Model</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_bgtsk.html#tenantjob"><code>TenantJob</code></a></td>
+<td><code>TenantJob</code></td>
 <td>Tenant-level job record with retry support</td>
 </tr>
 <tr>
 <td>⚡ Manager</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_bgtsk.html#backgroundtaskmanager"><code>BackgroundTaskManager</code></a></td>
+<td><code>BackgroundTaskManager</code></td>
 <td>Submit, execute, and track background tasks</td>
 </tr>
 </tbody>
@@ -5113,10 +4657,6 @@ Tracks background jobs at the tenant level with retry support.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_bgtsk.py#L26"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### TenantJob
 
 ``` python
@@ -5163,10 +4703,6 @@ Submit and track background tasks with automatic retry logic.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_bgtsk.py#L41"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### BackgroundTaskManager
 
 ``` python
@@ -5180,10 +4716,6 @@ def BackgroundTaskManager(
 *Lightweight background task manager for tenant-level operations.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_bgtsk.py#L103"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### BackgroundTaskManager.list_jobs
 
@@ -5199,10 +4731,6 @@ def list_jobs(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_bgtsk.py#L99"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### BackgroundTaskManager.get_job
 
 ``` python
@@ -5216,10 +4744,6 @@ def get_job(
 *Get job status and details.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_bgtsk.py#L49"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### BackgroundTaskManager.submit
 
@@ -5246,10 +4770,6 @@ FILE: _proc/09_utils_polars_mapper.html.md
 ## 🎯 Overview
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -5258,13 +4778,11 @@ FILE: _proc/09_utils_polars_mapper.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_polars_mapper.html#map_and_upsert"><code>map_and_upsert</code></a></td>
+<td><code>map_and_upsert</code></td>
 <td>Bulk JSON→DB upsert via staging table</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_polars_mapper.html#apply_schema"><code>apply_schema</code></a></td>
+<td><code>apply_schema</code></td>
 <td>Type conversions (dates, booleans, numbers)</td>
 </tr>
 </tbody>
@@ -5382,10 +4900,6 @@ print(f"Upserted {rows_affected} users")
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_polars_mapper.py#L21"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### map_and_upsert
 
 ``` python
@@ -5480,10 +4994,6 @@ df = apply_schema(df, {
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_polars_mapper.py#L133"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### apply_schema
 
 ``` python
@@ -5525,16 +5035,12 @@ FILE: _proc/16_utils_stripe.html.md
 <tbody>
 <tr>
 <td>⚙️ Configuration</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#stripeconfig"><code>StripeConfig</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#stripeconfig.from_env"><code>StripeConfig.from_env()</code></a></td>
+<td><code>StripeConfig</code>, <code>StripeConfig.from_env()</code></td>
 <td>Configure Stripe with env vars or explicit values</td>
 </tr>
 <tr>
 <td>💳 Service</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#stripeservice"><code>StripeService</code></a></td>
+<td><code>StripeService</code></td>
 <td>Unified API for checkouts, subscriptions, webhooks</td>
 </tr>
 <tr>
@@ -5556,26 +5062,21 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#stripeservic
 </tr>
 <tr>
 <td>🔐 Access Control</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#get_active_subscription"><code>get_active_subscription</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#has_active_subscription"><code>has_active_subscription</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#require_active_subscription"><code>require_active_subscription</code></a></td>
+<td><code>get_active_subscription</code>,
+<code>has_active_subscription</code>,
+<code>require_active_subscription</code></td>
 <td>Gate features by payment status</td>
 </tr>
 <tr>
 <td>📊 Feature Gating</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#check_feature_access"><code>check_feature_access</code></a></td>
+<td><code>check_feature_access</code></td>
 <td>Control features by plan tier</td>
 </tr>
 <tr>
 <td>🛤️ Route Helpers</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#create_webhook_route"><code>create_webhook_route</code></a>,
-<code>create_checkout_route</code>, <a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#create_portal_route"><code>create_portal_route</code></a></td>
+<td><code>create_webhook_route</code>,
+<code>create_checkout_route</code>,
+<code>create_portal_route</code></td>
 <td>FastHTML route factories</td>
 </tr>
 </tbody>
@@ -5669,10 +5170,6 @@ variable support.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L30"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### StripeConfig
 
 ``` python
@@ -5707,10 +5204,6 @@ StripeService(config)
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L74"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### StripeConfig.from_env
 
 ``` python
@@ -5742,10 +5235,6 @@ subscriptions, and webhooks.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L122"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### StripeService
 
 ``` python
@@ -5771,10 +5260,6 @@ tenant_id=‘tnt_123’, … user_email=‘user@example.com’ … ) \>\>\>
 print(checkout.url) \# Redirect user here
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L162"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService.create_subscription_checkout
 
@@ -5803,10 +5288,6 @@ RedirectResponse(checkout.url)
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L230"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### StripeService.create_one_time_checkout
 
 ``` python
@@ -5833,10 +5314,6 @@ return RedirectResponse(checkout.url)
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L298"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### StripeService.create_customer_portal_session
 
 ``` python
@@ -5860,10 +5337,6 @@ RedirectResponse(portal.url)
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L342"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### StripeService.cancel_subscription
 
 ``` python
@@ -5882,10 +5355,6 @@ cancel at end of billing period (default) If False, cancel immediately
 Returns: Updated Stripe Subscription object
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L441"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### StripeService.handle_event
 
@@ -5915,10 +5384,6 @@ Store your Stripe price IDs in the database for admin-configurable
 pricing without code changes.
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L740"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_pricing_plans
 
@@ -6004,16 +5469,10 @@ Enterprise Plan: $49.99/mo
 
 Note: - Create your Stripe Products and Prices in the Stripe Dashboard
 first - Copy the price IDs (price_xxx) into your database records - The
-`tier_level` field is used by
-[`check_feature_access()`](https://abhisheksreesaila.github.io/fh-saas/utils_stripe.html#check_feature_access)
-for feature gating - The `features` field should be a JSON array of
-feature keys
+`tier_level` field is used by `check_feature_access()` for feature
+gating - The `features` field should be a JSON array of feature keys
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L845"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_pricing_plan
 
@@ -6045,10 +5504,6 @@ period support.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L877"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### get_active_subscription
 
 ``` python
@@ -6075,10 +5530,6 @@ Example: \>\>\> sub = get_active_subscription(‘tnt_123’) \>\>\> if sub:
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L937"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### has_active_subscription
 
 ``` python
@@ -6100,10 +5551,6 @@ Example: \>\>\> if has_active_subscription(‘tnt_123’): …
 show_premium_features()
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L959"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_active_subscription
 
@@ -6132,10 +5579,6 @@ require_active_subscription(request.state.tenant_id) … if error: …
 return error … return render_premium_content()
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1000"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_subscription_status
 
@@ -6169,10 +5612,6 @@ Control access to features based on subscription plan tier.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1109"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### check_feature_access
 
 ``` python
@@ -6197,10 +5636,6 @@ Example: \>\>\> if check_feature_access(‘tnt_123’,
 render_upgrade_prompt()
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1161"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### require_feature_access
 
@@ -6233,10 +5668,6 @@ Ready-to-use FastHTML route factories for Stripe integration.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1205"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### create_webhook_route
 
 ``` python
@@ -6262,10 +5693,6 @@ POST /stripe/webhook
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1246"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### create_subscription_checkout_route
 
 ``` python
@@ -6290,10 +5717,6 @@ Example: \>\>\> create_subscription_checkout_route(app, service) \>\>\>
 \# Checkout available at GET /checkout/monthly or /checkout/yearly
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1293"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_one_time_checkout_route
 
@@ -6321,10 +5744,6 @@ service, products) \>\>\> \# Checkout available at GET /buy/report or
 /buy/credits
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1346"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### create_portal_route
 
@@ -6354,10 +5773,6 @@ Singleton pattern for easy service access across the application.
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1415"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### reset_stripe_service
 
 ``` python
@@ -6371,10 +5786,6 @@ def reset_stripe_service(
 *Reset singleton instance (for testing only).*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_stripe.py#L1392"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_stripe_service
 
@@ -6503,34 +5914,23 @@ FILE: _proc/05_utils_email.html.md
 <tbody>
 <tr>
 <td>⚙️ Config</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#get_smtp_config"><code>get_smtp_config</code></a></td>
+<td><code>get_smtp_config</code></td>
 <td>Load SMTP settings from env</td>
 </tr>
 <tr>
 <td>📁 Templates</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#get_template_path"><code>get_template_path</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#load_template"><code>load_template</code></a></td>
+<td><code>get_template_path</code>, <code>load_template</code></td>
 <td>Manage markdown templates</td>
 </tr>
 <tr>
 <td>✉️ Sending</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_email"><code>send_email</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_batch_emails"><code>send_batch_emails</code></a></td>
+<td><code>send_email</code>, <code>send_batch_emails</code></td>
 <td>Core send functions</td>
 </tr>
 <tr>
 <td>🎁 Convenience</td>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_welcome_email"><code>send_welcome_email</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_invitation_email"><code>send_invitation_email</code></a>,
-<a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_password_reset_email"><code>send_password_reset_email</code></a></td>
+<td><code>send_welcome_email</code>, <code>send_invitation_email</code>,
+<code>send_password_reset_email</code></td>
 <td>Pre-built templates</td>
 </tr>
 </tbody>
@@ -6612,10 +6012,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_password
 ## ⚙️ SMTP Configuration
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -6624,18 +6020,13 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_password
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#get_smtp_config"><code>get_smtp_config</code></a></td>
+<td><code>get_smtp_config</code></td>
 <td>Load SMTP config from environment vars</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L20"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_smtp_config
 
@@ -6673,23 +6064,17 @@ any email function.
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#get_template_path"><code>get_template_path</code></a></td>
+<td><code>get_template_path</code></td>
 <td>Resolve path to template file (built-in or custom)</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#load_template"><code>load_template</code></a></td>
+<td><code>load_template</code></td>
 <td>Read template content as string</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L82"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### load_template
 
@@ -6705,10 +6090,6 @@ def load_template(
 *Load markdown email template as string.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L58"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### get_template_path
 
@@ -6726,10 +6107,6 @@ def get_template_path(
 ## ✉️ Email Sending
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -6738,23 +6115,17 @@ def get_template_path(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_email"><code>send_email</code></a></td>
+<td><code>send_email</code></td>
 <td>Send single email with template</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_batch_emails"><code>send_batch_emails</code></a></td>
+<td><code>send_batch_emails</code></td>
 <td>Send to multiple recipients</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L91"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_email
 
@@ -6790,18 +6161,13 @@ def send_email(
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_batch_emails"><code>send_batch_emails</code></a></td>
+<td><code>send_batch_emails</code></td>
 <td>Send personalized emails to multiple recipients</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L170"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_batch_emails
 
@@ -6842,20 +6208,17 @@ Pre-built functions for common email types. All support
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_welcome_email"><code>send_welcome_email</code></a></td>
+<td><code>send_welcome_email</code></td>
 <td><code>welcome.md</code></td>
 <td>New user onboarding</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_invitation_email"><code>send_invitation_email</code></a></td>
+<td><code>send_invitation_email</code></td>
 <td><code>invitation.md</code></td>
 <td>Invite to tenant</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_password_reset_email"><code>send_password_reset_email</code></a></td>
+<td><code>send_password_reset_email</code></td>
 <td><code>password_reset.md</code></td>
 <td>Password recovery</td>
 </tr>
@@ -6863,10 +6226,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_email.html#send_password
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L254"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_welcome_email
 
@@ -6889,10 +6248,6 @@ def send_welcome_email(
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L280"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### send_invitation_email
 
 ``` python
@@ -6913,10 +6268,6 @@ def send_invitation_email(
 {invitation_url}, {to_email}*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_email.py#L306"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### send_password_reset_email
 
@@ -6995,10 +6346,6 @@ FILE: _proc/11_utils_blog.html.md
 ## 🎯 Overview
 
 <table>
-<colgroup>
-<col style="width: 43%" />
-<col style="width: 56%" />
-</colgroup>
 <thead>
 <tr>
 <th>Class</th>
@@ -7007,13 +6354,11 @@ FILE: _proc/11_utils_blog.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_blog.html#postloader"><code>PostLoader</code></a></td>
+<td><code>PostLoader</code></td>
 <td>Load markdown posts from filesystem</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_blog.html#markdownengine"><code>MarkdownEngine</code></a></td>
+<td><code>MarkdownEngine</code></td>
 <td>Render markdown to SEO-friendly HTML</td>
 </tr>
 </tbody>
@@ -7042,10 +6387,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_blog.html#markdownengine
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_blog.py#L34"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### PostLoader
 
 ``` python
@@ -7059,10 +6400,6 @@ def PostLoader(
 *Load and parse markdown blog posts from filesystem*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_blog.py#L41"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### PostLoader.load_posts
 
@@ -7087,10 +6424,6 @@ loader.load_posts()
     ```
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_blog.py#L81"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### PostLoader.get_post
 
@@ -7126,10 +6459,6 @@ Example:
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_blog.py#L96"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### MarkdownEngine
 
 ``` python
@@ -7143,10 +6472,6 @@ def MarkdownEngine(
 *Render markdown to HTML with SEO extensions*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_blog.py#L117"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MarkdownEngine.render
 
@@ -7181,10 +6506,6 @@ This is <strong>bold</strong>.
             ```
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_blog.py#L133"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### MarkdownEngine.get_toc
 
@@ -7266,10 +6587,6 @@ FILE: _proc/12_utils_seo.html.md
 ## 🎯 Overview
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -7278,13 +6595,11 @@ FILE: _proc/12_utils_seo.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_seo.html#generate_head_tags"><code>generate_head_tags</code></a></td>
+<td><code>generate_head_tags</code></td>
 <td>Meta tags for social sharing</td>
 </tr>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_seo.html#generate_sitemap_xml"><code>generate_sitemap_xml</code></a></td>
+<td><code>generate_sitemap_xml</code></td>
 <td>XML sitemap for crawlers</td>
 </tr>
 <tr>
@@ -7297,10 +6612,6 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_seo.html#generate_sitema
 ## 🏷️ Meta Tags
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -7309,18 +6620,13 @@ href="https://abhisheksreesaila.github.io/fh-saas/utils_seo.html#generate_sitema
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_seo.html#generate_head_tags"><code>generate_head_tags</code></a></td>
+<td><code>generate_head_tags</code></td>
 <td>OpenGraph, Twitter Card, canonical</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_seo.py#L16"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_head_tags
 
@@ -7367,10 +6673,6 @@ Example: \`\`\`python from fasthtml.common import \*
 ## 🗺️ Sitemap
 
 <table>
-<colgroup>
-<col style="width: 52%" />
-<col style="width: 47%" />
-</colgroup>
 <thead>
 <tr>
 <th>Function</th>
@@ -7379,18 +6681,13 @@ Example: \`\`\`python from fasthtml.common import \*
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_seo.html#generate_sitemap_xml"><code>generate_sitemap_xml</code></a></td>
+<td><code>generate_sitemap_xml</code></td>
 <td>XML sitemap for search crawlers</td>
 </tr>
 </tbody>
 </table>
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_seo.py#L103"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_sitemap_xml
 
@@ -7430,10 +6727,6 @@ fh_saas.utils_blog import PostLoader
 Generate RSS 2.0 feed for blog subscribers.
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_seo.py#L162"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### generate_rss_xml
 
@@ -7545,10 +6838,6 @@ FILE: _proc/13_utils_workflow.html.md
 ## 🎯 Overview
 
 <table>
-<colgroup>
-<col style="width: 43%" />
-<col style="width: 56%" />
-</colgroup>
 <thead>
 <tr>
 <th>Class</th>
@@ -7557,8 +6846,7 @@ FILE: _proc/13_utils_workflow.html.md
 </thead>
 <tbody>
 <tr>
-<td><a
-href="https://abhisheksreesaila.github.io/fh-saas/utils_workflow.html#workflow"><code>Workflow</code></a></td>
+<td><code>Workflow</code></td>
 <td>Execute callable steps sequentially</td>
 </tr>
 </tbody>
@@ -7591,10 +6879,6 @@ from nbdev.showdoc import *
 
 ------------------------------------------------------------------------
 
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_workflow.py#L13"
-target="_blank" style="float:right; font-size:smaller">source</a>
-
 ### Workflow
 
 ``` python
@@ -7609,10 +6893,6 @@ def Workflow(
 readability.*
 
 ------------------------------------------------------------------------
-
-<a
-href="https://github.com/abhisheksreesaila/fh-saas/blob/main/fh_saas/utils_workflow.py#L20"
-target="_blank" style="float:right; font-size:smaller">source</a>
 
 ### Workflow.execute
 

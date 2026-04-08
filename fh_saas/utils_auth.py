@@ -15,15 +15,16 @@ from nbdev.showdoc import show_doc
 from fastsql import *
 from fastcore.utils import *
 from fh_saas.db_host import (
-    timestamp, gen_id, 
+    timestamp, gen_id,
     GlobalUser, TenantCatalog, Membership, HostAuditLog,
     HostDatabase
 )
 from fh_saas.db_tenant import (
-    get_or_create_tenant_db, 
-    init_tenant_core_schema, 
+    get_or_create_tenant_db,
+    init_tenant_core_schema,
     TenantUser
 )
+from .utils_log import log_timing_event
 from fasthtml.oauth import GoogleAppClient, redir_url
 from starlette.responses import RedirectResponse, Response
 import os
@@ -31,6 +32,7 @@ import uuid
 import json
 import logging
 import time
+import sqlalchemy as sa
 from dotenv import load_dotenv
 from dataclasses import dataclass
 from starlette.middleware.sessions import SessionMiddleware
@@ -223,16 +225,54 @@ ROLE_HIERARCHY = {
     'viewer': 1
 }
 
+
+def _close_tenant_db_connection(tenant_db: 'Database'):
+    if not tenant_db:
+        return
+    try:
+        tenant_db.conn.close()
+    except Exception:
+        pass
+    try:
+        tenant_db.engine.dispose()
+    except Exception:
+        pass
+
+
+def _lookup_local_role(tenant_db: 'Database', user_id: str) -> str | None:
+    if not tenant_db or not user_id:
+        return None
+    try:
+        tenant_db.conn.rollback()
+    except Exception:
+        pass
+
+    try:
+        tenant_users = tenant_db.meta.tables.get('core_tenant_users')
+        if tenant_users is None:
+            return None
+        stmt = (
+            sa.select(tenant_users.c.local_role)
+            .where(tenant_users.c.id == user_id)
+            .limit(1)
+        )
+        row = tenant_db.conn.execute(stmt).first()
+        return row[0] if row else None
+    except Exception as e:
+        logger.warning(f"Failed to lookup TenantUser role: {e}")
+        return None
+
+
 def has_min_role(user: dict, required_role: str) -> bool:
     """Check if user meets the minimum role requirement.
-    
+
     Args:
         user: User dict with 'role' field (from request.state.user)
         required_role: Minimum role needed ('admin', 'editor', 'viewer')
-    
+
     Returns:
         True if user's role >= required_role in hierarchy
-        
+
     Example:
         >>> user = {'role': 'editor'}
         >>> has_min_role(user, 'viewer')  # True - editor > viewer
@@ -246,44 +286,31 @@ def has_min_role(user: dict, required_role: str) -> bool:
 
 def get_user_role(session: dict, tenant_db: 'Database' = None) -> str:
     """Derive effective role from session and tenant database.
-    
+
     Rules:
-    1. Tenant owner (session['tenant_role'] == 'owner') → 'admin'
-    2. System admin → 'admin'
-    3. Otherwise → lookup TenantUser.local_role from tenant DB
-    4. Fallback → None (user must be explicitly assigned a role)
-    
+    1. Tenant owner (session['tenant_role'] == 'owner') -> 'admin'
+    2. System admin -> 'admin'
+    3. Otherwise -> lookup TenantUser.local_role from tenant DB
+    4. Fallback -> None (user must be explicitly assigned a role)
+
     Args:
         session: User session dict
         tenant_db: Tenant database connection (optional)
-    
+
     Returns:
         Effective role string: 'admin', 'editor', 'viewer', or None
     """
-    # Owner is always admin
-    if session.get('tenant_role') == 'owner':
-        return 'admin'
-    
-    # System admin is always admin
-    if session.get('is_sys_admin'):
-        return 'admin'
-    
-    # Look up local_role from TenantUser
-    if tenant_db:
-        user_id = session.get('user_id')
-        if user_id:
-            try:
-                tenant_db.conn.rollback()
-                tenant_users = tenant_db.t.core_tenant_users
-                all_users = tenant_users()
-                matching = [u for u in all_users if u.id == user_id]
-                if matching:
-                    return matching[0].local_role
-            except Exception as e:
-                logger.warning(f"Failed to lookup TenantUser role: {e}")
-    
-    # No role found - user must be assigned explicitly
-    return None
+    role_started = time.perf_counter()
+    try:
+        if session.get('tenant_role') == 'owner':
+            return 'admin'
+
+        if session.get('is_sys_admin'):
+            return 'admin'
+
+        return _lookup_local_role(tenant_db, session.get('user_id'))
+    finally:
+        log_timing_event(logger, 'auth_get_user_role', role_started)
 
 # %% ../nbs/04_utils_auth.ipynb #ca53191d
 from functools import wraps
@@ -419,6 +446,63 @@ DEFAULT_SKIP_AUTH = [
     r'/static/.*',
 ]
 
+
+def _needs_tenant_membership(user: dict | None) -> bool:
+    return bool(user and user.get('tenant_id') and not user.get('is_sys_admin'))
+
+
+def _load_current_user(session: dict) -> dict | None:
+    started = time.perf_counter()
+    try:
+        user = get_current_user(session)
+        return user.copy() if user else None
+    finally:
+        log_timing_event(logger, 'auth_get_current_user', started)
+
+
+def _get_cached_request_user(session: dict, enabled: bool, cache_ttl: int):
+    started = time.perf_counter()
+    try:
+        if not enabled:
+            return None
+        cached = _get_cached_auth(session, cache_ttl)
+        if not cached:
+            return None
+        user = cached['user'].copy()
+        user.setdefault('is_owner', session.get('tenant_role') == 'owner')
+        return user
+    finally:
+        log_timing_event(logger, 'auth_cache_lookup', started)
+
+
+def _open_request_tenant_db(tenant_id: str):
+    if not tenant_id:
+        return None
+    try:
+        return get_or_create_tenant_db(tenant_id)
+    except Exception as e:
+        logger.error(f"Failed to setup tenant_db for tenant {tenant_id}: {e}")
+        return None
+
+
+def _verify_request_membership(user: dict) -> bool:
+    if not _needs_tenant_membership(user):
+        return True
+    try:
+        host_db = HostDatabase.from_env()
+        return verify_membership(host_db, user['user_id'], user['tenant_id'])
+    except Exception as e:
+        logger.error(f"Failed to verify membership for user {user.get('user_id')}: {e}")
+        return False
+
+
+def _set_request_auth_state(req, user: dict | None, tenant_db: 'Database' = None):
+    req.state.user = user
+    req.state.tenant_id = user.get('tenant_id') if user else None
+    req.state.tenant_db = tenant_db
+    req.state.tables = {}
+
+
 def create_auth_beforeware(
     redirect_path: str = '/login',
     session_key: str = 'user_id',
@@ -433,138 +517,65 @@ def create_auth_beforeware(
     grace_period_days: int = 3,
     session_config: SessionConfig = None,
 ):
-    """Create Beforeware that checks for authenticated session and sets up request.state.
-    
-    Args:
-        redirect_path: Where to redirect unauthenticated users
-        session_key: Session key for user ID
-        skip: List of regex patterns to skip auth
-        include_defaults: Include default skip patterns
-        setup_tenant_db: Auto-setup tenant database on request.state
-        schema_init: Optional callback to initialize tables dict.
-                     Signature: (tenant_db: Database) -> dict[str, Table]
-                     Result stored in request.state.tables
-        session_cache: Enable caching user dict in session to reduce DB queries.
-                       Recommended for HTMX-heavy apps. Default: False
-        session_cache_ttl: Cache TTL in seconds. Default: 300 (5 minutes)
-        require_subscription: If True, check for active subscription and return 402
-                             if not found. Default: False
-        subscription_redirect: Optional URL to redirect if subscription required.
-                              If None, returns 402 Payment Required response.
-        grace_period_days: Days to allow access after payment failure (default: 3)
-        session_config: Optional SessionConfig for absolute timeout enforcement.
-                       Note: Sliding expiry requires SlidingSessionMiddleware.
-                       This parameter only enforces absolute_max if configured.
-    
-    Returns:
-        Beforeware instance for FastHTML apps
-        
-    Sets on request.state:
-        - user: dict with user_id, email, tenant_id, role, is_owner
-        - tenant_id: str
-        - tenant_db: Database connection
-        - tables: dict of Table objects (if schema_init provided)
-        - subscription: Subscription object (if require_subscription enabled)
-        
-    Example:
-        >>> # Basic usage
-        >>> beforeware = create_auth_beforeware()
-        
-        >>> # With session caching for HTMX apps
-        >>> beforeware = create_auth_beforeware(
-        ...     session_cache=True,
-        ...     session_cache_ttl=300
-        ... )
-        
-        >>> # With schema initialization
-        >>> def get_app_tables(db):
-        ...     return {'users': db.create(User, pk='id')}
-        >>> beforeware = create_auth_beforeware(schema_init=get_app_tables)
-        
-        >>> # With subscription requirement
-        >>> beforeware = create_auth_beforeware(
-        ...     require_subscription=True,
-        ...     subscription_redirect='/pricing'
-        ... )
+    """Create Beforeware that checks for authenticated session and hydrates request.state.
+
+    When setup_tenant_db is False, the beforeware still hydrates request.state.user,
+    request.state.tenant_id, and request.state.tables, but it does not attach a live
+    tenant database handle or initialize schema tables.
     """
     skip_patterns = []
     if include_defaults:
         skip_patterns.extend(DEFAULT_SKIP_AUTH)
     if skip:
         skip_patterns.extend(skip)
-    
+
     def check_auth(req, sess):
-        # Check absolute session timeout if session_config provided
-        if session_config and session_config.absolute_max:
-            session_started = sess.get('session_started_at', 0)
-            if session_started and (time.time() - session_started > session_config.absolute_max):
-                logger.info(f"Session absolute max ({session_config.absolute_max}s) exceeded, forcing logout")
-                clear_session(sess)
+        beforeware_started = time.perf_counter()
+        try:
+            if session_config and session_config.absolute_max:
+                session_started = sess.get('session_started_at', 0)
+                if session_started and (time.time() - session_started > session_config.absolute_max):
+                    logger.info(f"Session absolute max ({session_config.absolute_max}s) exceeded, forcing logout")
+                    clear_session(sess)
+                    return auth_redirect(req, redirect_path)
+
+            if session_key not in sess:
                 return auth_redirect(req, redirect_path)
-        
-        if session_key not in sess:
-            return auth_redirect(req, redirect_path)
-        
-        if setup_tenant_db:
-            # Check session cache first (if enabled)
-            cache_hit = False
-            if session_cache:
-                cached = _get_cached_auth(sess, session_cache_ttl)
-                if cached:
-                    cache_hit = True
-                    user = cached['user']
-                    req.state.user = user
-                    req.state.tenant_id = cached['tenant_id']
-                    
-                    # Still need to create tenant_db connection (lightweight)
-                    if user.get('tenant_id') and not user.get('is_sys_admin'):
-                        try:
-                            req.state.tenant_db = get_or_create_tenant_db(user['tenant_id'])
-                        except Exception as e:
-                            logger.error(f"Failed to setup tenant_db from cache: {e}")
-                            req.state.tenant_db = None
-                    else:
-                        req.state.tenant_db = None
-            
-            # Cache miss - do full DB lookup
+
+            cached_user = _get_cached_request_user(sess, session_cache, session_cache_ttl)
+            cache_hit = cached_user is not None
+            user = cached_user or _load_current_user(sess)
+            if not user:
+                return auth_redirect(req, redirect_path)
+
+            membership_valid = True
             if not cache_hit:
-                user = get_current_user(sess)
-                if user:
-                    req.state.tenant_id = user.get('tenant_id')
-                    req.state.tenant_db = None
-                    
-                    if user.get('tenant_id') and not user.get('is_sys_admin'):
-                        try:
-                            host_db = HostDatabase.from_env()
-                            if verify_membership(host_db, user['user_id'], user['tenant_id']):
-                                req.state.tenant_db = get_or_create_tenant_db(user['tenant_id'])
-                            else:
-                                logger.warning(f"Invalid membership for user {user['user_id']}")
-                        except Exception as e:
-                            logger.error(f"Failed to setup tenant_db: {e}")
-                    
-                    # Derive effective role from session + tenant DB
-                    role = get_user_role(sess, req.state.tenant_db)
-                    user['role'] = role
-                    user['is_owner'] = sess.get('tenant_role') == 'owner'
-                    req.state.user = user
-                    
-                    # Update session cache (if enabled)
-                    if session_cache:
-                        _set_auth_cache(sess, user, user.get('tenant_id'))
-            
-            # Auto-initialize tables if schema_init provided
+                membership_valid = _verify_request_membership(user)
+                if not membership_valid and _needs_tenant_membership(user):
+                    logger.warning(f"Invalid membership for user {user['user_id']}")
+
+            tenant_db = None
+            if setup_tenant_db and membership_valid and _needs_tenant_membership(user):
+                tenant_db = _open_request_tenant_db(user['tenant_id'])
+
+            if not cache_hit:
+                user['role'] = get_user_role(sess, tenant_db)
+                user['is_owner'] = sess.get('tenant_role') == 'owner'
+                if session_cache:
+                    _set_auth_cache(sess, user, user.get('tenant_id'))
+            else:
+                user.setdefault('is_owner', sess.get('tenant_role') == 'owner')
+
+            _set_request_auth_state(req, user, tenant_db)
+
             if schema_init and req.state.tenant_db:
                 try:
                     req.state.tables = schema_init(req.state.tenant_db)
                 except Exception as e:
                     logger.error(f"Failed to initialize schema: {e}")
                     req.state.tables = {}
-            else:
-                req.state.tables = {}
-            
-            # Check subscription requirement
-            if require_subscription and hasattr(req.state, 'tenant_id') and req.state.tenant_id:
+
+            if require_subscription and req.state.tenant_id:
                 try:
                     from fh_saas.utils_stripe import get_active_subscription
                     subscription = get_active_subscription(
@@ -572,7 +583,7 @@ def create_auth_beforeware(
                         grace_period_days=grace_period_days
                     )
                     req.state.subscription = subscription
-                    
+
                     if not subscription:
                         logger.warning(f"Subscription required for tenant {req.state.tenant_id}")
                         if subscription_redirect:
@@ -583,12 +594,14 @@ def create_auth_beforeware(
                             media_type='text/plain'
                         )
                 except ImportError:
-                    logger.error("utils_stripe not available for subscription check")
+                    logger.error('utils_stripe not available for subscription check')
                     req.state.subscription = None
                 except Exception as e:
                     logger.error(f"Error checking subscription: {e}")
                     req.state.subscription = None
-    
+        finally:
+            log_timing_event(logger, 'auth_beforeware_total', beforeware_started)
+
     return Beforeware(check_auth, skip=skip_patterns)
 
 # %% ../nbs/04_utils_auth.ipynb #0d965490
@@ -625,16 +638,19 @@ def create_or_get_global_user(host_db: HostDatabase, oauth_id: str, email: str, 
     """Create or retrieve GlobalUser from host database."""
     try:
         host_db.rollback()
-        all_users = host_db.global_users()
-        existing = [u for u in all_users if u.oauth_id == oauth_id]
-        
+        existing = host_db.global_users(
+            where='oauth_id = :oauth_id',
+            where_args={'oauth_id': oauth_id},
+            limit=1,
+        )
+
         if existing:
             user = existing[0]
             user.last_login = timestamp()
             host_db.global_users.update(user)
             logger.info(f'User login: {email}', extra={'user_id': user.id, 'email': email})
             return user
-        
+
         new_user = GlobalUser(
             id=gen_id(),
             email=email,
@@ -645,7 +661,7 @@ def create_or_get_global_user(host_db: HostDatabase, oauth_id: str, email: str, 
         host_db.global_users.insert(new_user)
         logger.info(f'New user created: {email}', extra={'user_id': new_user.id, 'email': email})
         return new_user
-        
+
     except Exception as e:
         host_db.rollback()
         logger.error(f'Failed to create/get user {email}: {e}', exc_info=True)
@@ -653,18 +669,28 @@ def create_or_get_global_user(host_db: HostDatabase, oauth_id: str, email: str, 
 
 
 def get_user_membership(host_db: HostDatabase, user_id: str):
-    """Get single active membership for user."""
+    """Get the first active membership for a user via a direct point lookup."""
     host_db.rollback()
-    all_memberships = host_db.memberships()
-    active = [m for m in all_memberships if m.user_id == user_id and m.is_active]
+    active = host_db.memberships(
+        where='user_id = :user_id AND is_active = :is_active',
+        where_args={'user_id': user_id, 'is_active': True},
+        limit=1,
+    )
     return active[0] if active else None
 
 
 def verify_membership(host_db: HostDatabase, user_id: str, tenant_id: str) -> bool:
-    """Verify user has active membership for specific tenant."""
+    """Verify user has active membership for a specific tenant via a direct lookup."""
     host_db.rollback()
-    all_memberships = host_db.memberships()
-    valid = [m for m in all_memberships if m.user_id == user_id and m.tenant_id == tenant_id and m.is_active]
+    valid = host_db.memberships(
+        where='user_id = :user_id AND tenant_id = :tenant_id AND is_active = :is_active',
+        where_args={
+            'user_id': user_id,
+            'tenant_id': tenant_id,
+            'is_active': True,
+        },
+        limit=1,
+    )
     return len(valid) > 0
 
 # %% ../nbs/04_utils_auth.ipynb #7d74645e
@@ -674,17 +700,17 @@ def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
     username = global_user.email.split('@')[0]
     tenant_name = f"{username}'s Workspace"
     tenant_db = None
-    
+
     try:
         logger.info(f'Starting tenant provisioning for {global_user.email}',
                    extra={'tenant_id': tenant_id, 'user_id': global_user.id})
-        
+
         # Create physical tenant database and register in catalog
         tenant_db = get_or_create_tenant_db(tenant_id, tenant_name)
-        
+
         # Initialize core tenant schema
         core_tables = init_tenant_core_schema(tenant_db)
-        
+
         # Create TenantUser profile
         tenant_user = TenantUser(
             id=global_user.id,
@@ -694,7 +720,7 @@ def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
         )
         core_tables['tenant_users'].insert(tenant_user)
         tenant_db.conn.commit()  # Commit tenant changes
-        
+
         # Create membership in host database
         membership = Membership(
             id=gen_id(),
@@ -705,7 +731,7 @@ def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
             created_at=timestamp()
         )
         host_db.memberships.insert(membership)
-        
+
         # Log provisioning event
         audit_log = HostAuditLog(
             id=gen_id(),
@@ -716,12 +742,12 @@ def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
             created_at=timestamp()
         )
         host_db.audit_logs.insert(audit_log)
-        
+
         host_db.commit()
         logger.info(f'Tenant provisioned: {tenant_name}',
                    extra={'tenant_id': tenant_id, 'tenant_name': tenant_name, 'user_id': global_user.id})
         return tenant_id
-        
+
     except Exception as e:
         host_db.rollback()
         if tenant_db:
@@ -733,13 +759,7 @@ def provision_new_user(host_db: HostDatabase, global_user: GlobalUser) -> str:
                     extra={'tenant_id': tenant_id, 'user_id': global_user.id}, exc_info=True)
         raise Exception(f"Failed to provision tenant for {global_user.email}: {str(e)}") from e
     finally:
-        # Always close tenant_db connection to prevent connection leaks
-        if tenant_db:
-            try:
-                tenant_db.conn.close()
-                tenant_db.engine.dispose()
-            except Exception:
-                pass
+        _close_tenant_db_connection(tenant_db)
 
 # %% ../nbs/04_utils_auth.ipynb #5b1f2810
 def create_user_session(session: dict, global_user: GlobalUser, membership: Membership):
@@ -790,41 +810,29 @@ def clear_session(session: dict):
 def auth_redirect(request, redirect_url: str = '/login'):
     """
     HTMX-aware redirect for authentication flows.
-    
+
     When HTMX makes a partial request and receives a standard redirect (302/303),
     it follows the redirect and swaps the response into the target element.
     This causes the login page to appear inside the partial content area.
-    
+
     This function detects HTMX requests and uses the `HX-Redirect` header
     to trigger a full page navigation instead.
-    
+
     Args:
         request: Starlette request object
         redirect_url: URL to redirect to (default: '/login')
-        
+
     Returns:
         Response with appropriate redirect mechanism
-        
-    Example:
-        ```python
-        @app.get('/dashboard')
-        def dashboard(request):
-            if not get_current_user(request.session):
-                return auth_redirect(request)
-            return render_dashboard()
-        ```
     """
-    # Check if this is an HTMX request
     if 'HX-Request' in request.headers:
-        # Return 200 with HX-Redirect header - HTMX will do full page redirect
         response = Response(status_code=200)
         response.headers['HX-Redirect'] = redirect_url
         logger.debug(f"HTMX auth redirect to {redirect_url}")
         return response
-    else:
-        # Regular redirect for non-HTMX requests
-        logger.debug(f"Standard auth redirect to {redirect_url}")
-        return RedirectResponse(redirect_url, status_code=303)
+
+    logger.debug(f"Standard auth redirect to {redirect_url}")
+    return RedirectResponse(redirect_url, status_code=303)
 
 
 def route_user_after_login(global_user: GlobalUser, membership: Membership = None) -> str:
@@ -837,25 +845,27 @@ def route_user_after_login(global_user: GlobalUser, membership: Membership = Non
 
 
 def require_tenant_access(request_or_session):
-    """Get tenant database with membership validation."""
-    # Check if request.state.tenant_db already set by beforeware
+    """Get tenant database with membership validation, opening it only on demand."""
     if hasattr(request_or_session, 'state'):
-        if hasattr(request_or_session.state, 'tenant_db') and request_or_session.state.tenant_db:
-            return request_or_session.state.tenant_db
+        existing = getattr(request_or_session.state, 'tenant_db', None)
+        if existing:
+            return existing
         session = getattr(request_or_session, 'session', {})
     else:
         session = request_or_session
-    
+
     user = get_current_user(session)
     if not user:
-        raise ValueError("Authentication required")
-    
+        raise ValueError('Authentication required')
+
     host_db = HostDatabase.from_env()
-    
     if not verify_membership(host_db, user['user_id'], user['tenant_id']):
         raise PermissionError(f"Access denied for user {user['user_id']} to tenant {user['tenant_id']}")
-    
-    return get_or_create_tenant_db(user['tenant_id'])
+
+    tenant_db = get_or_create_tenant_db(user['tenant_id'])
+    if hasattr(request_or_session, 'state'):
+        request_or_session.state.tenant_db = tenant_db
+    return tenant_db
 
 # %% ../nbs/04_utils_auth.ipynb #a4b7b0cc
 def handle_login_request(request, session):

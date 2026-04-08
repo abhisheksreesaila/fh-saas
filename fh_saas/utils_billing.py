@@ -6,6 +6,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
+from types import SimpleNamespace
 from typing import Optional, Dict, Any, List, Protocol, runtime_checkable
 from datetime import datetime, timedelta
 from starlette.responses import Response, RedirectResponse, JSONResponse
@@ -315,23 +316,25 @@ def init_trial_on_first_login(
     subscription_store: SubscriptionStore,
     config: BillingConfig,
 ):
-    """Create a trial subscription if the tenant has no subscription yet. Idempotent."""
+    """Create a trial subscription if the tenant has no subscription yet and return the resolved subscription."""
     existing = subscription_store.get_subscription(tenant_id)
     if existing is not None:
-        return None
+        return existing
+
     trial_end = (datetime.utcnow() + timedelta(days=config.trial_days)).isoformat()
-    subscription_store.upsert_subscription(
-        tenant_id=tenant_id,
-        stripe_sub_id=f'trial_{tenant_id}',
-        stripe_cust_id='',
-        plan_tier='trial',
-        status=SubscriptionStatus.trialing.value,
-        trial_end=trial_end,
-        current_period_end=trial_end,
-        payment_type='subscription',
-    )
+    fields = {
+        'tenant_id': tenant_id,
+        'stripe_sub_id': f'trial_{tenant_id}',
+        'stripe_cust_id': '',
+        'plan_tier': 'trial',
+        'status': SubscriptionStatus.trialing.value,
+        'trial_end': trial_end,
+        'current_period_end': trial_end,
+        'payment_type': 'subscription',
+    }
+    subscription_store.upsert_subscription(**fields)
     logger.info(f"Trial started for tenant {tenant_id} (ends {trial_end})")
-    return subscription_store.get_subscription(tenant_id)
+    return SimpleNamespace(**fields)
 
 # %% ../nbs/18_utils_billing.ipynb #a0000020
 def resolve_subscription_access(
@@ -375,9 +378,10 @@ def resolve_checkout_return(
     session_id: str,
     tenant_id: str,
     subscription_store: SubscriptionStore,
+    subscription=None,
 ) -> SubscriptionStatus:
     """Determine subscription state after a checkout redirect."""
-    sub = subscription_store.get_subscription(tenant_id)
+    sub = subscription if subscription is not None else subscription_store.get_subscription(tenant_id)
     if sub is not None:
         normalized = SubscriptionStatus.normalize(getattr(sub, 'status', 'none'))
         if normalized in (SubscriptionStatus.active, SubscriptionStatus.trialing):
@@ -487,11 +491,11 @@ def register_billing_routes(
         tenant_id = user_ctx.get_tenant_id(request)
         if not tenant_id:
             return Response('Authentication required', status_code=401)
-        status = resolve_checkout_return(session_id, tenant_id, subscription_store)
+        sub = subscription_store.get_subscription(tenant_id)
+        status = resolve_checkout_return(session_id, tenant_id, subscription_store, subscription=sub)
         if ui_adapter and hasattr(ui_adapter, 'render_checkout_pending') and status == SubscriptionStatus.checkout_pending:
             return ui_adapter.render_checkout_pending(session_id)
         if ui_adapter and hasattr(ui_adapter, 'render_billing_status') and status != SubscriptionStatus.checkout_pending:
-            sub = subscription_store.get_subscription(tenant_id)
             return ui_adapter.render_billing_status(sub, status)
         return JSONResponse({'status': status.value, 'session_id': session_id})
 
@@ -583,8 +587,7 @@ def attach_billing_auth_hooks(
         if not tenant_id:
             return
         user_email = user_ctx.get_user_email(request) or ''
-        init_trial_on_first_login(tenant_id, user_email, subscription_store, config)
-        sub = subscription_store.get_subscription(tenant_id)
+        sub = init_trial_on_first_login(tenant_id, user_email, subscription_store, config)
         decision = resolve_subscription_access(sub, config)
         if not decision.allowed and decision.redirect_to:
             return RedirectResponse(decision.redirect_to, status_code=303)
@@ -600,7 +603,7 @@ def attach_billing_auth_hooks(
                 return await call_next(request)
 
         app.add_middleware(BillingMiddleware)
-        logger.info("Billing auth hooks attached as middleware")
+        logger.info('Billing auth hooks attached as middleware')
     except Exception as e:
         logger.warning(f"Could not attach billing middleware: {e}")
         app._billing_beforeware = _billing_beforeware

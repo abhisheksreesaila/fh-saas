@@ -148,6 +148,52 @@ tenant_db.conn.commit()
 
 ------------------------------------------------------------------------
 
+## ⚡ Performance Notes
+
+For FastHTML and Starlette apps with a mix of DB-backed and non-DB protected
+pages, use auth hydration and tenant DB access as separate steps:
+
+``` python
+from fh_saas.utils_auth import create_auth_beforeware, require_tenant_access
+
+beforeware = create_auth_beforeware(
+    setup_tenant_db=False,
+    session_cache=True,
+)
+
+@app.get('/dashboard')
+def dashboard(request):
+    return render_dashboard(request.state.user)
+
+@app.get('/transactions')
+def transactions(request):
+    tenant_db = require_tenant_access(request)
+    tables = get_app_tables(tenant_db)
+    return render_transactions(tables)
+```
+
+This keeps protected non-DB pages from paying tenant DB setup costs on every
+request while still preserving a lazy boundary for routes that actually need
+tenant data. For rollout diagnostics, set `FH_TIMING_ENABLED=1` to emit timing
+labels for auth and tenant DB setup.
+
+------------------------------------------------------------------------
+
+## 📝 Release Notes
+
+### v0.9.13
+
+| Before | After | Benefit |
+|---|---|---|
+| Auth beforeware eagerly opened the tenant DB on every protected request, even for pages that only needed session or user info. | Auth hydration and tenant DB access were split, so non-DB routes can stop at `request.state.user`, and DB routes cross the boundary only when they call `require_tenant_access`. | Lower latency on protected pages like dashboards, nav loads, and HTMX partials that do not query tenant tables. |
+| Every tenant DB open could pay engine setup and schema reflection costs again. | Tenant routing, shared SQLAlchemy engine, and reflected metadata are cached, while each request still gets a fresh live connection. | Warm tenant routes become much cheaper after the first hit, especially for repeated requests within the same tenant. |
+| Role lookup and membership validation did broader reads and more Python-side filtering than necessary. | Role resolution, global user lookup, membership lookup, and membership verification now use direct `where ... limit 1` queries. | Faster auth decisions, less DB I/O, and less Python work on login and route protection paths. |
+| Session-heavy HTMX traffic could rebuild the same auth state on each request. | Optional session auth caching reuses a recent hydrated auth payload for a short TTL. | Reduced repeated auth cost on bursty UI interactions and partial refreshes. |
+| Billing middleware and checkout return paths could fetch the same subscription more than once in one request flow. | Trial initialization returns the resolved subscription, and checkout and billing hooks reuse already-fetched subscription state. | Fewer duplicate host DB reads on subscription-gated routes and payment return flows. |
+| Route timing required ad hoc logging to understand where latency was going. | Env-gated timing hooks emit labeled timings for auth and tenant DB phases when enabled. | Easier rollout diagnostics and faster identification of remaining bottlenecks. |
+
+------------------------------------------------------------------------
+
 ## 🛠️ Developer Guide
 
 This project uses [nbdev](https://nbdev.fast.ai/) for literate

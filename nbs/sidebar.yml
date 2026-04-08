@@ -37,3 +37,7 @@ website:
       - 17_utils_migrate_tests.ipynb
       - 18_utils_billing.ipynb
       - 18_utils_billing_tests.ipynb
+      - 19_utils_ai_interface.ipynb
+      - 19_utils_ai_interface_tests.ipynb
+      - 20_utils_ai_queue.ipynb
+      - 20_utils_ai_queue_tests.ipynb
